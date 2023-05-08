@@ -34,11 +34,11 @@ export const ChatHeader: React.FC = () => {
         </Flex>
         <Box>
           <Text fontWeight="bold" fontSize="xl">
-            Dinda
+            Quick Chat
           </Text>
           {isTyping ? (
             <Text fontSize="sm" color="gray.400" fontStyle="italic">
-              Dinda is typing...
+              AI is typing...
             </Text>
           ) : (
             <Text fontSize="sm" color="gray.400">
