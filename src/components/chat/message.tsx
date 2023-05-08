@@ -22,15 +22,15 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         <Avatar
           name="Ryan Florence"
           src="https://bit.ly/ryan-florence"
-          w="35px"
-          h="35px"
+          w="2.188rem"
+          h="2.188rem"
         />
       ) : (
         <Flex
           p={4}
           bgColor="blue.500"
-          w="35px"
-          h="35px"
+          w="2.188rem"
+          h="2.188rem"
           align="center"
           justify="center"
           borderRadius="full"
@@ -39,9 +39,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         </Flex>
       )}
       <Box
-        mt={2}
+        mt="0.286rem"
         color={isMe ? 'gray.300' : 'gray.200'}
-        maxW="calc(100% - 70px)"
+        maxW="calc(100% - 4.375rem)"
         w="full"
         sx={{
           ['ul, ol']: {

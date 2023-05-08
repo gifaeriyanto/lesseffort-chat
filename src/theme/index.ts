@@ -21,9 +21,9 @@ const config: ThemeOverride = {
     sm: '1.3',
   },
   radii: {
-    lg: '8px',
-    md: '4px',
-    sm: '2px',
+    lg: '0.571rem',
+    md: '0.286rem',
+    sm: '0.143rem',
   },
   styles: {
     global: () => ({

@@ -23,8 +23,8 @@ export const ChatHeader: React.FC = () => {
         <Flex
           p={4}
           bgColor="blue.500"
-          w="35px"
-          h="35px"
+          w="2.188rem"
+          h="2.188rem"
           align="center"
           justify="center"
           borderRadius="full"

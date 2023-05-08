@@ -5,7 +5,7 @@ export const RichEditorTextareaStyle = {
     pointerEvents: 'none',
   },
   'ul, ol': {
-    paddingLeft: '20px',
+    paddingLeft: '1.25rem',
   },
 };
 

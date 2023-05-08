@@ -34,11 +34,13 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
 }) => {
   return (
     <Box
-      borderBottom="1px solid"
-      borderColor={CustomColor.border}
+      borderLeft={isActive ? '1px solid' : undefined}
+      borderColor="blue.500"
+      borderBottom={`1px solid ${CustomColor.border}`}
       bgColor={isActive ? 'gray.600' : 'transparent'}
       w="full"
       p={4}
+      pl={isActive ? 'calc(1rem - 1px)' : 4}
       role="button"
       onClick={() => id && onSelect(id)}
     >
@@ -56,7 +58,9 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
         justify="space-between"
       >
         <Box flexGrow={0} overflow="hidden">
-          <Text isTruncated>{title}</Text>
+          <Text isTruncated fontWeight={isActive ? '600' : '500'}>
+            {title}
+          </Text>
           <Text fontSize="sm" color="gray.400" isTruncated>
             {description || 'No messages yet'}
           </Text>

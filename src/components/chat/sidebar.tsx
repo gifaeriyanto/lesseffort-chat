@@ -101,7 +101,7 @@ export const ChatSidebar: React.FC = () => {
         direction="column"
       >
         {isShowSearch || search.length ? (
-          <Box p={2}>
+          <Box p={2} h="3.571rem">
             <InputGroup>
               <Input
                 placeholder="Search"
@@ -120,7 +120,7 @@ export const ChatSidebar: React.FC = () => {
           </Box>
         ) : (
           <Flex
-            py="10px"
+            h="3.571rem"
             pr={2}
             pl={4}
             borderBottom="1px solid"
@@ -128,8 +128,10 @@ export const ChatSidebar: React.FC = () => {
             w="full"
             justify="space-between"
             align="center"
+            onClick={onToggle}
+            cursor="text"
           >
-            <Text color="gray.400" fontSize="sm" onClick={onToggle}>
+            <Text color="gray.400" fontSize="sm">
               Chat History
             </Text>
             <IconButton
@@ -140,7 +142,6 @@ export const ChatSidebar: React.FC = () => {
               color="gray.400"
               borderRadius="2xl"
               fontSize="md"
-              onClick={onToggle}
             />
           </Flex>
         )}

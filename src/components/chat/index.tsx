@@ -14,7 +14,7 @@ export const Chat: React.FC = () => {
   return (
     <Flex
       w="full"
-      maxW="800px"
+      maxW="50rem"
       direction="column"
       h="calc(100vh - 2rem)"
       m="auto"
