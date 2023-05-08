@@ -1,6 +1,26 @@
 import React, { PropsWithChildren } from 'react';
-import { Avatar, Box, Flex, Icon } from '@chakra-ui/react';
-import { TbBrandOpenai } from 'react-icons/tb';
+import {
+  Avatar,
+  Box,
+  ButtonGroup,
+  Flex,
+  Icon,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
+import {
+  TbBookmark,
+  TbBrandOpenai,
+  TbCopy,
+  TbDotsVertical,
+  TbPencil,
+  TbReload,
+} from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
@@ -12,12 +32,100 @@ export interface ChatMessageProps {
   message: string;
 }
 
+export interface ChatMessageActionProps {
+  title: string;
+  icon: React.ReactElement;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
+  title,
+  icon,
+  onClick,
+}) => {
+  return (
+    <Tooltip label={title} openDelay={500}>
+      <IconButton
+        icon={icon}
+        aria-label={title}
+        variant="ghost"
+        size="md"
+        fontSize="2xl"
+        color="gray.300"
+        onClick={onClick}
+      />
+    </Tooltip>
+  );
+};
+
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   isMe,
   message,
 }) => {
+  const handleCopy = () => {
+    navigator.clipboard.writeText(message);
+  };
+
   return (
-    <Flex py={2} pr={2} w="full" align="flex-start" gap={4}>
+    <Flex
+      py={2}
+      pr={2}
+      w="full"
+      align="flex-start"
+      gap={4}
+      pos="relative"
+      _hover={{
+        ['.message-actions']: {
+          opacity: 1,
+        },
+      }}
+    >
+      <ButtonGroup
+        variant="outline"
+        pos="absolute"
+        top="0"
+        right="0"
+        bgColor="gray.700"
+        className="message-actions"
+        opacity="0"
+        transition="0.2s ease opacity"
+      >
+        {isMe ? (
+          <ChatMessageAction
+            title="Edit Message"
+            icon={<TbPencil />}
+            onClick={console.log}
+          />
+        ) : (
+          <ChatMessageAction
+            title="Regenerate Response"
+            icon={<TbReload />}
+            onClick={console.log}
+          />
+        )}
+        <ChatMessageAction
+          title="Save Message"
+          icon={<TbBookmark />}
+          onClick={console.log}
+        />
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<TbDotsVertical />}
+            aria-label="Action menu"
+            variant="ghost"
+            size="md"
+            fontSize="2xl"
+            color="gray.300"
+          />
+          <MenuList>
+            <MenuItem onClick={handleCopy}>
+              <Icon as={TbCopy} mr={2} fontSize="xl" />
+              <Text>Copy Text</Text>
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </ButtonGroup>
       {isMe ? (
         <Avatar
           name="Ryan Florence"
