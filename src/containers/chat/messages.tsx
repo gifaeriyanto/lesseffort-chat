@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Flex, Icon } from '@chakra-ui/react';
-import { OpenAIModel } from 'api/chat';
+import { Message, OpenAIModel } from 'api/chat';
 import { ChatMessage } from 'components/chat/message';
 import { RichEditor } from 'components/richEditor';
+import { getUnixTime } from 'date-fns';
 import { MdSubdirectoryArrowLeft } from 'react-icons/md';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
@@ -14,16 +15,16 @@ export const ChatMessagesContainer: React.FC = () => {
   const db = useIndexedDB('messages');
 
   const handleSubmitChat = async (value: string) => {
-    console.log(value);
     if (selectedChatId) {
-      await db.add({
+      await db.add<Message>({
         chatId: selectedChatId,
         content: value,
         role: 'user',
+        timestamp: getUnixTime(new Date()),
       });
     } else {
       await newChat({
-        bot_id: 2,
+        bot_id: 1,
         last_message: value,
         model: OpenAIModel.GPT_3_5,
         title: value,
@@ -31,7 +32,7 @@ export const ChatMessagesContainer: React.FC = () => {
     }
     streamChatCompletion(value);
   };
-
+  console.log(messages);
   return (
     <>
       <Flex
@@ -45,9 +46,9 @@ export const ChatMessagesContainer: React.FC = () => {
         direction="column-reverse"
       >
         {!!generatingMessage && <ChatMessage message={generatingMessage} />}
-        {messages.map((message, index) => (
+        {messages.map((message) => (
           <ChatMessage
-            key={message.content}
+            key={message.timestamp}
             isMe={message.role === 'user'}
             message={message.content}
           />

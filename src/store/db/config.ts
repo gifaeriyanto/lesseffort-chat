@@ -31,6 +31,7 @@ export const DBConfig = {
           keypath: 'role',
           options: { unique: false },
         },
+        { name: 'timestamp', keypath: 'timestamp', options: { unique: false } },
       ],
     },
     {

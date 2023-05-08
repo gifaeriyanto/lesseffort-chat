@@ -11,6 +11,8 @@ export interface Chat {
 export interface Message {
   role: 'user' | 'system' | 'assistant';
   content: string;
+  chatId?: number;
+  timestamp?: number;
 }
 
 export enum OpenAIModel {
@@ -33,7 +35,10 @@ export const generateResponse = (
           content:
             'You are a very smart humorous. Respond with casual language but friendly. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use supported emoticon for all devices',
         },
-        ...messages,
+        ...messages.map((message) => ({
+          content: message.content,
+          role: message.role,
+        })),
       ],
     },
     {

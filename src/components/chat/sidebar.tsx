@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { OpenAIModel } from 'api/chat';
 import { ChatHistory } from 'components/chat/history';
+import { getUnixTime } from 'date-fns';
 import { TbPlus, TbSearch } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
@@ -43,7 +44,7 @@ export const ChatSidebar: React.FC = () => {
 
   const handleNewChat = () => {
     newChat({
-      bot_id: 2,
+      bot_id: 1,
       last_message: '',
       model: OpenAIModel.GPT_3_5,
       title: 'New Chat',

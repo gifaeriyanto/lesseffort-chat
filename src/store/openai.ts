@@ -1,5 +1,6 @@
 import { Chat, generateResponse, Message, OpenAIModel } from 'api/chat';
 import { getUsages } from 'api/openai';
+import { getUnixTime } from 'date-fns';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { create } from 'zustand';
@@ -30,10 +31,9 @@ export const useChat = create<{
   xhr?: XMLHttpRequest;
   deleteChat: (id: number) => void;
   getChatHistory: () => Promise<void>;
-  getToken: () => number;
   newChat: (data: Chat) => Promise<void>;
+  regenerateResponse: () => void;
   reset: () => void;
-  setMessages: (messages: Message[]) => void;
   setSelectedChatId: (id: number | undefined) => void;
   stopStream: () => void;
   streamChatCompletion: (value: string) => void;
@@ -41,21 +41,23 @@ export const useChat = create<{
   generatingMessage: '',
   messages: [],
   model: OpenAIModel.GPT_3_5,
-  setMessages: (messages) => {
-    set({ messages });
-  },
   stopStream: () => get().xhr?.abort(),
   streamChatCompletion: (value) => {
     const { messages, model, getChatHistory, selectedChatId: chatId } = get();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
 
-    const assistandMessage: Message = { role: 'user', content: value };
+    const assistandMessage: Message = {
+      role: 'user',
+      content: value,
+      timestamp: getUnixTime(new Date()),
+    };
     const updatedMessages = prepend<Message>(
       assistandMessage,
       messages.map((message) => ({
         content: message.content,
         role: message.role,
+        timestamp: message.timestamp,
       })),
     );
 
@@ -68,10 +70,11 @@ export const useChat = create<{
           generatingMessage: '',
         }));
 
-        dbMessages.add({
+        dbMessages.add<Message>({
           chatId,
           content,
           role: 'assistant',
+          timestamp: getUnixTime(new Date()),
         });
 
         if (chatId) {
@@ -125,10 +128,11 @@ export const useChat = create<{
 
     const chatId = get().chatHistory[0]?.id;
     if (data.last_message) {
-      dbMessages.add({
+      dbMessages.add<Message>({
         chatId,
         content: data.last_message,
         role: 'user',
+        timestamp: getUnixTime(new Date()),
       });
     }
     set({
@@ -139,8 +143,16 @@ export const useChat = create<{
   setSelectedChatId: (id) => {
     const { getAll } = useIndexedDB('messages');
     set({ selectedChatId: id });
-    getAll()
-      .then((messages) => messages.filter((item) => item.chatId === id))
+    getAll<Message>()
+      .then((messages) =>
+        messages
+          .filter((item) => item.chatId === id)
+          .map((item) => ({
+            content: item.content,
+            role: item.role,
+            timestamp: item.timestamp,
+          })),
+      )
       .then((messages) => set({ messages: reverse(messages) }));
   },
   reset: () => {
@@ -149,10 +161,11 @@ export const useChat = create<{
       messages: [],
     });
   },
-  getToken: () => {
-    const allMessages = get().messages.reduce((prev, curr) => {
-      return `${prev.trim()} ${curr.content.trim()}`;
-    }, '');
-    return allMessages.split(' ').length;
+  regenerateResponse: () => {
+    const { messages, model } = get();
+    const stream = generateResponse(reverse(messages), model, {
+      onContent: console.log,
+    });
+    set({ xhr: stream });
   },
 }));
