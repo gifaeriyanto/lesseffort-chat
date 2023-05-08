@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -21,17 +21,27 @@ import {
 } from '@chakra-ui/react';
 import { OpenAIModel } from 'api/chat';
 import { ChatHistory } from 'components/chat/history';
-import { getUnixTime } from 'date-fns';
 import { TbPlus, TbSearch } from 'react-icons/tb';
-import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
+import { debounce } from 'utils/common';
 
 export const ChatSidebar: React.FC = () => {
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { chatHistory, getChatHistory, newChat } = useChat();
-  const botDb = useIndexedDB('bot');
+  const [search, setSearch] = useState('');
+
+  const debounceOnChange = debounce(
+    (setter: Function, value: unknown) => setter(value),
+    300,
+  );
+
+  const filteredChatHistory = useMemo(() => {
+    return chatHistory.filter((item) =>
+      item.title.match(new RegExp(search, 'i')),
+    );
+  }, [chatHistory, search]);
 
   useEffect(() => {
     getChatHistory();
@@ -90,7 +100,7 @@ export const ChatSidebar: React.FC = () => {
         overflow="hidden"
         direction="column"
       >
-        {isShowSearch ? (
+        {isShowSearch || search.length ? (
           <Box p={2}>
             <InputGroup>
               <Input
@@ -99,6 +109,9 @@ export const ChatSidebar: React.FC = () => {
                 bgColor="gray.600"
                 autoFocus
                 onBlur={onToggle}
+                onChange={(e) =>
+                  debounceOnChange(setSearch, e.currentTarget.value)
+                }
               />
               <InputRightElement>
                 <Icon as={TbSearch} color={CustomColor.border} />
@@ -132,7 +145,7 @@ export const ChatSidebar: React.FC = () => {
           </Flex>
         )}
 
-        <ChatHistory data={chatHistory} />
+        <ChatHistory data={filteredChatHistory} />
       </Flex>
       <Accordion allowToggle>
         <AccordionItem

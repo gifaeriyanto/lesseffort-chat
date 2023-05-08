@@ -32,7 +32,7 @@ export const ChatMessagesContainer: React.FC = () => {
     }
     streamChatCompletion(value);
   };
-  console.log(messages);
+
   return (
     <>
       <Flex
