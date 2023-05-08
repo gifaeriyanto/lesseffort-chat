@@ -81,25 +81,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         }}
       >
         <ReactMarkdown
-          components={
-            {
-              // code: ({ className, children, inline }) => (
-              //   <CodeBlock
-              //     language={className?.replace('language-', '')}
-              //     value={String(children)}
-              //     inline={inline}
-              //   />
-              // ),
-              // a: ({ children, href }) => {
-              //   if (!href) return null;
-              //   return (
-              //     <a href={href} target="_blank" rel="noopener noreferrer">
-              //       {children}
-              //     </a>
-              //   );
-              // },
-            }
-          }
           remarkPlugins={[remarkGfm, remarkBreaks]}
           rehypePlugins={[
             [
