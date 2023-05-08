@@ -17,7 +17,7 @@ export const ChatHeader: React.FC = () => {
       align="center"
       borderBottom="1px solid"
       borderColor={CustomColor.border}
-      py={4}
+      pb={2}
     >
       <Flex align="center" gap={4}>
         <Flex
