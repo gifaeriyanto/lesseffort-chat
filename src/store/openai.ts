@@ -14,7 +14,7 @@ export const useUsage = create<{
     try {
       const res = await getUsages();
       const { total_usage } = res.data;
-      set(() => ({ usage: total_usage }));
+      set({ usage: total_usage });
       return total_usage;
     } catch (error) {
       console.error(error);
@@ -61,7 +61,7 @@ export const useChat = create<{
       })),
     );
 
-    set(() => ({ messages: updatedMessages }));
+    set({ messages: updatedMessages });
 
     const onContent = (content: string, isFinal: boolean) => {
       if (isFinal) {
@@ -90,7 +90,7 @@ export const useChat = create<{
             .finally(getChatHistory);
         }
       } else {
-        set(() => ({ generatingMessage: content }));
+        set({ generatingMessage: content });
       }
     };
 
@@ -105,7 +105,7 @@ export const useChat = create<{
       onContent,
       onError,
     });
-    set(() => ({ xhr: stream }));
+    set({ xhr: stream });
   },
   xhr: undefined,
   chatHistory: [],
