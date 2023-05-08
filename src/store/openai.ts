@@ -1,12 +1,7 @@
-import {
-  ChatHistory,
-  generateResponse,
-  MappedChatHistory,
-  Message,
-  OpenAIModel,
-} from 'api/chat';
+import { Chat, generateResponse, Message, OpenAIModel } from 'api/chat';
 import { getUsages } from 'api/openai';
 import { prepend, reverse } from 'ramda';
+import { useIndexedDB } from 'react-indexed-db';
 import { create } from 'zustand';
 
 export const useUsage = create<{
@@ -74,27 +69,25 @@ export const useChat = create<{
 }));
 
 export const useChatHistory = create<{
-  chatHistory: ChatHistory;
-  mapChatHistory: () => MappedChatHistory;
-  setChatHistory: () => void;
+  chatHistory: Chat[];
+  getChatHistory: () => void;
+  newChat: (data: Chat) => void;
+  deleteChat: (id: number) => void;
 }>((set, get) => ({
-  chatHistory: {},
-  mapChatHistory: () => {
-    get().setChatHistory();
-    return Object.entries(get().chatHistory).map(([key, value]) => ({
-      title: value.title,
-      description: value.description,
-    }));
+  chatHistory: [],
+  getChatHistory: async () => {
+    const db = useIndexedDB('chatHistory');
+    const chatHistory = await db.getAll<Chat>();
+    set({ chatHistory });
   },
-  setChatHistory: () => {
-    if (typeof window !== 'undefined') {
-      if (!Object.keys(get().chatHistory).length) {
-        const savedChatHistory = window.localStorage.getItem('chatHistory');
-        const chatHistory = savedChatHistory
-          ? (JSON.parse(savedChatHistory) as ChatHistory)
-          : {};
-        set(() => ({ chatHistory }));
-      }
-    }
+  newChat: (data) => {
+    const db = useIndexedDB('chatHistory');
+    db.add<Chat>(data);
+    get().getChatHistory();
+  },
+  deleteChat: (id) => {
+    const db = useIndexedDB('chatHistory');
+    db.deleteRecord(id);
+    get().getChatHistory();
   },
 }));

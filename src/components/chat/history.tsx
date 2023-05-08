@@ -10,18 +10,24 @@ import {
   MenuList,
   Text,
 } from '@chakra-ui/react';
-import { MappedChatHistory } from 'api/chat';
+import { Chat } from 'api/chat';
 import { TbChevronDown } from 'react-icons/tb';
+import { useIndexedDB } from 'react-indexed-db';
+import { useChatHistory } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export interface ChatHistoryItemProps {
+  id?: number;
   title: string;
   description: string;
+  onDelete: (id: number) => void;
 }
 
 export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
+  id,
   title,
   description,
+  onDelete,
 }) => {
   return (
     <Box
@@ -42,11 +48,12 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
             display: 'flex',
           },
         }}
+        justify="space-between"
       >
         <Box flexGrow={0} overflow="hidden">
           <Text isTruncated>{title}</Text>
           <Text fontSize="sm" color="gray.400" isTruncated>
-            {description}
+            {description || 'No messages yet'}
           </Text>
         </Box>
         <Menu>
@@ -62,7 +69,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
           />
           <MenuList>
             <MenuItem>Rename</MenuItem>
-            <MenuItem>Delete</MenuItem>
+            <MenuItem onClick={() => id && onDelete(id)}>Delete</MenuItem>
           </MenuList>
         </Menu>
       </HStack>
@@ -71,10 +78,12 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
 };
 
 export interface ChatHistoryProps {
-  data: MappedChatHistory;
+  data: Chat[];
 }
 
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ data }) => {
+  const { deleteChat } = useChatHistory();
+
   if (!data.length) {
     return (
       <Flex
@@ -95,8 +104,10 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ data }) => {
       {data.map((item, index) => (
         <ChatHistoryItem
           key={index}
+          id={item.id}
           title={item.title}
-          description={item.description}
+          description={item.last_message}
+          onDelete={deleteChat}
         />
       ))}
     </Box>

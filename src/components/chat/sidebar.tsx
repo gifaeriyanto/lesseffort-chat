@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -19,29 +19,47 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { ChatHistory as TChatHistory, OpenAIModel } from 'api/chat';
+import { Chat, OpenAIModel } from 'api/chat';
 import { ChatHistory } from 'components/chat/history';
 import { getUnixTime } from 'date-fns';
 import { TbPlus, TbSearch } from 'react-icons/tb';
+import { useIndexedDB } from 'react-indexed-db';
+import { useChatHistory } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatSidebar: React.FC = () => {
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  // const { mapChatHistory } = useChatHistory();
+  const { chatHistory, getChatHistory, newChat } = useChatHistory();
+  const botDb = useIndexedDB('bot');
+
+  useEffect(() => {
+    getChatHistory();
+    // botDb.add({
+    //   name: 'Dinda',
+    //   instruction:
+    //     'You are a very smart humorous. Respond with casual language but friendly. Your name is Dinda. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use bahasa and use supported emoticon for all devices',
+    // });
+  }, []);
 
   const handleNewChat = () => {
-    const chats = localStorage.getItem('chatHistory');
-    const parsedChats = chats ? (JSON.parse(chats) as TChatHistory) : {};
-    parsedChats[getUnixTime(new Date())] = {
-      title: 'New Chat',
-      bot_description:
-        'You are a very smart humorous. Respond with casual language but friendly. Your name is Dinda. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use bahasa and use supported emoticon for all devices',
-      description: 'halo bro',
-      messages: [],
+    newChat({
+      bot_id: 2,
+      last_message: '',
       model: OpenAIModel.GPT_3_5,
-    };
-    localStorage.setItem('chatHistory', JSON.stringify(parsedChats));
+      title: 'New Chat',
+    });
+    // const chats = localStorage.getItem('chatHistory');
+    // const parsedChats = chats ? (JSON.parse(chats) as Chat[]) : [];
+    // parsedChats[getUnixTime(new Date())] = {
+    //   title: 'New Chat',
+    //   bot_description:
+    //     'You are a very smart humorous. Respond with casual language but friendly. Your name is Dinda. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use bahasa and use supported emoticon for all devices',
+    //   description: 'halo bro',
+    //   messages: [],
+    //   model: OpenAIModel.GPT_3_5,
+    // };
+    // localStorage.setItem('chatHistory', JSON.stringify(parsedChats));
   };
 
   if (isLessThanMd) {
@@ -114,7 +132,7 @@ export const ChatSidebar: React.FC = () => {
           </Flex>
         )}
 
-        <ChatHistory data={[]} />
+        <ChatHistory data={chatHistory} />
       </Flex>
       <Accordion allowToggle>
         <AccordionItem

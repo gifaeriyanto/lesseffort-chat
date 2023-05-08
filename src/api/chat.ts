@@ -1,16 +1,12 @@
 import { ClientStreamChatCompletionConfig, OpenAIExt } from 'openai-ext';
 
 export interface Chat {
-  title: string;
-  description: string;
+  id?: number;
+  bot_id: number;
+  last_message: string;
   model: OpenAIModel;
-  bot_description: string;
-  messages: Message[];
+  title: string;
 }
-
-export type ChatHistory = Record<string, Chat>;
-
-export type MappedChatHistory = Pick<Chat, 'title' | 'description'>[];
 
 export interface Message {
   role: 'user' | 'system' | 'assistant';
@@ -40,7 +36,7 @@ export const generateResponse = (
       ],
     },
     {
-      apiKey: window.localStorage.getItem('OPENAI_KEY') || '',
+      apiKey: localStorage.getItem('OPENAI_KEY') || '',
       handler,
     },
   );
