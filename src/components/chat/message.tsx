@@ -1,8 +1,11 @@
 import React, { PropsWithChildren } from 'react';
 import { Avatar, Box, Flex, Icon } from '@chakra-ui/react';
-import { CodeBlock } from 'components/chat/codeBlock';
 import { TbBrandOpenai } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
+import rehypeExternalLinks from 'rehype-external-links';
+import rehypeHighlight from 'rehype-highlight';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
 
 export interface ChatMessageProps {
   isMe?: boolean;
@@ -38,6 +41,8 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       <Box
         mt={2}
         color={isMe ? 'gray.300' : 'gray.200'}
+        maxW="calc(100% - 70px)"
+        w="full"
         sx={{
           ['ul, ol']: {
             paddingLeft: '1.25rem',
@@ -46,22 +51,71 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             marginBottom: '1rem',
           },
           ['pre']: {
+            maxWidth: 'full',
             borderRadius: 'md',
             bgColor: '#000 !important',
             p: 2,
           },
+          table: {
+            marginBottom: '1rem',
+            w: 'full',
+          },
+          ['td, th']: {
+            p: 2,
+            border: '1px solid',
+            borderColor: 'gray.400',
+          },
+          a: {
+            color: 'blue.300',
+            textDecor: 'underline',
+          },
+          ['.hljs']: {
+            maxWidth: 'full',
+            overflow: 'auto',
+          },
+          ['pre code:not(.hljs)']: {
+            maxWidth: 'full',
+            overflow: 'auto',
+            whiteSpace: 'pre-wrap',
+          },
         }}
       >
         <ReactMarkdown
-          components={{
-            code: ({ className, children, inline }) => (
-              <CodeBlock
-                language={className?.replace('language-', '')}
-                value={String(children)}
-                inline={inline}
-              />
-            ),
-          }}
+          components={
+            {
+              // code: ({ className, children, inline }) => (
+              //   <CodeBlock
+              //     language={className?.replace('language-', '')}
+              //     value={String(children)}
+              //     inline={inline}
+              //   />
+              // ),
+              // a: ({ children, href }) => {
+              //   if (!href) return null;
+              //   return (
+              //     <a href={href} target="_blank" rel="noopener noreferrer">
+              //       {children}
+              //     </a>
+              //   );
+              // },
+            }
+          }
+          remarkPlugins={[remarkGfm, remarkBreaks]}
+          rehypePlugins={[
+            [
+              rehypeHighlight,
+              {
+                ignoreMissing: true,
+              },
+            ],
+            [
+              rehypeExternalLinks,
+              {
+                target: '_blank',
+                rel: 'noopener noreferrer',
+              },
+            ],
+          ]}
         >
           {message}
         </ReactMarkdown>

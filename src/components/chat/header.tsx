@@ -6,9 +6,10 @@ import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatHeader: React.FC = () => {
-  const { isTyping, messagesLength } = useChat((state) => ({
+  const { isTyping, messagesLength, token } = useChat((state) => ({
     messagesLength: state.messages.length,
     isTyping: !!state.generatingMessage,
+    token: state.getToken(),
   }));
 
   return (
@@ -41,7 +42,8 @@ export const ChatHeader: React.FC = () => {
             </Text>
           ) : (
             <Text fontSize="sm" color="gray.400">
-              {messagesLength ? `${messagesLength} messages` : 'No messages'}
+              {messagesLength ? `${messagesLength} messages` : 'No messages'} .{' '}
+              {token} token
             </Text>
           )}
         </Box>

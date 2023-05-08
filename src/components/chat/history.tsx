@@ -12,30 +12,35 @@ import {
 } from '@chakra-ui/react';
 import { Chat } from 'api/chat';
 import { TbChevronDown } from 'react-icons/tb';
-import { useIndexedDB } from 'react-indexed-db';
-import { useChatHistory } from 'store/openai';
+import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export interface ChatHistoryItemProps {
   id?: number;
+  isActive?: boolean;
   title: string;
   description: string;
   onDelete: (id: number) => void;
+  onSelect: (id: number) => void;
 }
 
 export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   id,
+  isActive,
   title,
   description,
   onDelete,
+  onSelect,
 }) => {
   return (
     <Box
       borderBottom="1px solid"
       borderColor={CustomColor.border}
+      bgColor={isActive ? 'gray.600' : 'transparent'}
       w="full"
       p={4}
       role="button"
+      onClick={() => id && onSelect(id)}
     >
       <HStack
         sx={{
@@ -66,10 +71,18 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
             fontSize="xl"
             borderRadius="xl"
             size="sm"
+            onClick={(e) => e.stopPropagation()}
           />
           <MenuList>
             <MenuItem>Rename</MenuItem>
-            <MenuItem onClick={() => id && onDelete(id)}>Delete</MenuItem>
+            <MenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                id && onDelete(id);
+              }}
+            >
+              Delete
+            </MenuItem>
           </MenuList>
         </Menu>
       </HStack>
@@ -82,7 +95,7 @@ export interface ChatHistoryProps {
 }
 
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ data }) => {
-  const { deleteChat } = useChatHistory();
+  const { deleteChat, selectedChatId, setSelectedChatId } = useChat();
 
   if (!data.length) {
     return (
@@ -108,6 +121,8 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ data }) => {
           title={item.title}
           description={item.last_message}
           onDelete={deleteChat}
+          onSelect={setSelectedChatId}
+          isActive={selectedChatId === item.id}
         />
       ))}
     </Box>

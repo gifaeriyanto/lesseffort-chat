@@ -1,12 +1,36 @@
 import React from 'react';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Icon } from '@chakra-ui/react';
+import { OpenAIModel } from 'api/chat';
 import { ChatMessage } from 'components/chat/message';
 import { RichEditor } from 'components/richEditor';
+import { MdSubdirectoryArrowLeft } from 'react-icons/md';
+import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatMessagesContainer: React.FC = () => {
   const { messages, generatingMessage, streamChatCompletion } = useChat();
+  const { newChat, selectedChatId } = useChat();
+  const db = useIndexedDB('messages');
+
+  const handleSubmitChat = async (value: string) => {
+    console.log(value);
+    if (selectedChatId) {
+      await db.add({
+        chatId: selectedChatId,
+        content: value,
+        role: 'user',
+      });
+    } else {
+      await newChat({
+        bot_id: 2,
+        last_message: value,
+        model: OpenAIModel.GPT_3_5,
+        title: value,
+      });
+    }
+    streamChatCompletion(value);
+  };
 
   return (
     <>
@@ -23,22 +47,33 @@ export const ChatMessagesContainer: React.FC = () => {
         {!!generatingMessage && <ChatMessage message={generatingMessage} />}
         {messages.map((message, index) => (
           <ChatMessage
-            key={`message-${index}`}
+            key={message.content}
             isMe={message.role === 'user'}
             message={message.content}
           />
         ))}
       </Flex>
 
-      <Box
+      <Flex
         p={2}
+        pr={6}
         bgColor={CustomColor.card}
         borderRadius="2xl"
         border="1px solid"
         borderColor={CustomColor.border}
+        align="center"
+        justify="center"
       >
-        <RichEditor onSubmit={streamChatCompletion} />
-      </Box>
+        <Box w="full">
+          <RichEditor onSubmit={handleSubmitChat} />
+        </Box>
+        <Icon
+          as={MdSubdirectoryArrowLeft}
+          fontSize="2xl"
+          color="gray.400"
+          title="Press enter to submit"
+        />
+      </Flex>
     </>
   );
 };

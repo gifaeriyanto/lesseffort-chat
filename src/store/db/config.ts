@@ -25,7 +25,7 @@ export const DBConfig = {
       storeConfig: { keyPath: 'id', autoIncrement: true },
       storeSchema: [
         { name: 'chatId', keypath: 'chatId', options: { unique: false } },
-        { name: 'message', keypath: 'message', options: { unique: false } },
+        { name: 'content', keypath: 'content', options: { unique: false } },
         {
           name: 'role',
           keypath: 'role',

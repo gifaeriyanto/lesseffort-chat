@@ -19,18 +19,17 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { Chat, OpenAIModel } from 'api/chat';
+import { OpenAIModel } from 'api/chat';
 import { ChatHistory } from 'components/chat/history';
-import { getUnixTime } from 'date-fns';
 import { TbPlus, TbSearch } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChatHistory } from 'store/openai';
+import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatSidebar: React.FC = () => {
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { chatHistory, getChatHistory, newChat } = useChatHistory();
+  const { chatHistory, getChatHistory, newChat } = useChat();
   const botDb = useIndexedDB('bot');
 
   useEffect(() => {
