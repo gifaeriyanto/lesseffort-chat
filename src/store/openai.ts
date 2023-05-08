@@ -3,6 +3,7 @@ import { getUsages } from 'api/openai';
 import { getUnixTime } from 'date-fns';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
+import { filterByChatId, mapMessage } from 'store/utils/parser';
 import { create } from 'zustand';
 
 export const useUsage = create<{
@@ -54,11 +55,7 @@ export const useChat = create<{
     };
     const updatedMessages = prepend<Message>(
       assistandMessage,
-      messages.map((message) => ({
-        content: message.content,
-        role: message.role,
-        timestamp: message.timestamp,
-      })),
+      messages.map(mapMessage),
     );
 
     set({ messages: updatedMessages });
@@ -144,15 +141,7 @@ export const useChat = create<{
     const { getAll } = useIndexedDB('messages');
     set({ selectedChatId: id });
     getAll<Message>()
-      .then((messages) =>
-        messages
-          .filter((item) => item.chatId === id)
-          .map((item) => ({
-            content: item.content,
-            role: item.role,
-            timestamp: item.timestamp,
-          })),
-      )
+      .then((messages) => messages.filter(filterByChatId(id)).map(mapMessage))
       .then((messages) => set({ messages: reverse(messages) }));
   },
   reset: () => {
