@@ -124,7 +124,9 @@ export const useChat = create<{
   deleteChat: (id) => {
     const db = useIndexedDB('chatHistory');
     db.deleteRecord(id);
-    get().getChatHistory();
+    const { getChatHistory, reset } = get();
+    getChatHistory();
+    reset();
   },
   getChatHistory: async () => {
     const db = useIndexedDB('chatHistory');
@@ -163,6 +165,7 @@ export const useChat = create<{
     set({
       selectedChatId: undefined,
       messages: [],
+      generatingMessage: '',
     });
   },
   regenerateResponse: () => {
