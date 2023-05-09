@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
+  Button,
   Flex,
   Icon,
   IconButton,
+  LightMode,
   Tooltip,
   useBoolean,
 } from '@chakra-ui/react';
-import { Message, OpenAIModel } from 'api/chat';
+import { Chat, Message, OpenAIModel } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
@@ -37,12 +39,20 @@ export const ChatMessagesContainer: React.FC = () => {
     updateMessage,
   } = useChat();
   const { newChat, selectedChatId } = useChat();
-  const db = useIndexedDB('messages');
+  const dbMessages = useIndexedDB('messages');
+  const dbChatHistory = useIndexedDB('chatHistory');
   const [
     isShowJumpToBottomButton,
     { on: showJumpToBottomButton, off: hideJumpToBottomButton },
   ] = useBoolean(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
+  const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
+
+  useEffect(() => {
+    if (selectedChatId) {
+      dbChatHistory.getByID(selectedChatId).then(setSelectedChat);
+    }
+  }, [selectedChatId]);
 
   useEffect(() => {
     if (!generatingMessage) {
@@ -63,6 +73,16 @@ export const ChatMessagesContainer: React.FC = () => {
     });
   }, [chatAreaRef]);
 
+  const handleNewChat = () => {
+    newChat({
+      bot_id: 1,
+      last_message: '',
+      model: OpenAIModel.GPT_3_5,
+      title: 'New Chat',
+    });
+    richEditorRef?.current?.focus();
+  };
+
   const handleJumpToBottom = () => {
     if (chatAreaRef.current?.scrollTop) {
       chatAreaRef.current.scrollTop = 0;
@@ -80,7 +100,7 @@ export const ChatMessagesContainer: React.FC = () => {
     }
 
     if (selectedChatId) {
-      await db.add<Message>({
+      await dbMessages.add<Message>({
         chatId: selectedChatId,
         content: value,
         role: 'user',
@@ -96,6 +116,68 @@ export const ChatMessagesContainer: React.FC = () => {
     }
 
     streamChatCompletion(value);
+  };
+
+  const renderMessageInput = () => {
+    if (selectedChat?.locked) {
+      return (
+        <Box p={4}>
+          Reach the limit for a conversation, please create a new chat.
+        </Box>
+      );
+    }
+
+    if (generatingMessage) {
+      return (
+        <Box p={4}>
+          Assistant is typing
+          <TypingDots />
+        </Box>
+      );
+    }
+
+    return (
+      <RichEditor
+        defaultValue={editingMessage?.content}
+        onSubmit={generatingMessage ? undefined : handleSubmitChat}
+        key={editingMessage?.id}
+      />
+    );
+  };
+
+  const renderMessageInputCTA = () => {
+    if (selectedChat?.locked) {
+      return (
+        <LightMode>
+          <Button
+            borderRadius="lg"
+            colorScheme="blue"
+            size="sm"
+            onClick={handleNewChat}
+          >
+            New Chat
+          </Button>
+        </LightMode>
+      );
+    }
+
+    if (generatingMessage) {
+      <ChatMessageAction
+        title="Stop generating"
+        icon={<TbPlayerStopFilled />}
+        color="red.500"
+        onClick={stopStream}
+      />;
+    }
+
+    return (
+      <Icon
+        as={MdSubdirectoryArrowLeft}
+        fontSize="2xl"
+        color="gray.400"
+        title="Press enter to submit"
+      />
+    );
   };
 
   return (
@@ -195,35 +277,8 @@ export const ChatMessagesContainer: React.FC = () => {
             />
           </Tooltip>
         )}
-        <Box w="full">
-          {generatingMessage ? (
-            <Box p={4}>
-              Assistant is typing
-              <TypingDots />
-            </Box>
-          ) : (
-            <RichEditor
-              defaultValue={editingMessage?.content}
-              onSubmit={generatingMessage ? undefined : handleSubmitChat}
-              key={editingMessage?.id}
-            />
-          )}
-        </Box>
-        {generatingMessage ? (
-          <ChatMessageAction
-            title="Stop generating"
-            icon={<TbPlayerStopFilled />}
-            color="red.500"
-            onClick={stopStream}
-          />
-        ) : (
-          <Icon
-            as={MdSubdirectoryArrowLeft}
-            fontSize="2xl"
-            color="gray.400"
-            title="Press enter to submit"
-          />
-        )}
+        <Box w="full">{renderMessageInput()}</Box>
+        {renderMessageInputCTA()}
       </Flex>
     </>
   );

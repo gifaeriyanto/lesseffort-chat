@@ -60,17 +60,6 @@ export const ChatSidebar: React.FC = () => {
       title: 'New Chat',
     });
     richEditorRef?.current?.focus();
-    // const chats = localStorage.getItem('chatHistory');
-    // const parsedChats = chats ? (JSON.parse(chats) as Chat[]) : [];
-    // parsedChats[getUnixTime(new Date())] = {
-    //   title: 'New Chat',
-    //   bot_description:
-    //     'You are a very smart humorous. Respond with casual language but friendly. Your name is Dinda. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use bahasa and use supported emoticon for all devices',
-    //   description: 'halo bro',
-    //   messages: [],
-    //   model: OpenAIModel.GPT_3_5,
-    // };
-    // localStorage.setItem('chatHistory', JSON.stringify(parsedChats));
   };
 
   if (isLessThanMd) {

@@ -123,9 +123,25 @@ export const useChat = create<{
     };
 
     const onError = (_: Error, status: number) => {
-      if (status === 401) {
-        localStorage.removeItem('OPENAI_KEY');
-        window.location.reload();
+      switch (status) {
+        case 400:
+          if (chatId) {
+            dbChatHistory.getByID<Chat>(chatId).then((res) => {
+              dbChatHistory.update({
+                ...res,
+                locked: true,
+              });
+            });
+          }
+          break;
+
+        case 401:
+          localStorage.removeItem('OPENAI_KEY');
+          window.location.reload();
+          break;
+
+        default:
+          break;
       }
     };
 
@@ -199,7 +215,7 @@ export const useChat = create<{
     const { deleteRecord } = useIndexedDB('messages');
     const { getMessages } = get();
     const deleteCandidates = await getMessages(chatId);
-    const deleted = deleteCandidates
+    deleteCandidates
       .filter((item: Message) => {
         return !!item.id && item.id > messageId;
       })

@@ -1,6 +1,6 @@
 export const DBConfig = {
   name: 'effortlesschat',
-  version: 1,
+  version: 2,
   objectStoresMeta: [
     {
       store: 'chatHistory',
@@ -18,6 +18,7 @@ export const DBConfig = {
           keypath: 'bot_id',
           options: { unique: false },
         },
+        { name: 'locked', keypath: 'locked', options: { unique: false } },
       ],
     },
     {

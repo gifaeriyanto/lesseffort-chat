@@ -7,6 +7,7 @@ export interface Chat {
   last_message: string;
   model: OpenAIModel;
   title: string;
+  locked?: boolean;
 }
 
 export interface Message {
