@@ -69,6 +69,10 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const handleSubmitChat = async (value: string) => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = 0;
+    }
+
     if (editingMessage) {
       updateMessage(value);
       return;
