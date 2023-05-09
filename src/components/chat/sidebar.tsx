@@ -163,7 +163,7 @@ export const ChatSidebar: React.FC = () => {
               <Box>
                 <Text fontWeight="bold">Demo</Text>
                 <Text fontSize="sm" color="gray.400">
-                  Free User
+                  Trial user
                 </Text>
               </Box>
               <AccordionButton w="auto" p={1} transform="rotate(180deg)">
