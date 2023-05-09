@@ -158,12 +158,12 @@ export const ChatSidebar: React.FC = () => {
           borderColor={CustomColor.border}
         >
           <Flex gap={4}>
-            <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
+            <Avatar name="Demo" src="https://bit.ly/ryan-florence" />
             <Flex justify="space-between" w="full">
               <Box>
-                <Text fontWeight="bold">Ryan Florence</Text>
+                <Text fontWeight="bold">Demo</Text>
                 <Text fontSize="sm" color="gray.400">
-                  ryan@gmail.com
+                  Free User
                 </Text>
               </Box>
               <AccordionButton w="auto" p={1} transform="rotate(180deg)">

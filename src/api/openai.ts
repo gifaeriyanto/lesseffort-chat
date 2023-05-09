@@ -16,3 +16,7 @@ export const getUsages = () => {
     },
   });
 };
+
+export const getUserInfo = () => {
+  return openaiAPI.get('/dashboard/billing/subscription');
+};

@@ -115,7 +115,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       )}
       {isMe ? (
         <Avatar
-          name="Ryan Florence"
+          name="Demo"
           src="https://bit.ly/ryan-florence"
           w="2.188rem"
           h="2.188rem"

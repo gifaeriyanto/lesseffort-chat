@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   useDisclosure,
 } from '@chakra-ui/react';
+import { getUserInfo } from 'api/openai';
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
