@@ -6,18 +6,13 @@ import {
   Flex,
   Icon,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
+  IconButtonProps,
   Tooltip,
 } from '@chakra-ui/react';
 import {
   TbBookmark,
   TbBrandOpenai,
   TbCopy,
-  TbDotsVertical,
   TbPencil,
   TbReload,
 } from 'react-icons/tb';
@@ -30,18 +25,21 @@ import remarkGfm from 'remark-gfm';
 export interface ChatMessageProps {
   isMe?: boolean;
   message: string;
+  noActions?: boolean;
 }
 
-export interface ChatMessageActionProps {
+export interface ChatMessageActionProps
+  extends Omit<IconButtonProps, 'aria-label'> {
   title: string;
   icon: React.ReactElement;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
+export const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
   title,
   icon,
   onClick,
+  ...props
 }) => {
   return (
     <Tooltip label={title} openDelay={500}>
@@ -53,6 +51,7 @@ const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
         fontSize="2xl"
         color="gray.300"
         onClick={onClick}
+        {...props}
       />
     </Tooltip>
   );
@@ -61,6 +60,7 @@ const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   isMe,
   message,
+  noActions,
 }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
@@ -80,52 +80,33 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         },
       }}
     >
-      <ButtonGroup
-        variant="outline"
-        pos="absolute"
-        top="0"
-        right="0"
-        bgColor="gray.700"
-        className="message-actions"
-        opacity="0"
-        transition="0.2s ease opacity"
-      >
-        {isMe ? (
+      {!noActions && (
+        <ButtonGroup
+          variant="outline"
+          pos="absolute"
+          top="0"
+          right="0"
+          bgColor="gray.700"
+          className="message-actions"
+          opacity="0"
+          transition="0.2s ease opacity"
+        >
+          {isMe ? (
+            <ChatMessageAction title="Edit Message" icon={<TbPencil />} />
+          ) : (
+            <ChatMessageAction
+              title="Regenerate Response"
+              icon={<TbReload />}
+            />
+          )}
           <ChatMessageAction
-            title="Edit Message"
-            icon={<TbPencil />}
-            onClick={console.log}
+            title="Copy Text"
+            icon={<TbCopy />}
+            onClick={handleCopy}
           />
-        ) : (
-          <ChatMessageAction
-            title="Regenerate Response"
-            icon={<TbReload />}
-            onClick={console.log}
-          />
-        )}
-        <ChatMessageAction
-          title="Save Message"
-          icon={<TbBookmark />}
-          onClick={console.log}
-        />
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<TbDotsVertical />}
-            aria-label="Action menu"
-            variant="ghost"
-            size="md"
-            fontSize="2xl"
-            color="gray.300"
-          />
-          <MenuList>
-            <MenuItem onClick={handleCopy}>
-              <Icon as={TbCopy} mr={2} fontSize="xl" />
-              <Text>Copy Text</Text>
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </ButtonGroup>
+          <ChatMessageAction title="Save Message" icon={<TbBookmark />} />
+        </ButtonGroup>
+      )}
       {isMe ? (
         <Avatar
           name="Ryan Florence"

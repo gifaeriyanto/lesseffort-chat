@@ -1,6 +1,8 @@
+import { RefObject } from 'react';
 import { Chat, generateResponse, Message, OpenAIModel } from 'api/chat';
 import { getUsages } from 'api/openai';
 import { getUnixTime } from 'date-fns';
+import { Editor } from 'draft-js';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { filterByChatId, mapMessage } from 'store/utils/parser';
@@ -30,11 +32,13 @@ export const useChat = create<{
   model: OpenAIModel;
   selectedChatId: number | undefined;
   xhr?: XMLHttpRequest;
+  richEditorRef: RefObject<Editor> | null;
   deleteChat: (id: number) => void;
   getChatHistory: () => Promise<void>;
   newChat: (data: Chat) => Promise<void>;
   regenerateResponse: () => void;
   reset: () => void;
+  setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (id: number | undefined) => void;
   stopStream: () => void;
   streamChatCompletion: (value: string) => void;
@@ -42,7 +46,18 @@ export const useChat = create<{
   generatingMessage: '',
   messages: [],
   model: OpenAIModel.GPT_3_5,
-  stopStream: () => get().xhr?.abort(),
+  richEditorRef: null,
+  setRichEditorRef: (ref) => set({ richEditorRef: ref }),
+  stopStream: () => {
+    get().xhr?.abort();
+    set((prev) => ({
+      messages: [
+        { role: 'assistant', content: get().generatingMessage },
+        ...prev.messages,
+      ],
+      generatingMessage: '',
+    }));
+  },
   streamChatCompletion: (value) => {
     const { messages, model, getChatHistory, selectedChatId: chatId } = get();
     const dbChatHistory = useIndexedDB('chatHistory');

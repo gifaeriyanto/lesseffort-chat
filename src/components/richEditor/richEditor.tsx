@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { RichEditorTextareaStyle } from 'components/richEditor/richEditor.styles';
 import {
@@ -12,6 +12,7 @@ import {
   RichUtils,
   SelectionState,
 } from 'draft-js';
+import { useChat } from 'store/openai';
 
 export interface RichEditorProps {
   addon?: React.ReactElement;
@@ -31,6 +32,14 @@ export const RichEditor: React.FC<RichEditorProps> = ({
     : EditorState.createEmpty();
   const [editorState, setEditorState] = useState(initialEditorState);
   const isEmpty = !editorState.getCurrentContent().hasText();
+  const richEditorRef = useRef<Editor>(null);
+  const setRichEditorRef = useChat((state) => state.setRichEditorRef);
+
+  useEffect(() => {
+    if (richEditorRef.current) {
+      setRichEditorRef(richEditorRef);
+    }
+  }, [richEditorRef.current]);
 
   const handleKeyCommand = (
     command: string,
@@ -134,6 +143,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           onChange={setEditorState}
           placeholder={getPlaceholder()}
           stripPastedStyles
+          ref={richEditorRef}
         />
       </Box>
     </Box>

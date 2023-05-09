@@ -29,7 +29,7 @@ import { debounce } from 'utils/common';
 export const ChatSidebar: React.FC = () => {
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { chatHistory, getChatHistory, newChat } = useChat();
+  const { chatHistory, richEditorRef, getChatHistory, newChat } = useChat();
   const [search, setSearch] = useState('');
 
   const debounceOnChange = debounce(
@@ -59,6 +59,7 @@ export const ChatSidebar: React.FC = () => {
       model: OpenAIModel.GPT_3_5,
       title: 'New Chat',
     });
+    richEditorRef?.current?.focus();
     // const chats = localStorage.getItem('chatHistory');
     // const parsedChats = chats ? (JSON.parse(chats) as Chat[]) : [];
     // parsedChats[getUnixTime(new Date())] = {
