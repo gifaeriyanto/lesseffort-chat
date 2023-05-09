@@ -32,7 +32,7 @@ export const ChatHeader: React.FC = () => {
           <Icon as={TbBrandOpenai} fontSize="2xl" />
         </Flex>
         <Box>
-          <Text fontWeight="bold" fontSize="xl">
+          <Text fontWeight="bold" fontSize="xl" lineHeight="1.2">
             Quick Chat
           </Text>
           {isTyping ? (
