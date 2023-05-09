@@ -38,9 +38,8 @@ export const ChatMessagesContainer: React.FC = () => {
     setEditingMessage,
     updateMessage,
   } = useChat();
-  const { newChat, selectedChatId } = useChat();
+  const { newChat, chatHistory, selectedChatId } = useChat();
   const dbMessages = useIndexedDB('messages');
-  const dbChatHistory = useIndexedDB('chatHistory');
   const [
     isShowJumpToBottomButton,
     { on: showJumpToBottomButton, off: hideJumpToBottomButton },
@@ -50,9 +49,10 @@ export const ChatMessagesContainer: React.FC = () => {
 
   useEffect(() => {
     if (selectedChatId) {
-      dbChatHistory.getByID(selectedChatId).then(setSelectedChat);
+      const chat = chatHistory.find((item) => item.id === selectedChatId);
+      setSelectedChat(chat);
     }
-  }, [selectedChatId]);
+  }, [selectedChatId, chatHistory]);
 
   useEffect(() => {
     if (!generatingMessage) {
@@ -205,6 +205,7 @@ export const ChatMessagesContainer: React.FC = () => {
             onRegenerateResponse={() =>
               message.id && regenerateResponse(message.id)
             }
+            isLockedChat={selectedChat?.locked}
           />
         ))}
       </Flex>

@@ -122,17 +122,19 @@ export const useChat = create<{
       }
     };
 
-    const onError = (_: Error, status: number) => {
+    const onError = async (_: Error, status: number) => {
       switch (status) {
         case 400:
           if (chatId) {
-            dbChatHistory.getByID<Chat>(chatId).then((res) => {
+            await dbChatHistory.getByID<Chat>(chatId).then((res) => {
               dbChatHistory.update({
                 ...res,
                 locked: true,
               });
             });
+            await getChatHistory();
           }
+
           break;
 
         case 401:

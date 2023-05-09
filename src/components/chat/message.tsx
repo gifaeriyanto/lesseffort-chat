@@ -23,6 +23,7 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 
 export interface ChatMessageProps {
+  isLockedChat?: boolean;
   isMe?: boolean;
   message: string;
   noActions?: boolean;
@@ -34,15 +35,21 @@ export interface ChatMessageActionProps
   extends Omit<IconButtonProps, 'aria-label'> {
   title: string;
   icon: React.ReactElement;
+  isLockedChat?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
   title,
   icon,
+  isLockedChat,
   onClick,
   ...props
 }) => {
+  if (isLockedChat) {
+    return null;
+  }
+
   return (
     <Tooltip label={title} openDelay={500}>
       <IconButton
@@ -60,6 +67,7 @@ export const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
 };
 
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
+  isLockedChat,
   isMe,
   message,
   noActions,
@@ -100,12 +108,14 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               title="Edit Message"
               icon={<TbPencil />}
               onClick={onEdit}
+              isLockedChat={isLockedChat}
             />
           ) : (
             <ChatMessageAction
               title="Regenerate Response"
               icon={<TbReload />}
               onClick={onRegenerateResponse}
+              isLockedChat={isLockedChat}
             />
           )}
           <ChatMessageAction
