@@ -28,7 +28,7 @@ const config: ThemeOverride = {
   styles: {
     global: () => ({
       'html, body': {
-        fontSize: '14px',
+        fontSize: '16px',
         fontWeight: 500,
         lineHeight: 'tall',
         bgColor: CustomColor.background,
