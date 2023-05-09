@@ -3,6 +3,7 @@ import { Chat, generateResponse, Message, OpenAIModel } from 'api/chat';
 import { getUsages } from 'api/openai';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
+import { standaloneToast } from 'index';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { filterByChatId } from 'store/utils/parser';
@@ -73,6 +74,7 @@ export const useChat = create<{
       getChatHistory,
       selectedChatId: chatId,
       getMessages,
+      reset,
     } = get();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
@@ -139,7 +141,6 @@ export const useChat = create<{
             });
             await getChatHistory();
           }
-
           break;
 
         case 401:
@@ -147,7 +148,24 @@ export const useChat = create<{
           window.location.reload();
           break;
 
+        case 429:
+          standaloneToast({
+            title: 'Oops! Something went wrong. 😕',
+            description: `It seems like you're sending requests too quickly. Please slow down and pace your requests\nError status: ${status}`,
+            status: 'error',
+          });
+          break;
+
         default:
+          standaloneToast({
+            title: 'Oops! Something went wrong. 😕',
+            description: `We're sorry about that. Please try again later.\nError status: ${status}`,
+            status: 'error',
+          });
+          set({
+            generatingMessage: '',
+            isTyping: false,
+          });
           break;
       }
     };
@@ -213,6 +231,7 @@ export const useChat = create<{
       selectedChatId: undefined,
       messages: [],
       generatingMessage: '',
+      isTyping: false,
     });
   },
   setEditingMessage: (message) => {

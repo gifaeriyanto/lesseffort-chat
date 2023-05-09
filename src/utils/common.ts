@@ -1,3 +1,5 @@
+import { standaloneToast } from 'index';
+
 type Func<T extends any[], R> = (...a: T) => R;
 
 export const debounce = <T extends any[], R>(
@@ -11,4 +13,12 @@ export const debounce = <T extends any[], R>(
       func(...args);
     }, delay);
   };
+};
+
+export const comingSoon = () => {
+  standaloneToast({
+    title: 'Coming soon',
+    duration: 5000,
+    status: 'info',
+  });
 };

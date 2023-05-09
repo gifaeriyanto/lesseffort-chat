@@ -216,9 +216,13 @@ export const ChatMessagesContainer: React.FC = () => {
         h="full"
         align="flex-start"
         overflow="auto"
-        mt={4}
         direction="column-reverse"
         ref={chatAreaRef}
+        sx={{
+          '& > div:last-child': {
+            mt: 4,
+          },
+        }}
       >
         {!!generatingMessage && (
           <ChatMessage message={generatingMessage} noActions />

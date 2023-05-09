@@ -7,20 +7,29 @@ import {
   Icon,
   IconButton,
   IconButtonProps,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Portal,
+  Text,
   Tooltip,
 } from '@chakra-ui/react';
 import {
   TbBookmark,
   TbBrandOpenai,
   TbCopy,
+  TbDotsVertical,
   TbPencil,
   TbReload,
+  TbTrash,
 } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
+import { comingSoon } from 'utils/common';
 
 export interface ChatMessageProps {
   isLockedChat?: boolean;
@@ -39,13 +48,10 @@ export interface ChatMessageActionProps
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
-  title,
-  icon,
-  isLockedChat,
-  onClick,
-  ...props
-}) => {
+export const ChatMessageAction = React.forwardRef<
+  HTMLButtonElement,
+  ChatMessageActionProps
+>(({ title, icon, isLockedChat, onClick, ...props }, ref) => {
   if (isLockedChat) {
     return null;
   }
@@ -53,6 +59,7 @@ export const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
   return (
     <Tooltip label={title} openDelay={500}>
       <IconButton
+        ref={ref}
         icon={icon}
         aria-label={title}
         variant="ghost"
@@ -64,7 +71,7 @@ export const ChatMessageAction: React.FC<ChatMessageActionProps> = ({
       />
     </Tooltip>
   );
-};
+});
 
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   isLockedChat,
@@ -97,7 +104,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           variant="outline"
           pos="absolute"
           top="0"
-          right="0"
+          right="1rem"
           bgColor="gray.700"
           className="message-actions"
           opacity="0"
@@ -118,16 +125,29 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               isLockedChat={isLockedChat}
             />
           )}
-          <ChatMessageAction
-            title="Copy Text"
-            icon={<TbCopy />}
-            onClick={handleCopy}
-          />
-          <ChatMessageAction
-            title="Save Message"
-            icon={<TbBookmark />}
-            display="none"
-          />
+          <Menu>
+            <MenuButton
+              as={ChatMessageAction}
+              icon={<TbDotsVertical />}
+              title="More actions"
+            />
+            <Portal>
+              <MenuList>
+                <MenuItem onClick={handleCopy}>
+                  <TbCopy />
+                  <Text ml={2}>Copy Text</Text>
+                </MenuItem>
+                <MenuItem onClick={comingSoon}>
+                  <TbBookmark />
+                  <Text ml={2}>Save message</Text>
+                </MenuItem>
+                <MenuItem onClick={comingSoon}>
+                  <TbTrash />
+                  <Text ml={2}>Delete message</Text>
+                </MenuItem>
+              </MenuList>
+            </Portal>
+          </Menu>
         </ButtonGroup>
       )}
       {isMe ? (
