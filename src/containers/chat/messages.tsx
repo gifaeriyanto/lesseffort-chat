@@ -286,7 +286,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
       <Flex
         p={2}
-        pr={6}
+        pr={{ base: 4, md: 6 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"
         border="1px solid"
