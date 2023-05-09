@@ -122,7 +122,7 @@ export const ChatMessagesContainer: React.FC = () => {
     if (selectedChat?.locked) {
       return (
         <Box p={4}>
-          Reach the limit for a conversation, please create a new chat.
+          Hey there! Time to start a new chat as you've reached the limit. 😊
         </Box>
       );
     }
