@@ -29,6 +29,7 @@ export const useChat = create<{
   chatHistory: Chat[];
   editingMessage?: Message;
   generatingMessage: string;
+  isTyping: boolean;
   messages: Message[];
   model: OpenAIModel;
   selectedChatId: number | undefined;
@@ -50,6 +51,7 @@ export const useChat = create<{
 }>((set, get) => ({
   editingMessage: undefined,
   generatingMessage: '',
+  isTyping: false,
   messages: [],
   model: OpenAIModel.GPT_3_5,
   richEditorRef: null,
@@ -74,6 +76,8 @@ export const useChat = create<{
     } = get();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
+
+    set({ isTyping: true });
 
     const userMessage: Message = {
       chatId,
@@ -102,6 +106,7 @@ export const useChat = create<{
         set((prev) => ({
           messages: [newMessage, ...prev.messages],
           generatingMessage: '',
+          isTyping: false,
         }));
 
         if (chatId) {

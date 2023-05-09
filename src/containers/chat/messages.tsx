@@ -8,13 +8,14 @@ import {
   LightMode,
   Tooltip,
   useBoolean,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { Chat, Message, OpenAIModel } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { getUnixTime } from 'date-fns';
-import { MdSubdirectoryArrowLeft } from 'react-icons/md';
+import { MdSend, MdSubdirectoryArrowLeft } from 'react-icons/md';
 import {
   TbChevronDown,
   TbInfoCircle,
@@ -29,6 +30,7 @@ import { CustomColor } from 'theme/foundations/colors';
 export const ChatMessagesContainer: React.FC = () => {
   const {
     editingMessage,
+    isTyping,
     messages,
     generatingMessage,
     richEditorRef,
@@ -38,6 +40,7 @@ export const ChatMessagesContainer: React.FC = () => {
     setEditingMessage,
     updateMessage,
   } = useChat();
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { newChat, chatHistory, selectedChatId } = useChat();
   const dbMessages = useIndexedDB('messages');
   const [
@@ -55,10 +58,10 @@ export const ChatMessagesContainer: React.FC = () => {
   }, [selectedChatId, chatHistory]);
 
   useEffect(() => {
-    if (!generatingMessage) {
+    if (!isTyping) {
       richEditorRef?.current?.focus();
     }
-  }, [generatingMessage, richEditorRef]);
+  }, [isTyping, richEditorRef]);
 
   useEffect(() => {
     chatAreaRef.current?.addEventListener('scroll', () => {
@@ -127,7 +130,7 @@ export const ChatMessagesContainer: React.FC = () => {
       );
     }
 
-    if (generatingMessage) {
+    if (isTyping) {
       return (
         <Box p={4}>
           Assistant is typing
@@ -139,7 +142,7 @@ export const ChatMessagesContainer: React.FC = () => {
     return (
       <RichEditor
         defaultValue={editingMessage?.content}
-        onSubmit={generatingMessage ? undefined : handleSubmitChat}
+        onSubmit={isTyping ? undefined : handleSubmitChat}
         key={editingMessage?.id}
       />
     );
@@ -161,7 +164,7 @@ export const ChatMessagesContainer: React.FC = () => {
       );
     }
 
-    if (generatingMessage) {
+    if (isTyping) {
       return (
         <ChatMessageAction
           title="Stop generating"
@@ -169,6 +172,30 @@ export const ChatMessagesContainer: React.FC = () => {
           color="red.500"
           onClick={stopStream}
         />
+      );
+    }
+
+    if (isLessThanMd) {
+      return (
+        <LightMode>
+          <IconButton
+            icon={<MdSend />}
+            borderRadius="full"
+            colorScheme="blue"
+            fontSize="lg"
+            aria-label="Send message"
+            onClick={() => {
+              if (richEditorRef?.current) {
+                const message = richEditorRef.current.props.editorState
+                  .getCurrentContent()
+                  .getPlainText();
+                if (message) {
+                  handleSubmitChat(message);
+                }
+              }
+            }}
+          />
+        </LightMode>
       );
     }
 
@@ -260,10 +287,10 @@ export const ChatMessagesContainer: React.FC = () => {
       <Flex
         p={2}
         pr={6}
-        bgColor={generatingMessage ? 'gray.700' : CustomColor.card}
+        bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"
         border="1px solid"
-        borderColor={generatingMessage ? 'blue.500' : CustomColor.border}
+        borderColor={isTyping ? 'blue.500' : CustomColor.border}
         align="center"
         justify="center"
         pos="relative"

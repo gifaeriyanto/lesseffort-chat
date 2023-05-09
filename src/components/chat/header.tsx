@@ -8,7 +8,7 @@ import { CustomColor } from 'theme/foundations/colors';
 export const ChatHeader: React.FC = () => {
   const { isTyping, messagesLength } = useChat((state) => ({
     messagesLength: state.messages.length,
-    isTyping: !!state.generatingMessage,
+    isTyping: state.isTyping,
   }));
 
   return (
