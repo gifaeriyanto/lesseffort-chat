@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
-import { OpenAIModel } from 'api/chat';
+import { TypingDots } from 'components/typingDots';
 import { TbBrandOpenai, TbSettings } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
@@ -37,7 +37,8 @@ export const ChatHeader: React.FC = () => {
           </Text>
           {isTyping ? (
             <Text fontSize="sm" color="gray.400" fontStyle="italic">
-              AI is typing...
+              Assistant is typing
+              <TypingDots />
             </Text>
           ) : (
             <Text fontSize="sm" color="gray.400">
