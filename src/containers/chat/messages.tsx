@@ -162,12 +162,14 @@ export const ChatMessagesContainer: React.FC = () => {
     }
 
     if (generatingMessage) {
-      <ChatMessageAction
-        title="Stop generating"
-        icon={<TbPlayerStopFilled />}
-        color="red.500"
-        onClick={stopStream}
-      />;
+      return (
+        <ChatMessageAction
+          title="Stop generating"
+          icon={<TbPlayerStopFilled />}
+          color="red.500"
+          onClick={stopStream}
+        />
+      );
     }
 
     return (
