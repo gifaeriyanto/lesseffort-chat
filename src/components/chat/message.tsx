@@ -123,7 +123,11 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             icon={<TbCopy />}
             onClick={handleCopy}
           />
-          <ChatMessageAction title="Save Message" icon={<TbBookmark />} />
+          <ChatMessageAction
+            title="Save Message"
+            icon={<TbBookmark />}
+            display="none"
+          />
         </ButtonGroup>
       )}
       {isMe ? (
