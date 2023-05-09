@@ -27,6 +27,7 @@ export interface ChatMessageProps {
   message: string;
   noActions?: boolean;
   onEdit?: () => void;
+  onRegenerateResponse?: () => void;
 }
 
 export interface ChatMessageActionProps
@@ -63,6 +64,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   message,
   noActions,
   onEdit,
+  onRegenerateResponse,
 }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
@@ -103,6 +105,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             <ChatMessageAction
               title="Regenerate Response"
               icon={<TbReload />}
+              onClick={onRegenerateResponse}
             />
           )}
           <ChatMessageAction

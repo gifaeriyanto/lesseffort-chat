@@ -34,18 +34,19 @@ export const useChat = create<{
   selectedChatId: number | undefined;
   xhr?: XMLHttpRequest;
   richEditorRef: RefObject<Editor> | null;
-  deleteChat: (id: number) => void;
+  deleteChat: (chatId: number) => void;
+  deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
   updateMessage: (message: string) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
   newChat: (data: Chat) => Promise<void>;
-  regenerateResponse: () => void;
+  regenerateResponse: (messageId: number) => void;
   reset: () => void;
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
-  setSelectedChatId: (id: number | undefined) => void;
+  setSelectedChatId: (chatId: number | undefined) => void;
   stopStream: () => void;
-  streamChatCompletion: (value: string) => void;
+  streamChatCompletion: (value: string, notNewMessage?: boolean) => void;
 }>((set, get) => ({
   editingMessage: undefined,
   generatingMessage: '',
@@ -63,9 +64,8 @@ export const useChat = create<{
       generatingMessage: '',
     }));
   },
-  streamChatCompletion: (value) => {
+  streamChatCompletion: (value, notNewMessage) => {
     const {
-      editingMessage,
       messages,
       model,
       getChatHistory,
@@ -82,7 +82,7 @@ export const useChat = create<{
       timestamp: getUnixTime(new Date()),
     };
 
-    const updatedMessages = editingMessage
+    const updatedMessages = notNewMessage
       ? messages
       : prepend<Message>(userMessage, messages);
 
@@ -137,9 +137,9 @@ export const useChat = create<{
   },
   xhr: undefined,
   chatHistory: [],
-  deleteChat: (id) => {
+  deleteChat: (chatId) => {
     const db = useIndexedDB('chatHistory');
-    db.deleteRecord(id);
+    db.deleteRecord(chatId);
     const { getChatHistory, reset } = get();
     getChatHistory();
     reset();
@@ -178,10 +178,10 @@ export const useChat = create<{
     });
   },
   selectedChatId: undefined,
-  setSelectedChatId: (id) => {
-    set({ selectedChatId: id });
-    if (id) {
-      get().getMessages(id);
+  setSelectedChatId: (chatId) => {
+    set({ selectedChatId: chatId });
+    if (chatId) {
+      get().getMessages(chatId);
     }
   },
   reset: () => {
@@ -192,36 +192,59 @@ export const useChat = create<{
       generatingMessage: '',
     });
   },
-  regenerateResponse: () => {
-    const { messages, model } = get();
-    const stream = generateResponse(reverse(messages), model, {
-      onContent: console.log,
-    });
-    set({ xhr: stream });
-  },
   setEditingMessage: (message) => {
     set({ editingMessage: message });
   },
+  deleteTheNextMessages: async (chatId, messageId) => {
+    const { deleteRecord } = useIndexedDB('messages');
+    const { getMessages } = get();
+    const deleteCandidates = await getMessages(chatId);
+    const deleted = deleteCandidates
+      .filter((item: Message) => {
+        return !!item.id && item.id > messageId;
+      })
+      .forEach(async (item) => await deleteRecord(item.id));
+  },
   updateMessage: async (message) => {
-    const { update, deleteRecord } = useIndexedDB('messages');
-    const { editingMessage, getMessages, streamChatCompletion } = get();
+    const { update } = useIndexedDB('messages');
+    const {
+      editingMessage,
+      deleteTheNextMessages,
+      getMessages,
+      streamChatCompletion,
+    } = get();
 
     if (!editingMessage || !editingMessage.chatId || !editingMessage.id) {
       return;
     }
 
     await update({ ...editingMessage, content: message });
-
-    const deleteCandidates = await getMessages(editingMessage.chatId);
-    deleteCandidates
-      .filter((item: Message) => {
-        if (item.id && editingMessage.id) {
-          return item.id > editingMessage.id;
-        }
-      })
-      .forEach(async (item) => await deleteRecord(item.id));
+    await deleteTheNextMessages(editingMessage.chatId, editingMessage.id);
     await getMessages(editingMessage.chatId);
-    streamChatCompletion(message);
+    streamChatCompletion(message, true);
     set({ editingMessage: undefined });
+  },
+  regenerateResponse: async (messageId) => {
+    const {
+      messages,
+      deleteTheNextMessages,
+      getMessages,
+      streamChatCompletion,
+    } = get();
+    const messageIndex = messages.findIndex((item) => item.id === messageId);
+
+    if (messageIndex === -1) {
+      return;
+    }
+
+    const userMessage = messages[messageIndex + 1];
+
+    if (!userMessage.chatId || !userMessage.id) {
+      return;
+    }
+
+    await deleteTheNextMessages(userMessage.chatId, userMessage.id);
+    await getMessages(userMessage.chatId);
+    streamChatCompletion(userMessage.content, true);
   },
 }));

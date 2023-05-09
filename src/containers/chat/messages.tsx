@@ -30,6 +30,7 @@ export const ChatMessagesContainer: React.FC = () => {
     messages,
     generatingMessage,
     richEditorRef,
+    regenerateResponse,
     streamChatCompletion,
     stopStream,
     setEditingMessage,
@@ -117,6 +118,9 @@ export const ChatMessagesContainer: React.FC = () => {
             isMe={message.role === 'user'}
             message={message.content}
             onEdit={() => setEditingMessage(message)}
+            onRegenerateResponse={() =>
+              message.id && regenerateResponse(message.id)
+            }
           />
         ))}
       </Flex>
