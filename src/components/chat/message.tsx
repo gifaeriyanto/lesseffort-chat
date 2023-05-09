@@ -26,6 +26,7 @@ export interface ChatMessageProps {
   isMe?: boolean;
   message: string;
   noActions?: boolean;
+  onEdit?: () => void;
 }
 
 export interface ChatMessageActionProps
@@ -61,6 +62,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   isMe,
   message,
   noActions,
+  onEdit,
 }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
@@ -92,7 +94,11 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           transition="0.2s ease opacity"
         >
           {isMe ? (
-            <ChatMessageAction title="Edit Message" icon={<TbPencil />} />
+            <ChatMessageAction
+              title="Edit Message"
+              icon={<TbPencil />}
+              onClick={onEdit}
+            />
           ) : (
             <ChatMessageAction
               title="Regenerate Response"

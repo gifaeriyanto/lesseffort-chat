@@ -1,4 +1,5 @@
 import { ClientStreamChatCompletionConfig, OpenAIExt } from 'openai-ext';
+import { mapMessage } from 'store/utils/parser';
 
 export interface Chat {
   id?: number;
@@ -9,6 +10,7 @@ export interface Chat {
 }
 
 export interface Message {
+  id?: number;
   role: 'user' | 'system' | 'assistant';
   content: string;
   chatId?: number;
@@ -35,10 +37,7 @@ export const generateResponse = (
           content:
             'You are a very smart humorous. Respond with casual language but friendly. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use supported emoticon for all devices',
         },
-        ...messages.map((message) => ({
-          content: message.content,
-          role: message.role,
-        })),
+        ...messages.map(mapMessage),
       ],
     },
     {

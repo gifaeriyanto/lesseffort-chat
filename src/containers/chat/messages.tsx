@@ -13,18 +13,27 @@ import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { getUnixTime } from 'date-fns';
 import { MdSubdirectoryArrowLeft } from 'react-icons/md';
-import { TbChevronDown, TbPlayerStopFilled } from 'react-icons/tb';
+import {
+  TbChevronDown,
+  TbInfoCircle,
+  TbPencil,
+  TbPlayerStopFilled,
+  TbX,
+} from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
+    editingMessage,
     messages,
     generatingMessage,
     richEditorRef,
     streamChatCompletion,
     stopStream,
+    setEditingMessage,
+    updateMessage,
   } = useChat();
   const { newChat, selectedChatId } = useChat();
   const db = useIndexedDB('messages');
@@ -60,6 +69,11 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const handleSubmitChat = async (value: string) => {
+    if (editingMessage) {
+      updateMessage(value);
+      return;
+    }
+
     if (selectedChatId) {
       await db.add<Message>({
         chatId: selectedChatId,
@@ -75,6 +89,7 @@ export const ChatMessagesContainer: React.FC = () => {
         title: value,
       });
     }
+
     streamChatCompletion(value);
   };
 
@@ -84,10 +99,8 @@ export const ChatMessagesContainer: React.FC = () => {
         w="full"
         h="full"
         align="flex-start"
-        borderBottom="1px solid"
-        borderColor={CustomColor.border}
         overflow="auto"
-        my={4}
+        mt={4}
         direction="column-reverse"
         ref={chatAreaRef}
       >
@@ -99,9 +112,57 @@ export const ChatMessagesContainer: React.FC = () => {
             key={message.timestamp}
             isMe={message.role === 'user'}
             message={message.content}
+            onEdit={() => setEditingMessage(message)}
           />
         ))}
       </Flex>
+
+      {editingMessage && (
+        <Flex align="center" py={2}>
+          <Box w="4rem" textAlign="center" flexGrow="0" flexShrink="0">
+            <Icon as={TbPencil} fontSize="2xl" color="blue.500" />
+          </Box>
+          <Box
+            w="full"
+            maxW="calc(100% - 8.25rem)"
+            pl={4}
+            borderLeft="1px solid"
+            borderColor="blue.500"
+            flexGrow="0"
+            flexShrink="0"
+          >
+            <Flex align="center" color="blue.500">
+              Edit Message
+              <Tooltip
+                label="Note: All subsequent messages will be deleted after you submit an edit."
+                placement="top"
+              >
+                <IconButton
+                  icon={<TbInfoCircle />}
+                  aria-label="Edit info"
+                  variant="link"
+                  fontSize="xl"
+                  color="blue.500"
+                  mt="-2px"
+                />
+              </Tooltip>
+            </Flex>
+            <Box isTruncated maxW="100%">
+              {editingMessage.content}
+            </Box>
+          </Box>
+          <IconButton
+            icon={<TbX />}
+            aria-label="Cancel edit"
+            variant="ghost"
+            mx={4}
+            fontSize="xl"
+            onClick={() => setEditingMessage(undefined)}
+          />
+        </Flex>
+      )}
+
+      <Box h="1px" bgColor={CustomColor.border} mb={4} />
 
       <Flex
         p={2}
@@ -122,7 +183,7 @@ export const ChatMessagesContainer: React.FC = () => {
               onClick={handleJumpToBottom}
               pos="absolute"
               right="1rem"
-              top="-100%"
+              top={editingMessage ? '-200%' : '-100%'}
             />
           </Tooltip>
         )}
@@ -134,7 +195,9 @@ export const ChatMessagesContainer: React.FC = () => {
             </Box>
           ) : (
             <RichEditor
+              defaultValue={editingMessage?.content}
               onSubmit={generatingMessage ? undefined : handleSubmitChat}
+              key={editingMessage?.id}
             />
           )}
         </Box>

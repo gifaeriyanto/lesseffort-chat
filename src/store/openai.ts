@@ -5,7 +5,7 @@ import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
-import { filterByChatId, mapMessage } from 'store/utils/parser';
+import { filterByChatId } from 'store/utils/parser';
 import { create } from 'zustand';
 
 export const useUsage = create<{
@@ -27,6 +27,7 @@ export const useUsage = create<{
 
 export const useChat = create<{
   chatHistory: Chat[];
+  editingMessage?: Message;
   generatingMessage: string;
   messages: Message[];
   model: OpenAIModel;
@@ -34,15 +35,19 @@ export const useChat = create<{
   xhr?: XMLHttpRequest;
   richEditorRef: RefObject<Editor> | null;
   deleteChat: (id: number) => void;
+  updateMessage: (message: string) => void;
+  getMessages: (chatId: number) => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
   newChat: (data: Chat) => Promise<void>;
   regenerateResponse: () => void;
   reset: () => void;
+  setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (id: number | undefined) => void;
   stopStream: () => void;
   streamChatCompletion: (value: string) => void;
 }>((set, get) => ({
+  editingMessage: undefined,
   generatingMessage: '',
   messages: [],
   model: OpenAIModel.GPT_3_5,
@@ -59,37 +64,48 @@ export const useChat = create<{
     }));
   },
   streamChatCompletion: (value) => {
-    const { messages, model, getChatHistory, selectedChatId: chatId } = get();
+    const {
+      editingMessage,
+      messages,
+      model,
+      getChatHistory,
+      selectedChatId: chatId,
+      getMessages,
+    } = get();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
 
-    const assistandMessage: Message = {
+    const userMessage: Message = {
+      chatId,
       role: 'user',
       content: value,
       timestamp: getUnixTime(new Date()),
     };
-    const updatedMessages = prepend<Message>(
-      assistandMessage,
-      messages.map(mapMessage),
-    );
+
+    const updatedMessages = editingMessage
+      ? messages
+      : prepend<Message>(userMessage, messages);
 
     set({ messages: updatedMessages });
 
-    const onContent = (content: string, isFinal: boolean) => {
+    const onContent = async (content: string, isFinal: boolean) => {
       if (isFinal) {
-        set((prev) => ({
-          messages: [{ role: 'assistant', content }, ...prev.messages],
-          generatingMessage: '',
-        }));
-
-        dbMessages.add<Message>({
+        const newMessage: Message = {
           chatId,
           content,
           role: 'assistant',
           timestamp: getUnixTime(new Date()),
-        });
+        };
+
+        await dbMessages.add<Message>(newMessage);
+
+        set((prev) => ({
+          messages: [newMessage, ...prev.messages],
+          generatingMessage: '',
+        }));
 
         if (chatId) {
+          await getMessages(chatId); // to make sure all messages is sync with indexeddb
           dbChatHistory
             .getByID<Chat>(chatId)
             .then((res) => {
@@ -128,6 +144,14 @@ export const useChat = create<{
     getChatHistory();
     reset();
   },
+  getMessages: async (chatId) => {
+    const { getAll } = useIndexedDB('messages');
+    const filteredMessages = await getAll<Message>().then((messages) =>
+      messages.filter(filterByChatId(chatId)),
+    );
+    set({ messages: reverse(filteredMessages) });
+    return filteredMessages;
+  },
   getChatHistory: async () => {
     const db = useIndexedDB('chatHistory');
     const chatHistory = await db.getAll<Chat>();
@@ -155,14 +179,14 @@ export const useChat = create<{
   },
   selectedChatId: undefined,
   setSelectedChatId: (id) => {
-    const { getAll } = useIndexedDB('messages');
     set({ selectedChatId: id });
-    getAll<Message>()
-      .then((messages) => messages.filter(filterByChatId(id)).map(mapMessage))
-      .then((messages) => set({ messages: reverse(messages) }));
+    if (id) {
+      get().getMessages(id);
+    }
   },
   reset: () => {
     set({
+      editingMessage: undefined,
       selectedChatId: undefined,
       messages: [],
       generatingMessage: '',
@@ -174,5 +198,30 @@ export const useChat = create<{
       onContent: console.log,
     });
     set({ xhr: stream });
+  },
+  setEditingMessage: (message) => {
+    set({ editingMessage: message });
+  },
+  updateMessage: async (message) => {
+    const { update, deleteRecord } = useIndexedDB('messages');
+    const { editingMessage, getMessages, streamChatCompletion } = get();
+
+    if (!editingMessage || !editingMessage.chatId || !editingMessage.id) {
+      return;
+    }
+
+    await update({ ...editingMessage, content: message });
+
+    const deleteCandidates = await getMessages(editingMessage.chatId);
+    deleteCandidates
+      .filter((item: Message) => {
+        if (item.id && editingMessage.id) {
+          return item.id > editingMessage.id;
+        }
+      })
+      .forEach(async (item) => await deleteRecord(item.id));
+    await getMessages(editingMessage.chatId);
+    streamChatCompletion(message);
+    set({ editingMessage: undefined });
   },
 }));

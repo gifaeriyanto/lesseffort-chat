@@ -4,7 +4,6 @@ export const mapMessage = (message: Message) => {
   return {
     content: message.content,
     role: message.role,
-    timestamp: message.timestamp,
   };
 };
 
