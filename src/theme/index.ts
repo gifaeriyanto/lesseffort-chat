@@ -38,7 +38,6 @@ const config: ThemeOverride = {
       },
       body: {
         h: '100vh',
-        p: 4,
       },
       ['*::-webkit-scrollbar']: {
         width: '4px',

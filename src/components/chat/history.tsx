@@ -1,16 +1,29 @@
 import React from 'react';
 import {
   Box,
+  Button,
   Flex,
+  FormControl,
+  FormLabel,
   HStack,
   IconButton,
+  Input,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { Chat } from 'api/chat';
+import { useForm } from 'react-hook-form';
 import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
@@ -32,65 +45,101 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   onDelete,
   onSelect,
 }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { register, handleSubmit } = useForm();
+  const renameChat = useChat((state) => state.renameChat);
+
+  const handleSaveOpenaiKey = ({ title: newTitle = '' }) => {
+    if (id) {
+      renameChat(id, newTitle);
+    }
+    onClose();
+  };
+
   return (
-    <Box
-      borderLeft={isActive ? '1px solid' : undefined}
-      borderColor="blue.500"
-      borderBottom={`1px solid ${CustomColor.border}`}
-      bgColor={isActive ? 'gray.600' : 'transparent'}
-      w="full"
-      p={4}
-      pl={isActive ? 'calc(1rem - 1px)' : 4}
-      role="button"
-      onClick={() => id && onSelect(id)}
-    >
-      <HStack
-        sx={{
-          '& > button': {
-            display: 'none',
-          },
-        }}
-        _hover={{
-          '& > button': {
-            display: 'flex',
-          },
-        }}
-        justify="space-between"
+    <>
+      <Box
+        borderLeft={isActive ? '1px solid' : undefined}
+        borderColor="blue.500"
+        borderBottom={`1px solid ${CustomColor.border}`}
+        bgColor={isActive ? 'gray.600' : 'transparent'}
+        w="full"
+        p={4}
+        pl={isActive ? 'calc(1rem - 1px)' : 4}
+        role="button"
+        onClick={() => id && onSelect(id)}
       >
-        <Box flexGrow={0} overflow="hidden">
-          <Text isTruncated fontWeight={isActive ? '600' : '500'}>
-            {title}
-          </Text>
-          <Text fontSize="sm" color="gray.400" isTruncated>
-            {description || 'No messages yet'}
-          </Text>
-        </Box>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<TbChevronDown />}
-            aria-label="Action menu"
-            variant="ghost"
-            color="gray.400"
-            fontSize="xl"
-            borderRadius="xl"
-            size="sm"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <MenuList>
-            <MenuItem>Rename</MenuItem>
-            <MenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                id && onDelete(id);
-              }}
-            >
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </HStack>
-    </Box>
+        <HStack
+          sx={{
+            '& > button': {
+              display: 'none',
+            },
+          }}
+          _hover={{
+            '& > button': {
+              display: 'flex',
+            },
+          }}
+          justify="space-between"
+        >
+          <Box flexGrow={0} overflow="hidden">
+            <Text isTruncated fontWeight={isActive ? '600' : '500'}>
+              {title}
+            </Text>
+            <Text fontSize="sm" color="gray.400" isTruncated>
+              {description || 'No messages yet'}
+            </Text>
+          </Box>
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              icon={<TbChevronDown />}
+              aria-label="Action menu"
+              variant="ghost"
+              color="gray.400"
+              fontSize="xl"
+              borderRadius="xl"
+              size="sm"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <MenuList>
+              <MenuItem onClick={onOpen}>Rename</MenuItem>
+              <MenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  id && onDelete(id);
+                }}
+              >
+                Delete
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </HStack>
+      </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Rename chat</ModalHeader>
+          <ModalCloseButton />
+          <form onSubmit={handleSubmit(handleSaveOpenaiKey)}>
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Chat title</FormLabel>
+                <Input defaultValue={title} {...register('title')} />
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} type="submit">
+                Save
+              </Button>
+              <Button onClick={onClose}>Cancel</Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
