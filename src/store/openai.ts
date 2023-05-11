@@ -66,6 +66,7 @@ export const useChat = create<{
         ...prev.messages,
       ],
       generatingMessage: '',
+      isTyping: false,
     }));
   },
   streamChatCompletion: (value, notNewMessage) => {
