@@ -242,7 +242,11 @@ export const ChatMessagesContainer: React.FC = () => {
       </Flex>
 
       {editingMessage && (
-        <Flex align="center" py={2}>
+        <Flex
+          align="center"
+          py={2}
+          maxW={{ base: 'calc(100vw - 2rem)', md: 'auto' }}
+        >
           <Box w="4rem" textAlign="center" flexGrow="0" flexShrink="0">
             <Icon as={TbPencil} fontSize="2xl" color="blue.500" />
           </Box>

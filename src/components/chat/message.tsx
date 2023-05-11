@@ -178,7 +178,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       <Box
         mt="0.286rem"
         color={isMe ? 'gray.300' : 'gray.200'}
-        maxW={{ base: 'calc(100vw - 5.8rem)', md: 'calc(100% - 4.375rem)' }}
+        maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
         w="full"
         sx={{
           ['ul, ol']: {
