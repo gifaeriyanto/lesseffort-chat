@@ -155,8 +155,10 @@ export const ChatMessagesContainer: React.FC = () => {
           <Button
             borderRadius="lg"
             colorScheme="blue"
-            size="sm"
+            size={{ base: 'md', md: 'sm' }}
             onClick={handleNewChat}
+            w={{ base: 'calc(100% - 2rem)', md: 'auto' }}
+            mb={{ base: 4, md: 0 }}
           >
             New Chat
           </Button>
@@ -205,6 +207,7 @@ export const ChatMessagesContainer: React.FC = () => {
         fontSize="2xl"
         color="gray.400"
         title="Press enter to submit"
+        mr={2}
       />
     );
   };
@@ -294,7 +297,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
       <Flex
         p={2}
-        pr={{ base: 4, md: 6 }}
+        pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
         mb={{ base: 6, md: 0 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"
@@ -303,6 +306,7 @@ export const ChatMessagesContainer: React.FC = () => {
         align="center"
         justify="center"
         pos="relative"
+        direction={selectedChat?.locked && isLessThanMd ? 'column' : 'row'}
       >
         {isShowJumpToBottomButton && (
           <Tooltip label="Jump to the last message" openDelay={500}>
