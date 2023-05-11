@@ -1,6 +1,7 @@
 {
-  "short_name": "Your personal assistant, ask me anything!",
   "name": "Effortless Chat",
+  "short_name": "Effortless",
+  "description": "Your personal assistant, ask me anything!",
   "icons": [
     {
       "src": "favicon.ico",
