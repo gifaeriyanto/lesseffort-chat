@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { TypingDots } from 'components/typingDots';
-import { TbBrandOpenai, TbSettings } from 'react-icons/tb';
+import { TbBrandOpenai } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
 
@@ -47,13 +47,6 @@ export const ChatHeader: React.FC = () => {
           )}
         </Box>
       </Flex>
-      <IconButton
-        icon={<TbSettings />}
-        aria-label="Settings"
-        variant="ghost"
-        fontSize="xl"
-        color="gray.400"
-      />
     </Flex>
   );
 };
