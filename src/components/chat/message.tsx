@@ -125,29 +125,34 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               isLockedChat={isLockedChat}
             />
           )}
-          <Menu>
-            <MenuButton
-              as={ChatMessageAction}
-              icon={<TbDotsVertical />}
-              title="More actions"
-            />
-            <Portal>
-              <MenuList>
-                <MenuItem onClick={handleCopy}>
-                  <TbCopy />
-                  <Text ml={2}>Copy Text</Text>
-                </MenuItem>
-                <MenuItem onClick={comingSoon}>
-                  <TbBookmark />
-                  <Text ml={2}>Save message</Text>
-                </MenuItem>
-                <MenuItem onClick={comingSoon}>
-                  <TbTrash />
-                  <Text ml={2}>Delete message</Text>
-                </MenuItem>
-              </MenuList>
-            </Portal>
-          </Menu>
+          <ChatMessageAction
+            title="Copy Text"
+            icon={<TbCopy />}
+            onClick={handleCopy}
+            isLockedChat={isLockedChat}
+          />
+          {/* Coming soon feature */}
+          {false && (
+            <Menu>
+              <MenuButton
+                as={ChatMessageAction}
+                icon={<TbDotsVertical />}
+                title="More actions"
+              />
+              <Portal>
+                <MenuList>
+                  <MenuItem onClick={comingSoon}>
+                    <TbBookmark />
+                    <Text ml={2}>Save message</Text>
+                  </MenuItem>
+                  <MenuItem onClick={comingSoon}>
+                    <TbTrash />
+                    <Text ml={2}>Delete message</Text>
+                  </MenuItem>
+                </MenuList>
+              </Portal>
+            </Menu>
+          )}
         </ButtonGroup>
       )}
       {isMe ? (
