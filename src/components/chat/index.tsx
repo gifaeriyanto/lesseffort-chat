@@ -100,7 +100,6 @@ export const Chat: React.FC = () => {
                   placeholder="Search"
                   borderRadius="lg"
                   bgColor="gray.600"
-                  autoFocus
                   onChange={(e) =>
                     debounceOnChange(setSearch, e.currentTarget.value)
                   }
