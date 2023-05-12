@@ -26,6 +26,7 @@ import { Chat } from 'api/chat';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
+import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
 
 export interface ChatHistoryItemProps {
@@ -150,6 +151,7 @@ export interface ChatHistoryProps {
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   const { chatHistory, deleteChat, selectedChatId, setSelectedChatId } =
     useChat();
+  const { onClose: onCloseSidebar } = useSidebar();
 
   const filteredChatHistory = useMemo(() => {
     return chatHistory.filter((item) =>
@@ -181,7 +183,10 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           title={item.title}
           description={item.last_message}
           onDelete={deleteChat}
-          onSelect={setSelectedChatId}
+          onSelect={(id) => {
+            setSelectedChatId(id);
+            onCloseSidebar();
+          }}
           isActive={selectedChatId === item.id}
         />
       ))}

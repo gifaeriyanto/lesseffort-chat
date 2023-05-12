@@ -15,6 +15,7 @@ import {
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
+import { usePWA } from 'store/pwa';
 
 const ChatContainer: React.FC = () => {
   const {
@@ -23,8 +24,10 @@ const ChatContainer: React.FC = () => {
     onClose: onCloseAPIKEYModal,
   } = useDisclosure();
   const { register, handleSubmit } = useForm();
+  const { getPWAStatus } = usePWA();
 
   useEffect(() => {
+    getPWAStatus();
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
     }

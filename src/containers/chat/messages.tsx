@@ -25,6 +25,7 @@ import {
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
+import { usePWA } from 'store/pwa';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatMessagesContainer: React.FC = () => {
@@ -42,6 +43,7 @@ export const ChatMessagesContainer: React.FC = () => {
   } = useChat();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { newChat, chatHistory, selectedChatId } = useChat();
+  const { isPWA } = usePWA();
   const dbMessages = useIndexedDB('messages');
   const [
     isShowJumpToBottomButton,
@@ -221,6 +223,7 @@ export const ChatMessagesContainer: React.FC = () => {
         overflow="auto"
         direction="column-reverse"
         ref={chatAreaRef}
+        mt={{ base: '4.8rem', md: 0 }}
         px={{ base: 4, md: 0 }}
         sx={{
           '& > div:last-child': {
@@ -299,7 +302,7 @@ export const ChatMessagesContainer: React.FC = () => {
       <Flex
         p={2}
         pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
-        mb={{ base: 6, md: 0 }}
+        mb={{ base: isPWA ? 6 : 0, md: 0 }}
         mx={{ base: 4, md: 0 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"

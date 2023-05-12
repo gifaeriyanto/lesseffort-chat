@@ -43,11 +43,9 @@ const config: ThemeOverride = {
         width: '4px',
         height: '4px',
       },
-
       '*::-webkit-scrollbar-track': {
         bgColor: 'transparent',
       },
-
       '*::-webkit-scrollbar-thumb': {
         bgColor: 'gray.400',
         borderRadius: 'full',
