@@ -52,11 +52,6 @@ const config: ThemeOverride = {
         bgColor: 'gray.400',
         borderRadius: 'full',
       },
-      '@media (hover: none)': {
-        '*:hover': {
-          pointerEvents: 'none',
-        },
-      },
     }),
   },
 };
