@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Button,
@@ -144,13 +144,20 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
 };
 
 export interface ChatHistoryProps {
-  data: Chat[];
+  search: string;
 }
 
-export const ChatHistory: React.FC<ChatHistoryProps> = ({ data }) => {
-  const { deleteChat, selectedChatId, setSelectedChatId } = useChat();
+export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
+  const { chatHistory, deleteChat, selectedChatId, setSelectedChatId } =
+    useChat();
 
-  if (!data.length) {
+  const filteredChatHistory = useMemo(() => {
+    return chatHistory.filter((item) =>
+      item.title.match(new RegExp(search, 'i')),
+    );
+  }, [chatHistory, search]);
+
+  if (!filteredChatHistory.length) {
     return (
       <Flex
         justify="center"
@@ -167,7 +174,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ data }) => {
 
   return (
     <Box w="full" overflow="auto">
-      {data.map((item, index) => (
+      {filteredChatHistory.map((item, index) => (
         <ChatHistoryItem
           key={index}
           id={item.id}

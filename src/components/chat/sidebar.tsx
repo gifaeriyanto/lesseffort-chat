@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -29,19 +29,13 @@ import { debounce } from 'utils/common';
 export const ChatSidebar: React.FC = () => {
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { chatHistory, richEditorRef, getChatHistory, newChat } = useChat();
+  const { richEditorRef, getChatHistory, newChat } = useChat();
   const [search, setSearch] = useState('');
 
   const debounceOnChange = debounce(
     (setter: Function, value: unknown) => setter(value),
     300,
   );
-
-  const filteredChatHistory = useMemo(() => {
-    return chatHistory.filter((item) =>
-      item.title.match(new RegExp(search, 'i')),
-    );
-  }, [chatHistory, search]);
 
   useEffect(() => {
     getChatHistory();
@@ -139,7 +133,7 @@ export const ChatSidebar: React.FC = () => {
           </Flex>
         )}
 
-        <ChatHistory data={filteredChatHistory} />
+        <ChatHistory search={search} />
       </Flex>
       <Accordion allowToggle>
         <AccordionItem

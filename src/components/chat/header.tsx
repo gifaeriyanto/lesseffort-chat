@@ -1,15 +1,26 @@
 import React from 'react';
-import { Box, Flex, Icon, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Text,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { TypingDots } from 'components/typingDots';
-import { TbBrandOpenai } from 'react-icons/tb';
+import { TbBrandOpenai, TbMenu2, TbSearch } from 'react-icons/tb';
 import { useChat } from 'store/openai';
+import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatHeader: React.FC = () => {
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isTyping, messagesLength } = useChat((state) => ({
     messagesLength: state.messages.length,
     isTyping: state.isTyping,
   }));
+  const { onOpen } = useSidebar();
 
   return (
     <Flex
@@ -17,8 +28,18 @@ export const ChatHeader: React.FC = () => {
       align="center"
       borderBottom="1px solid"
       borderColor={CustomColor.border}
-      pb={2}
+      p={{ base: 4, md: 0 }}
+      pb={{ base: 3, md: 2 }}
     >
+      {isLessThanMd && (
+        <IconButton
+          icon={<TbMenu2 />}
+          aria-label="Menu"
+          variant="ghost"
+          fontSize="xl"
+          onClick={onOpen}
+        />
+      )}
       <Flex align="center" gap={4}>
         <Flex
           p={4}
@@ -47,6 +68,14 @@ export const ChatHeader: React.FC = () => {
           )}
         </Box>
       </Flex>
+      <HStack>
+        <IconButton
+          icon={<TbSearch />}
+          aria-label="Menu"
+          variant="ghost"
+          fontSize="xl"
+        />
+      </HStack>
     </Flex>
   );
 };

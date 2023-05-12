@@ -40,7 +40,7 @@ const ChatContainer: React.FC = () => {
       <Grid
         templateColumns={{ base: '1fr', md: '18.75rem 1fr' }}
         gap={{ base: 0, md: 4 }}
-        p={4}
+        p={{ base: 0, md: 4 }}
       >
         <GridItem>
           <ChatSidebar />

@@ -221,6 +221,7 @@ export const ChatMessagesContainer: React.FC = () => {
         overflow="auto"
         direction="column-reverse"
         ref={chatAreaRef}
+        px={{ base: 4, md: 0 }}
         sx={{
           '& > div:last-child': {
             mt: 4,
@@ -299,6 +300,7 @@ export const ChatMessagesContainer: React.FC = () => {
         p={2}
         pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
         mb={{ base: 6, md: 0 }}
+        mx={{ base: 4, md: 0 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"
         border="1px solid"
@@ -315,7 +317,7 @@ export const ChatMessagesContainer: React.FC = () => {
               aria-label="Jump to bottom"
               onClick={handleJumpToBottom}
               pos="absolute"
-              right="1rem"
+              right={{ base: 0, md: '1rem' }}
               top={editingMessage ? '-200%' : '-100%'}
             />
           </Tooltip>
