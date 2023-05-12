@@ -39,18 +39,23 @@ const config: ThemeOverride = {
       body: {
         h: '100vh',
       },
-      ['*::-webkit-scrollbar']: {
+      '*::-webkit-scrollbar': {
         width: '4px',
         height: '4px',
       },
 
-      ['*::-webkit-scrollbar-track']: {
+      '*::-webkit-scrollbar-track': {
         bgColor: 'transparent',
       },
 
-      ['*::-webkit-scrollbar-thumb']: {
+      '*::-webkit-scrollbar-thumb': {
         bgColor: 'gray.400',
         borderRadius: 'full',
+      },
+      '@media (hover: none)': {
+        '*:hover': {
+          pointerEvents: 'none',
+        },
       },
     }),
   },
