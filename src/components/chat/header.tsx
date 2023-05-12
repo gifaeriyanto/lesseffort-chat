@@ -31,9 +31,6 @@ export const ChatHeader: React.FC = () => {
       bgColor={CustomColor.background}
       p={{ base: 4, md: 0 }}
       pb={{ base: 3, md: 2 }}
-      pos={{ base: 'fixed', md: 'relative' }}
-      top="0"
-      zIndex={1}
       w={{ base: 'full', md: 'auto' }}
     >
       {isLessThanMd && (

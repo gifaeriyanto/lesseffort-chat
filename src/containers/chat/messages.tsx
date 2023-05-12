@@ -221,7 +221,6 @@ export const ChatMessagesContainer: React.FC = () => {
         overflow="auto"
         direction="column-reverse"
         ref={chatAreaRef}
-        mt={{ base: '4.8rem', md: 0 }}
         px={{ base: 4, md: 0 }}
         sx={{
           '& > div:last-child': {
