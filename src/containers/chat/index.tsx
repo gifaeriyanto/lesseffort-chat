@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Grid,
@@ -12,7 +12,6 @@ import {
   ModalOverlay,
   useDisclosure,
 } from '@chakra-ui/react';
-import { getUserInfo } from 'api/openai';
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
