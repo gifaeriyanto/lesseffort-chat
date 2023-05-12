@@ -302,7 +302,7 @@ export const ChatMessagesContainer: React.FC = () => {
       <Flex
         p={2}
         pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
-        mb={{ base: isPWA ? 6 : 0, md: 0 }}
+        mb={{ base: isPWA ? 4 : 0, md: 0 }}
         mx={{ base: 4, md: 0 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"

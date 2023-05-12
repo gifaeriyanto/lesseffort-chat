@@ -115,7 +115,7 @@ export const Chat: React.FC = () => {
                 )}
               </InputGroup>
             </Box>
-            <Box overflowY="auto" h="calc(100% - 9rem)">
+            <Box overflowY="auto" h="calc(100% - 11rem)">
               <ChatHistory search={search} />
             </Box>
             <Flex gap={4} p={4} borderTop={`1px solid ${CustomColor.border}`}>
