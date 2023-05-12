@@ -62,7 +62,7 @@ export const Chat: React.FC = () => {
       w="full"
       maxW="50rem"
       direction="column"
-      h="calc(100vh - 2rem)"
+      h={{ base: 'calc(100vh - 1.5rem)', md: 'calc(100vh - 2rem)' }}
       m="auto"
     >
       <ChatHeader />

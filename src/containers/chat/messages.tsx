@@ -95,9 +95,7 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const handleSubmitChat = async (value: string) => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = 0;
-    }
+    handleJumpToBottom();
 
     if (editingMessage) {
       updateMessage(value);
@@ -302,7 +300,6 @@ export const ChatMessagesContainer: React.FC = () => {
       <Flex
         p={2}
         pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
-        mb={{ base: isPWA ? 4 : 0, md: 0 }}
         mx={{ base: 4, md: 0 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius="2xl"

@@ -22,7 +22,6 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Chat } from 'api/chat';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
