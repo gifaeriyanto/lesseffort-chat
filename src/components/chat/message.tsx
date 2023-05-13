@@ -86,14 +86,14 @@ const CodeBlock = memo((props: CodeProps) => {
   }
 
   return (
-    <Box pos="relative">
+    <Box pos="relative" p={2}>
       <code ref={textInput} {...props} />
       <IconButton
         icon={<TbCopy />}
         aria-label="Copy code"
         pos="absolute"
-        top="0.5rem"
-        right="0.5rem"
+        top="0rem"
+        right="0rem"
         onClick={handleCopy}
       />
     </Box>
