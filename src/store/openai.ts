@@ -6,8 +6,41 @@ import { Editor } from 'draft-js';
 import { standaloneToast } from 'index';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
-import { filterByChatId } from 'store/utils/parser';
 import { create } from 'zustand';
+
+const getMessagesByChatID = (chatId: number): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('effortlesschat', 2);
+
+    request.onsuccess = (event: any) => {
+      const db = event.target.result;
+      const transaction = db.transaction(['messages'], 'readonly');
+      const objectStore = transaction.objectStore('messages');
+      const chatIdIndex = objectStore.index('chatId');
+      const chatIdRange = IDBKeyRange.only(chatId);
+      const request = chatIdIndex.openCursor(chatIdRange);
+      const messages: Message[] = [];
+
+      request.onsuccess = (event: any) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          messages.push(cursor.value);
+          cursor.continue();
+        } else {
+          resolve(messages);
+        }
+      };
+
+      request.onerror = (event: any) => {
+        reject(event.target.error);
+      };
+    };
+
+    request.onerror = (event: any) => {
+      reject(event.target.error);
+    };
+  });
+};
 
 export const useUsage = create<{
   usage: number;
@@ -187,10 +220,7 @@ export const useChat = create<{
     reset();
   },
   getMessages: async (chatId) => {
-    const { getAll } = useIndexedDB('messages');
-    const filteredMessages = await getAll<Message>().then((messages) =>
-      messages.filter(filterByChatId(chatId)),
-    );
+    const filteredMessages = await getMessagesByChatID(chatId);
     set({ messages: reverse(filteredMessages) });
     return filteredMessages;
   },

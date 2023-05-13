@@ -6,6 +6,3 @@ export const mapMessage = (message: Message) => {
     role: message.role,
   };
 };
-
-export const filterByChatId = (id: number | undefined) => (message: Message) =>
-  message.chatId === id;
