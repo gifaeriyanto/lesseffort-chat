@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { memo, PropsWithChildren, useRef } from 'react';
 import {
   Avatar,
   Box,
@@ -25,6 +25,7 @@ import {
   TbTrash,
 } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
+import { CodeProps } from 'react-markdown/lib/ast-to-react';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
@@ -70,6 +71,32 @@ export const ChatMessageAction = React.forwardRef<
         {...props}
       />
     </Tooltip>
+  );
+});
+
+const CodeBlock = memo((props: CodeProps) => {
+  const textInput = useRef<HTMLElement>(null);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(textInput?.current?.textContent || '');
+  };
+
+  if (props.inline) {
+    return <code {...props} />;
+  }
+
+  return (
+    <Box pos="relative">
+      <code ref={textInput} {...props} />
+      <IconButton
+        icon={<TbCopy />}
+        aria-label="Copy code"
+        pos="absolute"
+        top="0.5rem"
+        right="0.5rem"
+        onClick={handleCopy}
+      />
+    </Box>
   );
 });
 
@@ -218,6 +245,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         }}
       >
         <ReactMarkdown
+          components={{
+            code: CodeBlock,
+          }}
           remarkPlugins={[remarkGfm, remarkBreaks]}
           rehypePlugins={[
             [
