@@ -105,7 +105,8 @@ export const ChatMessagesContainer: React.FC = () => {
         chatId: selectedChatId,
         content: value,
         role: 'user',
-        timestamp: getUnixTime(new Date()),
+        createdAt: getUnixTime(new Date()),
+        updatedAt: getUnixTime(new Date()),
       });
     } else {
       await newChat({
@@ -222,7 +223,7 @@ export const ChatMessagesContainer: React.FC = () => {
         px={{ base: 4, md: 0 }}
         sx={{
           '& > div:last-child': {
-            mt: 4,
+            mt: 6,
           },
         }}
       >
@@ -231,7 +232,7 @@ export const ChatMessagesContainer: React.FC = () => {
         )}
         {messages.map((message) => (
           <ChatMessage
-            key={message.timestamp}
+            key={message.id}
             isMe={message.role === 'user'}
             message={message.content}
             onEdit={() => setEditingMessage(message)}

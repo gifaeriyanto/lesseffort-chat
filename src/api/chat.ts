@@ -8,6 +8,8 @@ export interface Chat {
   model: OpenAIModel;
   title: string;
   locked?: boolean;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export interface Message {
@@ -15,7 +17,8 @@ export interface Message {
   role: 'user' | 'system' | 'assistant';
   content: string;
   chatId?: number;
-  timestamp?: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export enum OpenAIModel {

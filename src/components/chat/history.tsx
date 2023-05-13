@@ -22,6 +22,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { sort } from 'ramda';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
@@ -68,6 +69,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
         pl={isActive ? 'calc(1rem - 1px)' : 4}
         role="button"
         onClick={() => id && onSelect(id)}
+        _last={{ borderBottom: 0 }}
       >
         <HStack
           sx={{
@@ -153,8 +155,15 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   const { onClose: onCloseSidebar } = useSidebar();
 
   const filteredChatHistory = useMemo(() => {
-    return chatHistory.filter((item) =>
-      item.title.match(new RegExp(search, 'i')),
+    return sort(
+      (a, b) => {
+        if (a.updatedAt && b.updatedAt) {
+          return b.updatedAt - a.updatedAt;
+        } else {
+          return (b.id || 0) - (a.id || 0);
+        }
+      },
+      chatHistory.filter((item) => item.title.match(new RegExp(search, 'i'))),
     );
   }, [chatHistory, search]);
 

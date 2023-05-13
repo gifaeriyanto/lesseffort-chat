@@ -86,7 +86,8 @@ export const useChat = create<{
       chatId,
       role: 'user',
       content: value,
-      timestamp: getUnixTime(new Date()),
+      createdAt: getUnixTime(new Date()),
+      updatedAt: getUnixTime(new Date()),
     };
 
     const updatedMessages = notNewMessage
@@ -101,7 +102,8 @@ export const useChat = create<{
           chatId,
           content,
           role: 'assistant',
-          timestamp: getUnixTime(new Date()),
+          createdAt: getUnixTime(new Date()),
+          updatedAt: getUnixTime(new Date()),
         };
 
         await dbMessages.add<Message>(newMessage);
@@ -121,6 +123,7 @@ export const useChat = create<{
                 ...res,
                 title: res.title === 'New Chat' ? value : res.title,
                 last_message: content,
+                updatedAt: getUnixTime(new Date()),
               });
             })
             .finally(getChatHistory);
@@ -209,7 +212,8 @@ export const useChat = create<{
         chatId,
         content: data.last_message,
         role: 'user',
-        timestamp: getUnixTime(new Date()),
+        createdAt: getUnixTime(new Date()),
+        updatedAt: getUnixTime(new Date()),
       });
     }
     set({
@@ -258,7 +262,11 @@ export const useChat = create<{
       return;
     }
 
-    await update({ ...editingMessage, content: message });
+    await update({
+      ...editingMessage,
+      content: message,
+      updatedAt: getUnixTime(new Date()),
+    });
     await deleteTheNextMessages(editingMessage.chatId, editingMessage.id);
     await getMessages(editingMessage.chatId);
     streamChatCompletion(message, true);
