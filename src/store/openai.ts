@@ -222,6 +222,7 @@ export const useChat = create<{
   },
   selectedChatId: undefined,
   setSelectedChatId: (chatId) => {
+    localStorage.setItem('lastOpenChatId', String(chatId));
     set({ selectedChatId: chatId });
     if (chatId) {
       get().getMessages(chatId);

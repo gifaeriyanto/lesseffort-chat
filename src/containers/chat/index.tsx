@@ -16,6 +16,7 @@ import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
 import { getPrompts } from 'store/db/queries';
+import { useChat } from 'store/openai';
 import { usePWA } from 'store/pwa';
 
 const ChatContainer: React.FC = () => {
@@ -26,10 +27,15 @@ const ChatContainer: React.FC = () => {
   } = useDisclosure();
   const { register, handleSubmit } = useForm();
   const { getPWAStatus } = usePWA();
+  const { setSelectedChatId } = useChat();
 
   useEffect(() => {
     getPWAStatus();
-    getPrompts();
+
+    if (localStorage.getItem('lastOpenChatId')) {
+      setSelectedChatId(Number(localStorage.getItem('lastOpenChatId')));
+    }
+
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
     }
