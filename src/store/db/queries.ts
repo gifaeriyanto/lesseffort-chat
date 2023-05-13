@@ -1,6 +1,8 @@
 import { Message } from 'react-hook-form';
 import { DBVersion } from 'store/db/config';
 
+import prompts from './prompts.json';
+
 export const getMessagesByChatID = (chatId: number): Promise<any> => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('effortlesschat', DBVersion);
@@ -33,4 +35,8 @@ export const getMessagesByChatID = (chatId: number): Promise<any> => {
       reject(event.target.error);
     };
   });
+};
+
+export const getPrompts = () => {
+  return prompts;
 };

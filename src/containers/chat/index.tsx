@@ -15,6 +15,7 @@ import {
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
+import { getPrompts } from 'store/db/queries';
 import { usePWA } from 'store/pwa';
 
 const ChatContainer: React.FC = () => {
@@ -28,6 +29,7 @@ const ChatContainer: React.FC = () => {
 
   useEffect(() => {
     getPWAStatus();
+    getPrompts();
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
     }
