@@ -230,10 +230,11 @@ export const ChatMessagesContainer: React.FC = () => {
         {!!generatingMessage && (
           <ChatMessage message={generatingMessage} noActions />
         )}
-        {messages.map((message) => (
+        {messages.map((message, index) => (
           <ChatMessage
-            key={message.id}
+            key={message.id || index}
             isMe={message.role === 'user'}
+            id={message.id}
             message={message.content}
             onEdit={() => setEditingMessage(message)}
             onRegenerateResponse={() =>

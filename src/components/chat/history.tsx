@@ -186,7 +186,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
     <Box w="full" overflow="auto">
       {filteredChatHistory.map((item, index) => (
         <ChatHistoryItem
-          key={index}
+          key={item.id || index}
           id={item.id}
           title={item.title}
           description={item.last_message}

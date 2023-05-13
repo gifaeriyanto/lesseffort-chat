@@ -41,6 +41,7 @@ import { comingSoon } from 'utils/common';
 export interface ChatMessageProps {
   isLockedChat?: boolean;
   isMe?: boolean;
+  id?: number;
   message: string;
   noActions?: boolean;
   onEdit?: () => void;
@@ -80,7 +81,7 @@ export const ChatMessageAction = React.forwardRef<
   );
 });
 
-const CodeBlock = memo(({ node, ...props }: CodeProps) => {
+const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
   const textInput = useRef<HTMLElement>(null);
   const [lang, setLang] = useState('');
 
@@ -93,7 +94,7 @@ const CodeBlock = memo(({ node, ...props }: CodeProps) => {
     navigator.clipboard.writeText(textInput?.current?.textContent || '');
   };
 
-  if (props.inline) {
+  if (inline) {
     return <code {...props} />;
   }
 
@@ -122,6 +123,7 @@ const CodeBlock = memo(({ node, ...props }: CodeProps) => {
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   isLockedChat,
   isMe,
+  id,
   message,
   noActions,
   onEdit,
@@ -144,6 +146,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           opacity: 1,
         },
       }}
+      id={`message-${id || 0}`}
     >
       {!noActions && (
         <ButtonGroup
