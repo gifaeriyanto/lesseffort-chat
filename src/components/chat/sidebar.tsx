@@ -19,7 +19,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { OpenAIModel } from 'api/chat';
+import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { ChatHistory } from 'components/chat/history';
 import { TbPlus, TbSearch, TbX } from 'react-icons/tb';
 import { useChat } from 'store/openai';
@@ -48,7 +48,7 @@ export const ChatSidebar: React.FC = () => {
 
   const handleNewChat = () => {
     newChat({
-      bot_id: 1,
+      bot_instruction: defaultBotInstruction,
       last_message: '',
       model: OpenAIModel.GPT_3_5,
       title: 'New Chat',

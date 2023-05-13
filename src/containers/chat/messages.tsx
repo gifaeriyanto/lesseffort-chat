@@ -10,7 +10,7 @@ import {
   useBoolean,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { Chat, Message, OpenAIModel } from 'api/chat';
+import { Chat, defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
@@ -78,7 +78,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const handleNewChat = () => {
     newChat({
-      bot_id: 1,
+      bot_instruction: defaultBotInstruction,
       last_message: '',
       model: OpenAIModel.GPT_3_5,
       title: 'New Chat',
@@ -110,7 +110,7 @@ export const ChatMessagesContainer: React.FC = () => {
       });
     } else {
       await newChat({
-        bot_id: 1,
+        bot_instruction: defaultBotInstruction,
         last_message: value,
         model: OpenAIModel.GPT_3_5,
         title: value,

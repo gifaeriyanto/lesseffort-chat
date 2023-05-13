@@ -20,7 +20,7 @@ import {
   LightMode,
   Text,
 } from '@chakra-ui/react';
-import { Message, OpenAIModel } from 'api/chat';
+import { defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
 import { ChatHeader } from 'components/chat/header';
 import { ChatHistory } from 'components/chat/history';
 import { ChatMessagesContainer } from 'containers/chat/messages';
@@ -48,7 +48,7 @@ export const Chat: React.FC = () => {
 
   const handleNewChat = () => {
     newChat({
-      bot_id: 1,
+      bot_instruction: defaultBotInstruction,
       last_message: '',
       model: OpenAIModel.GPT_3_5,
       title: 'New Chat',
