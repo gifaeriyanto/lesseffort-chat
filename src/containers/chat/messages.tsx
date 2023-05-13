@@ -25,7 +25,6 @@ import {
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
-import { usePWA } from 'store/pwa';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatMessagesContainer: React.FC = () => {
@@ -43,7 +42,6 @@ export const ChatMessagesContainer: React.FC = () => {
   } = useChat();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { newChat, chatHistory, selectedChatId } = useChat();
-  const { isPWA } = usePWA();
   const dbMessages = useIndexedDB('messages');
   const [
     isShowJumpToBottomButton,
@@ -89,7 +87,7 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const handleJumpToBottom = () => {
-    if (chatAreaRef.current?.scrollTop) {
+    if (chatAreaRef.current) {
       chatAreaRef.current.scrollTop = 0;
     }
   };

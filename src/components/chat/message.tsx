@@ -1,4 +1,10 @@
-import React, { memo, PropsWithChildren, useRef } from 'react';
+import React, {
+  memo,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Avatar,
   Box,
@@ -64,8 +70,8 @@ export const ChatMessageAction = React.forwardRef<
         icon={icon}
         aria-label={title}
         variant="ghost"
-        size="md"
-        fontSize="2xl"
+        size="sm"
+        fontSize="md"
         color="gray.300"
         onClick={onClick}
         {...props}
@@ -74,8 +80,14 @@ export const ChatMessageAction = React.forwardRef<
   );
 });
 
-const CodeBlock = memo((props: CodeProps) => {
+const CodeBlock = memo(({ node, ...props }: CodeProps) => {
   const textInput = useRef<HTMLElement>(null);
+  const [lang, setLang] = useState('');
+
+  useEffect(() => {
+    let className = props.className;
+    setLang(className?.replace('hljs language-', '') || '');
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(textInput?.current?.textContent || '');
@@ -86,15 +98,22 @@ const CodeBlock = memo((props: CodeProps) => {
   }
 
   return (
-    <Box pos="relative" p={2}>
-      <code ref={textInput} {...props} />
+    <Box pos="relative" p={lang ? 0 : 2}>
+      {!!lang && (
+        <Box fontSize="sm" color="gray.400" pl={2} pt={2} mb={4}>
+          {lang}
+        </Box>
+      )}
+      <Box as="code" ref={textInput} {...props} />
       <IconButton
         icon={<TbCopy />}
         aria-label="Copy code"
-        pos="absolute"
-        top="0rem"
-        right="0rem"
         onClick={handleCopy}
+        pos="absolute"
+        top={0}
+        right={0}
+        size="sm"
+        fontSize="md"
       />
     </Box>
   );
