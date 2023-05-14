@@ -64,6 +64,12 @@ export const ChatMessagesContainer: React.FC = () => {
     }
   }, [isTyping, richEditorRef]);
 
+  const handleJumpToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = 100;
+    }
+  };
+
   const handleJumpToBottomButton = () => {
     if (!chatAreaRef.current) {
       return;
@@ -93,12 +99,6 @@ export const ChatMessagesContainer: React.FC = () => {
       title: 'New Chat',
     });
     richEditorRef?.current?.focus();
-  };
-
-  const handleJumpToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = 0;
-    }
   };
 
   const handleSubmitChat = async (value: string) => {
@@ -221,9 +221,9 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessages = () => {
-    // if (!messages.length) {
-    //   return <StarterContainer />;
-    // }
+    if (!messages.length) {
+      return <StarterContainer />;
+    }
 
     return (
       <>
