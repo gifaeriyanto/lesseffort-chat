@@ -212,7 +212,7 @@ export const ChatMessagesContainer: React.FC = () => {
           title="Stop generating"
           icon={<TbPlayerStopFilled />}
           color="red.500"
-          onClick={stopStream}
+          onClick={() => stopStream()}
         />
       );
     }

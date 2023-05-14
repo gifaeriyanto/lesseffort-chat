@@ -48,7 +48,7 @@ export const useChat = create<{
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (chatId: number | undefined) => void;
-  stopStream: () => void;
+  stopStream: (noUpdateMessages?: boolean) => void;
   streamChatCompletion: (value: string, notNewMessage?: boolean) => void;
 }>((set, get) => ({
   editingMessage: undefined,
@@ -58,16 +58,24 @@ export const useChat = create<{
   model: OpenAIModel.GPT_3_5,
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
-  stopStream: () => {
-    get().xhr?.abort();
-    set((prev) => ({
-      messages: [
-        { role: 'assistant', content: get().generatingMessage },
-        ...prev.messages,
-      ],
-      generatingMessage: '',
-      isTyping: false,
-    }));
+  stopStream: (noUpdateMessages) => {
+    const { xhr, generatingMessage } = get();
+    xhr?.abort();
+    if (noUpdateMessages) {
+      set({
+        generatingMessage: '',
+        isTyping: false,
+      });
+    } else {
+      set((prev) => ({
+        messages: [
+          { role: 'assistant', content: generatingMessage },
+          ...prev.messages,
+        ],
+        generatingMessage: '',
+        isTyping: false,
+      }));
+    }
   },
   streamChatCompletion: (value, notNewMessage) => {
     const {
@@ -222,6 +230,7 @@ export const useChat = create<{
   },
   selectedChatId: undefined,
   setSelectedChatId: (chatId) => {
+    get().stopStream(true);
     localStorage.setItem('lastOpenChatId', String(chatId));
     set({ selectedChatId: chatId });
     if (chatId) {
