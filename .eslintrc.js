@@ -79,7 +79,7 @@ module.exports = {
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/require-await': 'off',
         '@typescript-eslint/restrict-template-expressions': 'warn',
-        '@typescript-eslint/unbound-method': 'warn',
+        '@typescript-eslint/unbound-method': 'off',
       },
     },
   ],

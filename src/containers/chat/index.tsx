@@ -15,7 +15,6 @@ import {
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
-import { getPrompts } from 'store/db/queries';
 import { useChat } from 'store/openai';
 import { usePWA } from 'store/pwa';
 

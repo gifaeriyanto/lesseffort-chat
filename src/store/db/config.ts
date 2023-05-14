@@ -1,4 +1,4 @@
-export const DBVersion = 4;
+export const DBVersion = 5;
 
 export const DBConfig = {
   name: 'effortlesschat',
@@ -31,11 +31,8 @@ export const DBConfig = {
       storeSchema: [
         { name: 'chatId', keypath: 'chatId', options: { unique: false } },
         { name: 'content', keypath: 'content', options: { unique: false } },
-        {
-          name: 'role',
-          keypath: 'role',
-          options: { unique: false },
-        },
+        { name: 'role', keypath: 'role', options: { unique: false } },
+        { name: 'hidden', keypath: 'hidden', options: { unique: false } },
         { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },
         { name: 'updatedAt', keypath: 'updatedAt', options: { unique: false } },
       ],

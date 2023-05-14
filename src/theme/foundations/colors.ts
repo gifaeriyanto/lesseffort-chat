@@ -1,6 +1,6 @@
 export enum CustomColor {
-  background = '#151718',
-  card = 'gray.500',
+  background = 'gray.700',
+  card = 'gray.600',
   border = '#303435',
 }
 
