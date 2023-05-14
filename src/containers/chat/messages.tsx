@@ -226,7 +226,10 @@ export const ChatMessagesContainer: React.FC = () => {
     return (
       <>
         {!!generatingMessage && (
-          <ChatMessage message={generatingMessage} noActions />
+          <ChatMessage
+            message={isLessThanMd ? '...' : generatingMessage}
+            noActions
+          />
         )}
         {messages.map((message, index) => (
           <ChatMessage
