@@ -310,20 +310,17 @@ export const ChatMessagesContainer: React.FC = () => {
           <ChatMessage key="message-0" message={generatingMessage} noActions />
         )}
         {messages.map((message) => (
-          <>
-            <ChatMessage
-              key={message.id || message.createdAt}
-              isMe={message.role === 'user'}
-              id={message.id}
-              message={message.originalContent || message.content}
-              onEdit={() => setEditingMessage(message)}
-              onRegenerateResponse={() =>
-                message.id && regenerateResponse(message.id)
-              }
-              isLockedChat={selectedChat?.locked}
-            />
-            {console.log(message.id || message.createdAt)}
-          </>
+          <ChatMessage
+            key={message.id || message.createdAt}
+            isMe={message.role === 'user'}
+            id={message.id}
+            message={message.originalContent || message.content}
+            onEdit={() => setEditingMessage(message)}
+            onRegenerateResponse={() =>
+              message.id && regenerateResponse(message.id)
+            }
+            isLockedChat={selectedChat?.locked}
+          />
         ))}
       </>
     );
