@@ -65,9 +65,7 @@ export const ChatMessagesContainer: React.FC = () => {
   }, [isTyping, richEditorRef]);
 
   const handleJumpToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTo(0, 0);
-    }
+    chatAreaRef?.current?.scrollTo(0, 0);
   };
 
   const handleJumpToBottomButton = () => {
@@ -221,9 +219,9 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessages = () => {
-    if (!messages.length) {
-      return <StarterContainer />;
-    }
+    // if (!messages.length) {
+    //   return <StarterContainer />;
+    // }
 
     return (
       <>
