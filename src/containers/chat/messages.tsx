@@ -221,9 +221,10 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessages = () => {
-    if (!messages.length) {
-      return <StarterContainer />;
-    }
+    // if (!messages.length) {
+    //   return <StarterContainer />;
+    // }
+
     return (
       <>
         {!!generatingMessage && (
