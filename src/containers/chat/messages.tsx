@@ -348,7 +348,7 @@ export const ChatMessagesContainer: React.FC = () => {
         </Flex>
       )}
 
-      <Box h="1px" bgColor={CustomColor.border} mb={4} />
+      {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
 
       <Flex
         p={2}
