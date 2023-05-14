@@ -57,7 +57,7 @@ export const useChat = create<{
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (chatId: number | undefined) => void;
-  stopStream: (noUpdateMessages?: boolean) => void;
+  stopStream: () => void;
   streamChatCompletion: (
     value: string,
     notNewMessage?: boolean,
@@ -71,28 +71,31 @@ export const useChat = create<{
   model: OpenAIModel.GPT_3_5,
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
-  stopStream: (noUpdateMessages) => {
+  stopStream: () => {
     const dbMessages = useIndexedDB('messages');
     const { xhr, generatingMessage, selectedChatId } = get();
     xhr?.abort();
+    set({
+      generatingMessage: '',
+      isTyping: false,
+    });
+
     if (generatingMessage) {
+      const content =
+        generatingMessage + '\n\n> 🚨 This message was interrupted.';
       dbMessages.add<Message>({
         role: 'assistant',
-        content:
-          generatingMessage +
-          '\n\n> 🚨 ***error***\n> This message was interrupted last time.',
+        content,
         chatId: selectedChatId,
         createdAt: getUnixTime(new Date()),
         updatedAt: getUnixTime(new Date()),
       });
+      set((prev) => ({
+        messages: generatingMessage
+          ? [{ role: 'assistant', content }, ...prev.messages]
+          : prev.messages,
+      }));
     }
-    set((prev) => ({
-      messages: generatingMessage
-        ? [{ role: 'assistant', content: generatingMessage }, ...prev.messages]
-        : prev.messages,
-      generatingMessage: '',
-      isTyping: false,
-    }));
   },
   streamChatCompletion: (value, notNewMessage, template) => {
     const {
@@ -262,7 +265,7 @@ export const useChat = create<{
   selectedChatId: undefined,
   setSelectedChatId: (chatId) => {
     const { getMessages, setEditingMessage, stopStream } = get();
-    stopStream(true);
+    stopStream();
     setEditingMessage(undefined);
     set({ selectedChatId: chatId });
     if (chatId) {
