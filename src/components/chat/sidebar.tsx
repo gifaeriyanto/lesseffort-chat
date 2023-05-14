@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { ChatHistory } from 'components/chat/history';
+import { Search } from 'components/search';
 import { TbPlus, TbSearch, TbX } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
@@ -86,23 +87,13 @@ export const ChatSidebar: React.FC = () => {
       >
         {isShowSearch || search.length ? (
           <Box p={2} h="3.571rem" flexShrink={0}>
-            <InputGroup>
-              <Input
-                placeholder="Search"
-                borderRadius="lg"
-                bgColor="gray.600"
-                autoFocus
-                onBlur={onToggle}
-                onChange={(e) =>
-                  debounceOnChange(setSearch, e.currentTarget.value)
-                }
-              />
-              {!!search.length && (
-                <InputRightElement onClick={() => setSearch('')}>
-                  <Icon as={TbX} color="gray.400" />
-                </InputRightElement>
-              )}
-            </InputGroup>
+            <Search
+              borderRadius="lg"
+              bgColor="gray.600"
+              autoFocus
+              onBlur={onToggle}
+              onSearch={setSearch}
+            />
           </Box>
         ) : (
           <Flex

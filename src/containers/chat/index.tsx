@@ -39,6 +39,8 @@ const ChatContainer: React.FC = () => {
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
     }
+
+    console.log(getPrompts());
   }, []);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {

@@ -1,34 +1,26 @@
 import React, { useState } from 'react';
 import {
-  AccordionButton,
-  AccordionIcon,
   Avatar,
   Box,
-  Button,
   Drawer,
   DrawerBody,
-  DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  Icon,
   IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
   LightMode,
   Text,
 } from '@chakra-ui/react';
 import { defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
 import { ChatHeader } from 'components/chat/header';
 import { ChatHistory } from 'components/chat/history';
+import { Search } from 'components/search';
 import { ChatMessagesContainer } from 'containers/chat/messages';
-import { TbPlus, TbSearch, TbX } from 'react-icons/tb';
+import { TbPlus } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
-import { debounce } from 'utils/common';
 
 export interface ChatProps {
   generatingMessage: string;
@@ -40,11 +32,6 @@ export const Chat: React.FC = () => {
   const { richEditorRef, newChat } = useChat();
   const { isOpen, onClose } = useSidebar();
   const [search, setSearch] = useState('');
-
-  const debounceOnChange = debounce(
-    (setter: Function, value: unknown) => setter(value),
-    300,
-  );
 
   const handleNewChat = () => {
     newChat({
@@ -95,25 +82,11 @@ export const Chat: React.FC = () => {
 
           <DrawerBody p={0}>
             <Box p={2} h="3.571rem" flexShrink={0}>
-              <InputGroup>
-                <Input
-                  placeholder="Search"
-                  borderRadius="lg"
-                  bgColor="gray.600"
-                  onChange={(e) =>
-                    debounceOnChange(setSearch, e.currentTarget.value)
-                  }
-                />
-                {!!search.length ? (
-                  <InputRightElement onClick={() => setSearch('')}>
-                    <Icon as={TbX} color="gray.400" />
-                  </InputRightElement>
-                ) : (
-                  <InputRightElement>
-                    <Icon as={TbSearch} color="gray.400" />
-                  </InputRightElement>
-                )}
-              </InputGroup>
+              <Search
+                onSearch={setSearch}
+                borderRadius="lg"
+                bgColor="gray.600"
+              />
             </Box>
             <Box overflowY="auto" h="calc(100% - 11rem)">
               <ChatHistory search={search} />

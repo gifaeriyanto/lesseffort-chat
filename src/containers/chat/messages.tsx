@@ -14,6 +14,7 @@ import { Chat, defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
+import { StarterContainer } from 'containers/chat/starter';
 import { getUnixTime } from 'date-fns';
 import { MdSend, MdSubdirectoryArrowLeft } from 'react-icons/md';
 import {
@@ -63,17 +64,25 @@ export const ChatMessagesContainer: React.FC = () => {
     }
   }, [isTyping, richEditorRef]);
 
+  const handleJumpToBottomButton = () => {
+    if (!chatAreaRef.current) {
+      return;
+    }
+    if (chatAreaRef.current.scrollTop < -100) {
+      showJumpToBottomButton();
+    } else {
+      hideJumpToBottomButton();
+    }
+  };
+
   useEffect(() => {
-    chatAreaRef.current?.addEventListener('scroll', () => {
-      if (!chatAreaRef.current) {
-        return;
-      }
-      if (chatAreaRef.current.scrollTop < -100) {
-        showJumpToBottomButton();
-      } else {
-        hideJumpToBottomButton();
-      }
-    });
+    chatAreaRef.current?.addEventListener('scroll', handleJumpToBottomButton);
+    return () => {
+      chatAreaRef.current?.removeEventListener(
+        'scroll',
+        handleJumpToBottomButton,
+      );
+    };
   }, [chatAreaRef]);
 
   const handleNewChat = () => {
@@ -211,22 +220,12 @@ export const ChatMessagesContainer: React.FC = () => {
     );
   };
 
-  return (
-    <>
-      <Flex
-        w="full"
-        h="full"
-        align="flex-start"
-        overflow="auto"
-        direction="column-reverse"
-        ref={chatAreaRef}
-        px={{ base: 4, md: 0 }}
-        sx={{
-          '& > div:last-child': {
-            mt: 6,
-          },
-        }}
-      >
+  const renderMessages = () => {
+    if (!messages.length) {
+      return <StarterContainer />;
+    }
+    return (
+      <>
         {!!generatingMessage && (
           <ChatMessage message={generatingMessage} noActions />
         )}
@@ -243,6 +242,27 @@ export const ChatMessagesContainer: React.FC = () => {
             isLockedChat={selectedChat?.locked}
           />
         ))}
+      </>
+    );
+  };
+
+  return (
+    <>
+      <Flex
+        w="full"
+        h="full"
+        align="flex-start"
+        overflow="auto"
+        direction={messages.length ? 'column-reverse' : 'column'}
+        ref={chatAreaRef}
+        px={{ base: 4, md: 0 }}
+        sx={{
+          '& > div:last-child': {
+            mt: 6,
+          },
+        }}
+      >
+        {renderMessages()}
       </Flex>
 
       {editingMessage && (
