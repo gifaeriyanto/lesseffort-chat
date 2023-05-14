@@ -39,7 +39,13 @@ import {
   formatNumber,
 } from 'utils/common';
 
-export const StarterContainer: React.FC = () => {
+export interface StarterContainerProps {
+  onSelectPrompt: (prompt: Prompt) => void;
+}
+
+export const StarterContainer: React.FC<StarterContainerProps> = ({
+  onSelectPrompt,
+}) => {
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
   const [community, setCommunity] = useState('');
@@ -83,10 +89,12 @@ export const StarterContainer: React.FC = () => {
         gap={4}
       >
         <Box>
-          <Text color="blue.500" as="span" fontSize="xl" fontWeight="bold">
-            Starter
-          </Text>{' '}
-          Prompts
+          <Box fontSize="xl" fontWeight="bold">
+            <Text color="blue.500" as="span">
+              Starter
+            </Text>{' '}
+            Prompts
+          </Box>
           <Box fontSize="sm" color="gray.400">
             {count ? (
               <>
@@ -209,6 +217,7 @@ export const StarterContainer: React.FC = () => {
                     direction="column"
                     role="button"
                     _hover={{ bgColor: 'gray.600' }}
+                    onClick={() => onSelectPrompt(item)}
                   >
                     <Box fontWeight="bold" fontSize="lg">
                       {item.Title}

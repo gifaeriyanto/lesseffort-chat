@@ -19,6 +19,7 @@ export interface RichEditorProps {
   defaultValue?: string;
   onBlur?: (value: string) => void;
   onSubmit?: (value: string) => void;
+  placeholder?: string;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
@@ -26,6 +27,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   defaultValue,
   onBlur,
   onSubmit,
+  placeholder,
 }) => {
   const initialEditorState = defaultValue
     ? EditorState.createWithContent(ContentState.createFromText(defaultValue))
@@ -141,7 +143,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           keyBindingFn={handleKeyBinding}
           onBlur={handleBlur}
           onChange={setEditorState}
-          placeholder={getPlaceholder()}
+          placeholder={placeholder || getPlaceholder()}
           stripPastedStyles
           ref={richEditorRef}
         />

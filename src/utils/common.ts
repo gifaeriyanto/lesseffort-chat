@@ -1,6 +1,6 @@
 import { pipe } from 'framer-motion';
 import { standaloneToast } from 'index';
-import { join, map, split, toLower } from 'ramda';
+import { join, map, replace, split, toLower } from 'ramda';
 import { PipeFunction } from 'utils/types/functional';
 
 type Func<T extends any[], R> = (...a: T) => R;
@@ -50,3 +50,9 @@ export const formatNumber = (number: number) => {
 
 export const createIncrementArray = (length: number) =>
   Array.from({ length }, (_, i) => i + 1);
+
+export const sanitizeString = pipe(
+  replace(/[^a-zA-Z0-9 ]/g, ''),
+  toLower,
+  uppercaseFirstLetter,
+);

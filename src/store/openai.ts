@@ -49,7 +49,11 @@ export const useChat = create<{
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (chatId: number | undefined) => void;
   stopStream: (noUpdateMessages?: boolean) => void;
-  streamChatCompletion: (value: string, notNewMessage?: boolean) => void;
+  streamChatCompletion: (
+    value: string,
+    notNewMessage?: boolean,
+    template?: string,
+  ) => void;
 }>((set, get) => ({
   editingMessage: undefined,
   generatingMessage: '',
@@ -77,7 +81,7 @@ export const useChat = create<{
       }));
     }
   },
-  streamChatCompletion: (value, notNewMessage) => {
+  streamChatCompletion: (value, notNewMessage, template) => {
     const {
       messages,
       model,
@@ -90,10 +94,18 @@ export const useChat = create<{
 
     set({ isTyping: true });
 
+    let content = value;
+    if (template) {
+      content = template
+        .replaceAll('[PROMPT]', value)
+        .replaceAll('[TARGETLANGUAGE]', 'English');
+    }
+
     const userMessage: Message = {
       chatId,
       role: 'user',
-      content: value,
+      content,
+      originalContent: value,
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
     };
@@ -230,11 +242,13 @@ export const useChat = create<{
   },
   selectedChatId: undefined,
   setSelectedChatId: (chatId) => {
-    get().stopStream(true);
+    const { getMessages, setEditingMessage, stopStream } = get();
+    stopStream(true);
+    setEditingMessage(undefined);
     localStorage.setItem('lastOpenChatId', String(chatId));
     set({ selectedChatId: chatId });
     if (chatId) {
-      get().getMessages(chatId);
+      getMessages(chatId);
     }
   },
   reset: () => {

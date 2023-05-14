@@ -6,12 +6,14 @@ import {
   Icon,
   IconButton,
   LightMode,
+  Link,
   Tooltip,
   useBoolean,
   useMediaQuery,
 } from '@chakra-ui/react';
 import { Chat, defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
+import SelectedMessage from 'components/chat/selectedMessage';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';
@@ -22,11 +24,13 @@ import {
   TbInfoCircle,
   TbPencil,
   TbPlayerStopFilled,
-  TbX,
+  TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
+import { Prompt } from 'store/supabase';
 import { CustomColor } from 'theme/foundations/colors';
+import { sanitizeString } from 'utils/common';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
@@ -52,6 +56,7 @@ export const ChatMessagesContainer: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
   const [readyToUse, setReadyToUse] = useState(false);
   const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
+  const [template, setTemplate] = useState<Prompt | undefined>(undefined);
 
   useEffect(() => {
     if (messages.length && !readyToUse) {
@@ -88,6 +93,8 @@ export const ChatMessagesContainer: React.FC = () => {
       const chat = chatHistory.find((item) => item.id === selectedChatId);
       setSelectedChat(chat);
     }
+
+    setTemplate(undefined);
   }, [selectedChatId, chatHistory]);
 
   useEffect(() => {
@@ -183,8 +190,8 @@ export const ChatMessagesContainer: React.FC = () => {
         title: value,
       });
     }
-
-    streamChatCompletion(value);
+    streamChatCompletion(value, false, template?.Prompt);
+    setTemplate(undefined);
   };
 
   const renderMessageInput = () => {
@@ -210,6 +217,11 @@ export const ChatMessagesContainer: React.FC = () => {
         defaultValue={editingMessage?.content}
         onSubmit={isTyping ? undefined : handleSubmitChat}
         key={editingMessage?.id}
+        placeholder={
+          template?.PromptHint
+            ? sanitizeString(template?.PromptHint)
+            : undefined
+        }
       />
     );
   };
@@ -280,7 +292,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const renderMessages = () => {
     if (!messages.length) {
-      return <StarterContainer />;
+      return <StarterContainer onSelectPrompt={setTemplate} />;
     }
 
     return (
@@ -293,7 +305,7 @@ export const ChatMessagesContainer: React.FC = () => {
             key={message.id || message.createdAt}
             isMe={message.role === 'user'}
             id={message.id}
-            message={message.content}
+            message={message.originalContent || message.content}
             onEdit={() => setEditingMessage(message)}
             onRegenerateResponse={() =>
               message.id && regenerateResponse(message.id)
@@ -326,92 +338,94 @@ export const ChatMessagesContainer: React.FC = () => {
         {renderMessages()}
       </Flex>
 
-      {editingMessage && (
-        <Flex
-          align="center"
-          py={2}
-          maxW={{ base: 'calc(100vw - 2rem)', md: 'auto' }}
-        >
-          <Box w="4rem" textAlign="center" flexGrow="0" flexShrink="0">
-            <Icon as={TbPencil} fontSize="2xl" color="blue.500" />
-          </Box>
-          <Box
-            w="full"
-            maxW="calc(100% - 8.25rem)"
-            pl={4}
-            borderLeft="1px solid"
-            borderColor="blue.500"
-            flexGrow="0"
-            flexShrink="0"
-          >
-            <Flex align="center" color="blue.500">
-              Edit Message
-              <Tooltip
-                label="Note: All subsequent messages will be deleted after you submit an edit."
-                placement="top"
-              >
-                <IconButton
-                  icon={<TbInfoCircle />}
-                  aria-label="Edit info"
-                  variant="link"
-                  fontSize="xl"
-                  color="blue.500"
-                  mt="-2px"
-                />
-              </Tooltip>
-            </Flex>
-            <Box isTruncated maxW="100%">
-              {editingMessage.content}
-            </Box>
-          </Box>
-          <IconButton
-            icon={<TbX />}
-            aria-label="Cancel edit"
-            variant="ghost"
-            mx={4}
-            fontSize="xl"
-            onClick={() => setEditingMessage(undefined)}
-          />
-        </Flex>
-      )}
-
-      {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
-
-      <Flex
-        p={2}
-        pb={{ base: 6, md: 2 }}
-        pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
-        bgColor={isTyping ? 'gray.700' : CustomColor.card}
-        borderRadius={{ base: 0, md: '2xl' }}
-        border="1px solid"
-        borderColor={{
-          base: 'transparent',
-          md: isTyping ? 'blue.500' : CustomColor.border,
-        }}
-        align="center"
-        justify="center"
+      <Box
         pos={{ base: 'fixed', md: 'relative' }}
-        direction={selectedChat?.locked && isLessThanMd ? 'column' : 'row'}
         bottom={0}
         left={0}
         w="full"
         zIndex={1}
+        bgColor="gray.700"
       >
-        {isShowJumpToBottomButton && (
-          <Tooltip label="Jump to the last message" openDelay={500}>
-            <IconButton
-              icon={<TbChevronDown />}
-              aria-label="Jump to bottom"
-              onClick={handleJumpToBottom}
-              pos="absolute"
-              right="1rem"
-              top={editingMessage ? '-200%' : '-100%'}
-            />
-          </Tooltip>
+        {!!editingMessage && (
+          <SelectedMessage
+            icon={TbPencil}
+            onClose={() => setEditingMessage(undefined)}
+            title={editingMessage.content}
+            info={
+              <>
+                Edit Message
+                <Tooltip
+                  label="Note: All subsequent messages will be deleted after you submit an edit."
+                  placement="top"
+                >
+                  <IconButton
+                    icon={<TbInfoCircle />}
+                    aria-label="Edit info"
+                    variant="link"
+                    fontSize="xl"
+                    color="blue.500"
+                    mt="-2px"
+                  />
+                </Tooltip>
+              </>
+            }
+          />
         )}
-        <Box w="full">{renderMessageInput()}</Box>
-        {renderMessageInputCTA()}
-      </Flex>
+
+        {!!template && (
+          <SelectedMessage
+            icon={TbTemplate}
+            onClose={() => setTemplate(undefined)}
+            title={template.Title}
+            info={
+              <>
+                By{' '}
+                <Link
+                  href={template.AuthorURL}
+                  target="_blank"
+                  ml={1}
+                  isTruncated
+                >
+                  {template.AuthorName}
+                </Link>
+              </>
+            }
+          />
+        )}
+
+        {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
+
+        <Flex
+          p={2}
+          pb={{ base: 6, md: 2 }}
+          pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
+          bgColor={isTyping ? 'gray.700' : CustomColor.card}
+          borderRadius={{ base: 0, md: '2xl' }}
+          border="1px solid"
+          borderColor={{
+            base: 'transparent',
+            md: isTyping ? 'blue.500' : CustomColor.border,
+          }}
+          align="center"
+          justify="center"
+          direction={selectedChat?.locked && isLessThanMd ? 'column' : 'row'}
+        >
+          {isShowJumpToBottomButton && (
+            <Tooltip label="Jump to the last message" openDelay={500}>
+              <IconButton
+                icon={<TbChevronDown />}
+                aria-label="Jump to bottom"
+                onClick={handleJumpToBottom}
+                pos="absolute"
+                right="1rem"
+                top="-4rem"
+              />
+            </Tooltip>
+          )}
+          <Box w="full">{renderMessageInput()}</Box>
+          {renderMessageInputCTA()}
+        </Flex>
+      </Box>
     </>
   );
 };

@@ -17,6 +17,7 @@ export interface Message {
   role: 'user' | 'system' | 'assistant';
   content: string;
   chatId?: number;
+  originalContent?: string;
   createdAt?: number;
   updatedAt?: number;
 }
