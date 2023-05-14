@@ -57,7 +57,7 @@ export const ChatMessagesContainer: React.FC = () => {
         top: window.document.body.scrollHeight,
       });
     }
-  }, [messages]);
+  }, [selectedChatId]);
 
   useEffect(() => {
     if (selectedChatId) {
@@ -283,7 +283,7 @@ export const ChatMessagesContainer: React.FC = () => {
     <>
       <Flex
         w="full"
-        h={{ base: 'calc(100vh - 1rem - 1px)', md: 'full' }}
+        h={{ base: 'auto', md: 'full' }}
         align="flex-start"
         overflow="auto"
         direction={messages.length ? 'column-reverse' : 'column'}
