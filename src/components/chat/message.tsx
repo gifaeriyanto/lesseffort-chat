@@ -266,6 +266,20 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           },
           ['table td, table th']: {
             fontSize: '0.938rem',
+            verticalAlign: 'baseline',
+          },
+          ['h1, h2, h3']: {
+            fontWeight: 'bold',
+            marginBottom: '1rem',
+          },
+          h1: {
+            fontSize: '1.8rem',
+          },
+          h2: {
+            fontSize: '1.4rem',
+          },
+          h3: {
+            fontSize: '1.2rem',
           },
         }}
       >
