@@ -190,7 +190,11 @@ export const ChatMessagesContainer: React.FC = () => {
         title: value,
       });
     }
-    streamChatCompletion(value, false, template?.Prompt);
+    streamChatCompletion(
+      value,
+      false,
+      template?.Prompt + '\n\nAlways use markdown format.',
+    );
     setTemplate(undefined);
   };
 
