@@ -285,7 +285,7 @@ export const ChatMessagesContainer: React.FC = () => {
         w="full"
         h={{ base: 'auto', md: 'full' }}
         align="flex-start"
-        overflow="auto"
+        overflow={{ base: 'initial', md: 'auto' }}
         direction={messages.length ? 'column-reverse' : 'column'}
         ref={chatAreaRef}
         px={{ base: 4, md: 0 }}
