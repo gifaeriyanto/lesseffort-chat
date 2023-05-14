@@ -27,7 +27,7 @@ import {
   TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChat } from 'store/openai';
+import { modifyTemplate, useChat } from 'store/openai';
 import { Prompt } from 'store/supabase';
 import { CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
@@ -174,13 +174,22 @@ export const ChatMessagesContainer: React.FC = () => {
       return;
     }
 
+    const prompt = template
+      ? {
+          content: modifyTemplate(value, template.Prompt),
+          originalContent: value,
+        }
+      : {
+          content: value,
+        };
+
     if (selectedChatId) {
       await dbMessages.add<Message>({
         chatId: selectedChatId,
-        content: value,
         role: 'user',
         createdAt: getUnixTime(new Date()),
         updatedAt: getUnixTime(new Date()),
+        ...prompt,
       });
     } else {
       await newChat({
@@ -190,11 +199,7 @@ export const ChatMessagesContainer: React.FC = () => {
         title: value,
       });
     }
-    streamChatCompletion(
-      value,
-      false,
-      template?.Prompt + '\n\nAlways use markdown format.',
-    );
+    streamChatCompletion(value, false, template ? prompt.content : undefined);
     setTemplate(undefined);
   };
 
@@ -305,17 +310,20 @@ export const ChatMessagesContainer: React.FC = () => {
           <ChatMessage key="message-0" message={generatingMessage} noActions />
         )}
         {messages.map((message) => (
-          <ChatMessage
-            key={message.id || message.createdAt}
-            isMe={message.role === 'user'}
-            id={message.id}
-            message={message.originalContent || message.content}
-            onEdit={() => setEditingMessage(message)}
-            onRegenerateResponse={() =>
-              message.id && regenerateResponse(message.id)
-            }
-            isLockedChat={selectedChat?.locked}
-          />
+          <>
+            <ChatMessage
+              key={message.id || message.createdAt}
+              isMe={message.role === 'user'}
+              id={message.id}
+              message={message.originalContent || message.content}
+              onEdit={() => setEditingMessage(message)}
+              onRegenerateResponse={() =>
+                message.id && regenerateResponse(message.id)
+              }
+              isLockedChat={selectedChat?.locked}
+            />
+            {console.log(message.id || message.createdAt)}
+          </>
         ))}
       </>
     );

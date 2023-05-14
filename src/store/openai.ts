@@ -9,6 +9,15 @@ import { useIndexedDB } from 'react-indexed-db';
 import { getMessagesByChatID } from 'store/db/queries';
 import { create } from 'zustand';
 
+export const modifyTemplate = (prompt: string, template: string) => {
+  return (
+    template
+      .replaceAll('[PROMPT]', prompt)
+      .replaceAll('[TARGETLANGUAGE]', 'English') +
+    '\n\nAlways use markdown format.'
+  );
+};
+
 export const useUsage = create<{
   usage: number;
   getUsages: () => Promise<number | void>;
@@ -63,23 +72,27 @@ export const useChat = create<{
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
   stopStream: (noUpdateMessages) => {
-    const { xhr, generatingMessage } = get();
+    const dbMessages = useIndexedDB('messages');
+    const { xhr, generatingMessage, selectedChatId } = get();
     xhr?.abort();
-    if (noUpdateMessages) {
-      set({
-        generatingMessage: '',
-        isTyping: false,
+    if (generatingMessage) {
+      dbMessages.add<Message>({
+        role: 'assistant',
+        content:
+          generatingMessage +
+          '\n\n> 🚨 ***error***\n> This message was interrupted last time.',
+        chatId: selectedChatId,
+        createdAt: getUnixTime(new Date()),
+        updatedAt: getUnixTime(new Date()),
       });
-    } else {
-      set((prev) => ({
-        messages: [
-          { role: 'assistant', content: generatingMessage },
-          ...prev.messages,
-        ],
-        generatingMessage: '',
-        isTyping: false,
-      }));
     }
+    set((prev) => ({
+      messages: generatingMessage
+        ? [{ role: 'assistant', content: generatingMessage }, ...prev.messages]
+        : prev.messages,
+      generatingMessage: '',
+      isTyping: false,
+    }));
   },
   streamChatCompletion: (value, notNewMessage, template) => {
     const {
@@ -94,20 +107,21 @@ export const useChat = create<{
 
     set({ isTyping: true });
 
-    let content = value;
-    if (template) {
-      content = template
-        .replaceAll('[PROMPT]', value)
-        .replaceAll('[TARGETLANGUAGE]', 'English');
-    }
+    const userContent = template
+      ? {
+          content: modifyTemplate(value, template),
+          originalContent: value,
+        }
+      : {
+          content: value,
+        };
 
     const userMessage: Message = {
       chatId,
       role: 'user',
-      content,
-      originalContent: value,
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
+      ...userContent,
     };
 
     const updatedMessages = notNewMessage
@@ -154,6 +168,9 @@ export const useChat = create<{
     };
 
     const onError = async (_: Error, status: number) => {
+      set({
+        isTyping: false,
+      });
       switch (status) {
         case 400:
           if (chatId) {
@@ -210,7 +227,9 @@ export const useChat = create<{
     reset();
   },
   getMessages: async (chatId) => {
+    localStorage.setItem('lastOpenChatId', String(chatId));
     const filteredMessages = await getMessagesByChatID(chatId);
+    console.log(filteredMessages);
     set({ messages: reverse(filteredMessages) });
     return filteredMessages;
   },
@@ -245,7 +264,6 @@ export const useChat = create<{
     const { getMessages, setEditingMessage, stopStream } = get();
     stopStream(true);
     setEditingMessage(undefined);
-    localStorage.setItem('lastOpenChatId', String(chatId));
     set({ selectedChatId: chatId });
     if (chatId) {
       getMessages(chatId);

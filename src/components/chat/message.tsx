@@ -258,6 +258,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           ['.hljs']: {
             maxWidth: 'full',
             overflow: 'auto',
+            fontSize: '0.938rem',
           },
           ['pre code:not(.hljs)']: {
             maxWidth: 'full',
@@ -280,6 +281,11 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           },
           h3: {
             fontSize: '1.2rem',
+          },
+          blockquote: {
+            borderLeft: '2px solid',
+            borderColor: 'gray.400',
+            pl: 4,
           },
         }}
       >
