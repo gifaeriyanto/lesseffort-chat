@@ -262,9 +262,9 @@ export const ChatMessagesContainer: React.FC = () => {
         {!!generatingMessage && (
           <ChatMessage message={generatingMessage} noActions />
         )}
-        {messages.map((message, index) => (
+        {messages.map((message) => (
           <ChatMessage
-            key={message.id || index}
+            key={message.id || message.createdAt}
             isMe={message.role === 'user'}
             id={message.id}
             message={message.content}
