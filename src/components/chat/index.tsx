@@ -47,7 +47,7 @@ export const Chat: React.FC = () => {
   return (
     <Flex
       w="full"
-      maxW="50rem"
+      maxW="60rem"
       direction="column"
       h={{ base: 'auto', md: 'calc(100vh - 2rem)' }}
       m="auto"

@@ -264,6 +264,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             overflow: 'auto',
             whiteSpace: 'pre-wrap',
           },
+          ['table td, table th']: {
+            fontSize: '0.938rem',
+          },
         }}
       >
         <ReactMarkdown
