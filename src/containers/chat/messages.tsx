@@ -66,7 +66,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const handleJumpToBottom = () => {
     if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = 100;
+      chatAreaRef.current.scrollTo(0, 0);
     }
   };
 
@@ -90,12 +90,6 @@ export const ChatMessagesContainer: React.FC = () => {
       );
     };
   }, [chatAreaRef]);
-
-  useEffect(() => {
-    if (generatingMessage) {
-      handleJumpToBottom();
-    }
-  }, [generatingMessage]);
 
   const handleNewChat = () => {
     newChat({
