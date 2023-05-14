@@ -88,7 +88,7 @@ export const Chat: React.FC = () => {
                 bgColor="gray.600"
               />
             </Box>
-            <Box overflowY="auto" h="calc(100% - 11rem)">
+            <Box overflowY="auto" h="calc(100% - 140px)">
               <ChatHistory search={search} />
             </Box>
             <Flex gap={4} p={4} borderTop={`1px solid ${CustomColor.border}`}>

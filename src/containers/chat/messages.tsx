@@ -53,9 +53,11 @@ export const ChatMessagesContainer: React.FC = () => {
 
   useEffect(() => {
     if (isLessThanMd) {
-      (chatAreaRef as any).current = window.document.body;
+      window.scrollTo({
+        top: window.document.body.scrollHeight,
+      });
     }
-  }, [isLessThanMd]);
+  }, [messages]);
 
   useEffect(() => {
     if (selectedChatId) {
@@ -72,13 +74,29 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const handleJumpToBottom = () => {
     chatAreaRef?.current?.scrollTo(0, 0);
+    if (isLessThanMd) {
+      window.scrollTo({
+        top: window.document.body.scrollHeight,
+      });
+    }
   };
 
-  const handleJumpToBottomButton = () => {
+  const handleShowJumpToBottom = () => {
     if (!chatAreaRef.current) {
       return;
     }
-    if (chatAreaRef.current.scrollTop < -100) {
+
+    let isScrollNotInBottom = chatAreaRef.current.scrollTop < -100;
+    if (isLessThanMd) {
+      const bodyElement = document.body;
+      const scrollTopBody =
+        bodyElement.scrollTop || document.documentElement.scrollTop;
+      isScrollNotInBottom =
+        scrollTopBody + bodyElement.clientHeight <
+        bodyElement.scrollHeight - 500;
+    }
+
+    if (isScrollNotInBottom) {
       showJumpToBottomButton();
     } else {
       hideJumpToBottomButton();
@@ -86,14 +104,24 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   useEffect(() => {
-    chatAreaRef.current?.addEventListener('scroll', handleJumpToBottomButton);
+    chatAreaRef.current?.addEventListener('scroll', handleShowJumpToBottom);
     return () => {
       chatAreaRef.current?.removeEventListener(
         'scroll',
-        handleJumpToBottomButton,
+        handleShowJumpToBottom,
       );
     };
   }, [chatAreaRef]);
+
+  useEffect(() => {
+    if (!isLessThanMd) {
+      return;
+    }
+    window.document.addEventListener('scroll', handleShowJumpToBottom);
+    return () => {
+      window.document.removeEventListener('scroll', handleShowJumpToBottom);
+    };
+  }, [isLessThanMd]);
 
   const handleNewChat = () => {
     newChat({
@@ -255,7 +283,7 @@ export const ChatMessagesContainer: React.FC = () => {
     <>
       <Flex
         w="full"
-        h="full"
+        h={{ base: 'calc(100vh - 1rem - 1px)', md: 'full' }}
         align="flex-start"
         overflow="auto"
         direction={messages.length ? 'column-reverse' : 'column'}
@@ -324,6 +352,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
       <Flex
         p={2}
+        pb={{ base: 6, md: 2 }}
         pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
         borderRadius={{ base: 0, md: '2xl' }}
@@ -348,7 +377,7 @@ export const ChatMessagesContainer: React.FC = () => {
               aria-label="Jump to bottom"
               onClick={handleJumpToBottom}
               pos="absolute"
-              right={{ base: 0, md: '1rem' }}
+              right="1rem"
               top={editingMessage ? '-200%' : '-100%'}
             />
           </Tooltip>
