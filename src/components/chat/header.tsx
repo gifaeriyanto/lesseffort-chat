@@ -32,6 +32,10 @@ export const ChatHeader: React.FC = () => {
       p={{ base: 4, md: 0 }}
       pb={{ base: 3, md: 2 }}
       w={{ base: 'full', md: 'auto' }}
+      pos={{ base: 'fixed', md: 'initial' }}
+      zIndex={1}
+      top={0}
+      left={0}
     >
       {isLessThanMd && (
         <IconButton
@@ -58,16 +62,9 @@ export const ChatHeader: React.FC = () => {
           <Text fontWeight="bold" fontSize="xl" lineHeight="1.2">
             Quick Chat
           </Text>
-          {isTyping ? (
-            <Text fontSize="sm" color="gray.400" fontStyle="italic">
-              Assistant is typing
-              <TypingDots />
-            </Text>
-          ) : (
-            <Text fontSize="sm" color="gray.400">
-              {messagesLength ? `${messagesLength} messages` : 'No messages'}
-            </Text>
-          )}
+          <Text fontSize="sm" color="gray.400">
+            {messagesLength ? `${messagesLength} messages` : 'No messages'}
+          </Text>
         </Box>
       </Flex>
       <HStack>

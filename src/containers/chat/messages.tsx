@@ -52,6 +52,12 @@ export const ChatMessagesContainer: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
 
   useEffect(() => {
+    if (isLessThanMd) {
+      (chatAreaRef as any).current = window.document.body;
+    }
+  }, [isLessThanMd]);
+
+  useEffect(() => {
     if (selectedChatId) {
       const chat = chatHistory.find((item) => item.id === selectedChatId);
       setSelectedChat(chat);
@@ -255,6 +261,7 @@ export const ChatMessagesContainer: React.FC = () => {
         direction={messages.length ? 'column-reverse' : 'column'}
         ref={chatAreaRef}
         px={{ base: 4, md: 0 }}
+        py={{ base: '5rem', md: 0 }}
         sx={{
           '& > div:last-child': {
             mt: 6,
@@ -318,15 +325,21 @@ export const ChatMessagesContainer: React.FC = () => {
       <Flex
         p={2}
         pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
-        mx={{ base: 4, md: 0 }}
         bgColor={isTyping ? 'gray.700' : CustomColor.card}
-        borderRadius="2xl"
+        borderRadius={{ base: 0, md: '2xl' }}
         border="1px solid"
-        borderColor={isTyping ? 'blue.500' : CustomColor.border}
+        borderColor={{
+          base: 'transparent',
+          md: isTyping ? 'blue.500' : CustomColor.border,
+        }}
         align="center"
         justify="center"
-        pos="relative"
+        pos={{ base: 'fixed', md: 'relative' }}
         direction={selectedChat?.locked && isLessThanMd ? 'column' : 'row'}
+        bottom={0}
+        left={0}
+        w="full"
+        zIndex={1}
       >
         {isShowJumpToBottomButton && (
           <Tooltip label="Jump to the last message" openDelay={500}>
