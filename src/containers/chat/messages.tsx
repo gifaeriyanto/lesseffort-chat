@@ -91,6 +91,12 @@ export const ChatMessagesContainer: React.FC = () => {
     };
   }, [chatAreaRef]);
 
+  useEffect(() => {
+    if (generatingMessage) {
+      handleJumpToBottom();
+    }
+  }, [generatingMessage]);
+
   const handleNewChat = () => {
     newChat({
       bot_instruction: defaultBotInstruction,
