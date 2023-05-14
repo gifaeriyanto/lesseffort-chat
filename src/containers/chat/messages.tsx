@@ -50,14 +50,38 @@ export const ChatMessagesContainer: React.FC = () => {
   ] = useBoolean(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
+  const [readyToUse, setReadyToUse] = useState(false);
+  const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
 
   useEffect(() => {
-    if (isLessThanMd) {
-      window.scrollTo({
-        top: window.document.body.scrollHeight,
-      });
+    if (messages.length && !readyToUse) {
+      setReadyToUse(true);
     }
-  }, [selectedChatId]);
+    return () => {
+      setReadyToUse(false);
+    };
+  }, [messages, selectedChatId]);
+
+  const jumpToBottomMobile = () => {
+    if (!isLessThanMd) {
+      return;
+    }
+    window.scrollTo({
+      top: window.document.body.scrollHeight,
+    });
+  };
+
+  useEffect(() => {
+    if (watchGeneratingMessage) {
+      jumpToBottomMobile();
+    }
+  }, [generatingMessage, watchGeneratingMessage]);
+
+  useEffect(() => {
+    if (readyToUse) {
+      jumpToBottomMobile();
+    }
+  }, [readyToUse]);
 
   useEffect(() => {
     if (selectedChatId) {
@@ -75,9 +99,7 @@ export const ChatMessagesContainer: React.FC = () => {
   const handleJumpToBottom = () => {
     chatAreaRef?.current?.scrollTo(0, 0);
     if (isLessThanMd) {
-      window.scrollTo({
-        top: window.document.body.scrollHeight,
-      });
+      setWatchGeneratingMessage(true);
     }
   };
 
@@ -94,6 +116,10 @@ export const ChatMessagesContainer: React.FC = () => {
       isScrollNotInBottom =
         scrollTopBody + bodyElement.clientHeight <
         bodyElement.scrollHeight - 500;
+
+      const userStartToScrollToTop =
+        scrollTopBody + bodyElement.clientHeight < bodyElement.scrollHeight - 1;
+      setWatchGeneratingMessage(!userStartToScrollToTop);
     }
 
     if (isScrollNotInBottom) {
@@ -289,7 +315,8 @@ export const ChatMessagesContainer: React.FC = () => {
         direction={messages.length ? 'column-reverse' : 'column'}
         ref={chatAreaRef}
         px={{ base: 4, md: 0 }}
-        py={{ base: '5rem', md: 0 }}
+        pt={{ base: '5rem', md: 0 }}
+        pb={{ base: '6rem', md: 0 }}
         sx={{
           '& > div:last-child': {
             mt: 6,
