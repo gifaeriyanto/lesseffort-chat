@@ -58,11 +58,11 @@ export const useChat = create<{
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (chatId: number | undefined) => void;
   stopStream: () => void;
-  streamChatCompletion: (
-    value: string,
-    notNewMessage?: boolean,
-    template?: string,
-  ) => void;
+  streamChatCompletion: (params: {
+    value: string;
+    notNewMessage?: boolean;
+    template?: string;
+  }) => void;
 }>((set, get) => ({
   editingMessage: undefined,
   generatingMessage: '',
@@ -97,7 +97,11 @@ export const useChat = create<{
       }));
     }
   },
-  streamChatCompletion: (value, notNewMessage, template) => {
+  streamChatCompletion: ({
+    value = '',
+    notNewMessage = false,
+    template = '',
+  }) => {
     const {
       messages,
       model,
@@ -313,7 +317,10 @@ export const useChat = create<{
     });
     await deleteTheNextMessages(editingMessage.chatId, editingMessage.id);
     await getMessages(editingMessage.chatId);
-    streamChatCompletion(message, true);
+    streamChatCompletion({
+      value: message,
+      notNewMessage: true,
+    });
     set({ editingMessage: undefined });
   },
   regenerateResponse: async (messageId) => {
@@ -337,7 +344,7 @@ export const useChat = create<{
 
     await deleteTheNextMessages(userMessage.chatId, userMessage.id);
     await getMessages(userMessage.chatId);
-    streamChatCompletion(userMessage.content, true);
+    streamChatCompletion({ value: userMessage.content, notNewMessage: true });
   },
   renameChat: async (chatId, newTitle) => {
     const { update, getByID } = useIndexedDB('chatHistory');

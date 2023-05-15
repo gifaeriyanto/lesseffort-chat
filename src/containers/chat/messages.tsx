@@ -9,10 +9,12 @@ import {
   Link,
   Tooltip,
   useBoolean,
+  useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
 import { Chat, defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
+import { ChatRules } from 'components/chat/rules';
 import SelectedMessage from 'components/chat/selectedMessage';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
@@ -22,6 +24,7 @@ import { MdSend, MdSubdirectoryArrowLeft } from 'react-icons/md';
 import {
   TbChevronDown,
   TbInfoCircle,
+  TbMenu,
   TbPencil,
   TbPlayerStopFilled,
   TbTemplate,
@@ -57,6 +60,9 @@ export const ChatMessagesContainer: React.FC = () => {
   const [readyToUse, setReadyToUse] = useState(false);
   const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
   const [template, setTemplate] = useState<Prompt | undefined>(undefined);
+  const [chatRules, setChatRules] = useState('');
+  const { isOpen: isShowRuleOptions, onToggle: toggleShowRuleOptions } =
+    useDisclosure();
 
   useEffect(() => {
     if (messages.length && !readyToUse) {
@@ -102,6 +108,10 @@ export const ChatMessagesContainer: React.FC = () => {
       richEditorRef?.current?.focus();
     }
   }, [isTyping, richEditorRef]);
+
+  const handleClearRules = () => {
+    setChatRules('');
+  };
 
   const handleJumpToBottom = () => {
     chatAreaRef?.current?.scrollTo(0, 0);
@@ -166,8 +176,10 @@ export const ChatMessagesContainer: React.FC = () => {
     richEditorRef?.current?.focus();
   };
 
-  const handleSubmitChat = async (value: string) => {
+  const handleSubmitChat = async (message: string) => {
     handleJumpToBottom();
+
+    const value = message + chatRules;
 
     if (editingMessage) {
       updateMessage(value);
@@ -199,7 +211,10 @@ export const ChatMessagesContainer: React.FC = () => {
         title: value,
       });
     }
-    streamChatCompletion(value, false, template ? prompt.content : undefined);
+    streamChatCompletion({
+      value,
+      template: template ? prompt.content : undefined,
+    });
     setTemplate(undefined);
   };
 
@@ -338,7 +353,7 @@ export const ChatMessagesContainer: React.FC = () => {
         ref={chatAreaRef}
         px={{ base: 4, md: 0 }}
         pt={{ base: '5rem', md: 0 }}
-        pb={{ base: '6rem', md: 0 }}
+        pb={{ base: '6rem', md: isShowRuleOptions ? '3rem' : 0 }}
         sx={{
           '& > div:last-child': {
             mt: 6,
@@ -403,7 +418,40 @@ export const ChatMessagesContainer: React.FC = () => {
           />
         )}
 
+        <Flex
+          justify="center"
+          w="full"
+          h="2rem"
+          top="-2rem"
+          pointerEvents="none"
+          className="rules"
+          transition="0.1s ease opacity"
+          pos="absolute"
+        >
+          <Button
+            leftIcon={<TbMenu />}
+            aria-label="Show rule options"
+            size="sm"
+            pointerEvents="initial"
+            borderBottomRadius="0"
+            bgColor="gray.500"
+            onClick={toggleShowRuleOptions}
+            _hover={{ bgColor: 'gray.600' }}
+          >
+            {isShowRuleOptions ? 'Show' : 'Hide'} Rules
+          </Button>
+        </Flex>
+
         {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
+
+        <Box mb={4} hidden={isShowRuleOptions}>
+          <ChatRules
+            onChange={setChatRules}
+            hidden={template ? ['format', 'writingStyle'] : []}
+            onClose={handleClearRules}
+            key={selectedChatId}
+          />
+        </Box>
 
         <Flex
           p={2}

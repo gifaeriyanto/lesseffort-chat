@@ -239,7 +239,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           title="Copy Text"
           icon={<TbCopy />}
           onClick={handleCopy}
-          isLockedChat={isLockedChat}
         />
         {/* Coming soon feature */}
         {false && (
