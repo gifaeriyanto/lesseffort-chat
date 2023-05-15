@@ -216,13 +216,12 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
                     <Box fontWeight="bold" fontSize="lg">
                       {item.Title}
                     </Box>
-                    <Box
-                      fontSize="sm"
-                      color="gray.400"
-                      mb={4}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Link href={item.AuthorURL} target="_blank">
+                    <Box fontSize="sm" color="gray.400" mb={4}>
+                      <Link
+                        href={item.AuthorURL}
+                        target="_blank"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         {item.AuthorName}
                       </Link>{' '}
                       . {COMMUNITIES[item.Community]}
