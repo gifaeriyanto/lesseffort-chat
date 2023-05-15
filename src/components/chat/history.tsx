@@ -48,7 +48,10 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit } = useForm();
-  const renameChat = useChat((state) => state.renameChat);
+  const { renameChat, chatHistoryCount } = useChat((state) => ({
+    renameChat: state.renameChat,
+    chatHistoryCount: state.chatHistory.length,
+  }));
 
   const handleSaveOpenaiKey = ({ title: newTitle = '' }) => {
     if (id) {
@@ -69,7 +72,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
         pl={isActive ? 'calc(1rem - 1px)' : 4}
         role="button"
         onClick={() => id && onSelect(id)}
-        _last={{ borderBottom: 0 }}
+        _last={chatHistoryCount > 8 ? { borderBottom: 0 } : undefined}
       >
         <HStack
           sx={{
