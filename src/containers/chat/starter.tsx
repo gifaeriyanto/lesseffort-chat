@@ -43,6 +43,20 @@ export interface StarterContainerProps {
   onSelectPrompt: (prompt: Prompt) => void;
 }
 
+const COMMUNITIES: Record<string, string> = {
+  'Copywriting-00ea56f446414284': 'Copywriting',
+  'DevOps-f3e52afbf831197f': 'DevOps',
+  'Generative-AI-b983edfcaa490850': 'Generative AI',
+  'Marketing-cc647f5cf02ffd02': 'Marketing',
+  'OperatingSystems-8a5ca60d957fe707': 'Operating Systems',
+  'Productivity-b5a49cdd0796137a': 'Productivity',
+  'SaaS-84c5d6a7b8e9f0c2': 'SaaS',
+  'SEO-84c5d6a7b8e9f0c1': 'SEO',
+  'Applications-f69b52b4213a6bd3': 'Software Applications',
+  'SoftwareEngineering-f1858b980c341d28': 'Software Engineering',
+  'Unsure-f69c57b424376b23': 'UNSURE',
+};
+
 export const StarterContainer: React.FC<StarterContainerProps> = ({
   onSelectPrompt,
 }) => {
@@ -137,31 +151,11 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
                       onChange={(e) => setCommunity(e.currentTarget.value)}
                     >
                       <option value="">All</option>
-                      <option value="Copywriting-00ea56f446414284">
-                        Copywriting
-                      </option>
-                      <option value="DevOps-f3e52afbf831197f">DevOps</option>
-                      <option value="Generative-AI-b983edfcaa490850">
-                        Generative AI
-                      </option>
-                      <option value="Marketing-cc647f5cf02ffd02">
-                        Marketing
-                      </option>
-                      <option value="OperatingSystems-8a5ca60d957fe707">
-                        Operating Systems
-                      </option>
-                      <option value="Productivity-b5a49cdd0796137a">
-                        Productivity
-                      </option>
-                      <option value="SaaS-84c5d6a7b8e9f0c2">SaaS</option>
-                      <option value="SEO-84c5d6a7b8e9f0c1">SEO</option>
-                      <option value="Applications-f69b52b4213a6bd3">
-                        Software Applications
-                      </option>
-                      <option value="SoftwareEngineering-f1858b980c341d28">
-                        Software Engineering
-                      </option>
-                      <option value="Unsure-f69c57b424376b23">UNSURE</option>
+                      {Object.entries(COMMUNITIES).map(([key, value]) => (
+                        <option value={key} key={key}>
+                          {value}
+                        </option>
+                      ))}
                     </Select>
                   </FormControl>
                 </VStack>
@@ -231,12 +225,7 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
                       <Link href={item.AuthorURL} target="_blank">
                         {item.AuthorName}
                       </Link>{' '}
-                      .{' '}
-                      {capitalizeWords(
-                        item.Community.split('-')
-                          .filter((_, index, arr) => index < arr.length - 1)
-                          .join(' '),
-                      )}
+                      . {COMMUNITIES[item.Community]}
                     </Box>
                     <Box fontSize="sm" color="gray.300">
                       {item.Teaser}

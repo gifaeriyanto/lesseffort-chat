@@ -16,10 +16,15 @@ import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatHeader: React.FC = () => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { messagesLength } = useChat((state) => ({
-    messagesLength: state.messages.length,
-    isTyping: state.isTyping,
-  }));
+  const { messagesLength, selectedChat } = useChat((state) => {
+    const selectedChat = state.chatHistory.find(
+      (item) => item.id === state.selectedChatId,
+    );
+    return {
+      messagesLength: state.messages.length,
+      selectedChat,
+    };
+  });
   const { onOpen } = useSidebar();
 
   return (
@@ -46,23 +51,43 @@ export const ChatHeader: React.FC = () => {
           onClick={onOpen}
         />
       )}
-      <Flex align="center" gap={4}>
-        <Flex
-          p={4}
-          bgColor="blue.500"
-          w="2.188rem"
-          h="2.188rem"
-          align="center"
-          justify="center"
-          borderRadius="full"
+      <Flex
+        align="center"
+        justify={{ base: 'center', md: 'initial' }}
+        gap={4}
+        minW="0"
+      >
+        {!isLessThanMd && (
+          <Flex
+            p={4}
+            bgColor="blue.500"
+            w="2.188rem"
+            h="2.188rem"
+            align="center"
+            justify="center"
+            borderRadius="full"
+          >
+            <Icon as={TbBrandOpenai} fontSize="2xl" />
+          </Flex>
+        )}
+        <Box
+          w={{ base: '60vw', md: '90%' }}
+          maxW={{ base: 'full', md: 'calc(100% - 3.188rem)' }}
         >
-          <Icon as={TbBrandOpenai} fontSize="2xl" />
-        </Flex>
-        <Box>
-          <Text fontWeight="bold" fontSize="xl" lineHeight="1.2">
-            Quick Chat
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            lineHeight="1.2"
+            isTruncated
+            textAlign={{ base: 'center', md: 'initial' }}
+          >
+            {selectedChat?.title || 'New Chat'}
           </Text>
-          <Text fontSize="sm" color="gray.400">
+          <Text
+            fontSize="sm"
+            color="gray.400"
+            textAlign={{ base: 'center', md: 'initial' }}
+          >
             {messagesLength ? `${messagesLength} messages` : 'No messages'}
           </Text>
         </Box>
