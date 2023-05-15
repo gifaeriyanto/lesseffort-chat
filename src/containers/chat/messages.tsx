@@ -438,7 +438,7 @@ export const ChatMessagesContainer: React.FC = () => {
             onClick={toggleShowRuleOptions}
             _hover={{ bgColor: 'gray.600' }}
           >
-            {isShowRuleOptions ? 'Show' : 'Hide'} Rules
+            {isShowRuleOptions ? 'Hide' : 'Show'} Rules
           </Button>
         </Flex>
 
