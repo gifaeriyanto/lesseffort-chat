@@ -228,7 +228,7 @@ export const ChatSidebar: React.FC = () => {
               color="gray.300"
               borderColor={CustomColor.border}
             >
-              Today is{' '}
+              Today usage is{' '}
               <Box as="b" color="blue.500">
                 ${usages.today.toFixed(2)}
               </Box>
