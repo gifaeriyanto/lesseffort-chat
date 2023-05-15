@@ -7,6 +7,7 @@ import {
   IconButton,
   LightMode,
   Link,
+  Tag,
   Tooltip,
   useBoolean,
   useDisclosure,
@@ -37,19 +38,21 @@ import { sanitizeString } from 'utils/common';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
+    chatHistory,
     editingMessage,
+    generatingMessage,
     isTyping,
     messages,
-    generatingMessage,
-    richEditorRef,
+    newChat,
     regenerateResponse,
-    streamChatCompletion,
-    stopStream,
+    richEditorRef,
+    selectedChatId,
     setEditingMessage,
+    stopStream,
+    streamChatCompletion,
     updateMessage,
   } = useChat();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { newChat, chatHistory, selectedChatId } = useChat();
   const dbMessages = useIndexedDB('messages');
   const [
     isShowJumpToBottomButton,
@@ -60,9 +63,13 @@ export const ChatMessagesContainer: React.FC = () => {
   const [readyToUse, setReadyToUse] = useState(false);
   const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
   const [template, setTemplate] = useState<Prompt | undefined>(undefined);
+  const [chatRulesCount, setChatRulesCount] = useState(0);
   const [chatRules, setChatRules] = useState('');
-  const { isOpen: isShowRuleOptions, onToggle: toggleShowRuleOptions } =
-    useDisclosure();
+  const {
+    isOpen: isShowRuleOptions,
+    onToggle: toggleShowRuleOptions,
+    onClose: hideRuleOptions,
+  } = useDisclosure();
 
   useEffect(() => {
     if (messages.length && !readyToUse) {
@@ -104,6 +111,7 @@ export const ChatMessagesContainer: React.FC = () => {
   }, [selectedChatId, chatHistory]);
 
   useEffect(() => {
+    hideRuleOptions();
     if (!isTyping) {
       richEditorRef?.current?.focus();
     }
@@ -439,6 +447,11 @@ export const ChatMessagesContainer: React.FC = () => {
             _hover={{ bgColor: 'gray.600' }}
           >
             {isShowRuleOptions ? 'Hide' : 'Show'} Rules
+            {!!chatRulesCount && (
+              <Tag ml={2} size="sm" borderRadius="full">
+                {chatRulesCount}
+              </Tag>
+            )}
           </Button>
         </Flex>
 
@@ -449,6 +462,7 @@ export const ChatMessagesContainer: React.FC = () => {
             onChange={setChatRules}
             hidden={template ? ['format', 'writingStyle'] : []}
             onClose={handleClearRules}
+            getActiveRules={setChatRulesCount}
             key={selectedChatId}
           />
         </Box>

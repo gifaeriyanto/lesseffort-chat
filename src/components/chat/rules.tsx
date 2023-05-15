@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { HStack, IconButton, Select, SelectProps } from '@chakra-ui/react';
 import { TbX } from 'react-icons/tb';
 import { CustomColor } from 'theme/foundations/colors';
@@ -11,12 +11,14 @@ export interface Rules {
 }
 
 export interface ChatRulesProps {
+  getActiveRules?: (activeRulesCount: number) => void;
   onChange?: (prompt: string, rules: Rules) => void;
   onClose?: () => void;
   hidden?: Array<keyof Rules>;
 }
 
 export const ChatRules: React.FC<ChatRulesProps> = ({
+  getActiveRules,
   onChange,
   onClose,
   hidden,
@@ -28,6 +30,19 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
     format: '',
   };
   const [rules, setRules] = useState(defaultRules);
+
+  const activeRulesCount = useMemo(() => {
+    return Object.entries(rules).reduce((prev, [key, value]) => {
+      if (value) {
+        return prev + 1;
+      }
+      return prev;
+    }, 0);
+  }, [rules]);
+
+  useEffect(() => {
+    getActiveRules?.(activeRulesCount);
+  }, [activeRulesCount]);
 
   const handleChange =
     (name: keyof Rules) => (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -281,13 +296,15 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
         </option>
         <option value="Answer in Q&amp;A format">Q&amp;A</option>
       </Select>
-      <IconButton
-        icon={<TbX />}
-        aria-label="Clear rules"
-        size="sm"
-        borderRadius="xl"
-        onClick={handleClear}
-      />
+      {!!activeRulesCount && (
+        <IconButton
+          icon={<TbX />}
+          aria-label="Clear rules"
+          size="sm"
+          borderRadius="xl"
+          onClick={handleClear}
+        />
+      )}
     </HStack>
   );
 };

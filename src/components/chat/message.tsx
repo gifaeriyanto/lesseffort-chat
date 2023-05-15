@@ -314,7 +314,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           ['ul, ol']: {
             paddingLeft: '1.25rem',
           },
-          ['p, li, pre']: {
+          ['p, li, pre, hr']: {
             marginBottom: '1rem',
           },
           ['pre']: {
