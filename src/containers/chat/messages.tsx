@@ -444,7 +444,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
         {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
 
-        <Box mb={4} hidden={isShowRuleOptions}>
+        <Box mb={4} hidden={!isShowRuleOptions}>
           <ChatRules
             onChange={setChatRules}
             hidden={template ? ['format', 'writingStyle'] : []}
