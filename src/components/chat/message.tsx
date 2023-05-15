@@ -180,21 +180,28 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent userSelect="none">
             <ModalBody py={4}>
               <VStack spacing={4}>
                 {!!id && !isLockedChat && (
                   <>
                     {isMe ? (
-                      <Box onClick={handleClose(onEdit)}>Edit</Box>
+                      <Box role="button" onClick={handleClose(onEdit)}>
+                        Edit
+                      </Box>
                     ) : (
-                      <Box onClick={handleClose(onRegenerateResponse)}>
+                      <Box
+                        role="button"
+                        onClick={handleClose(onRegenerateResponse)}
+                      >
                         Regenerate Response
                       </Box>
                     )}
                   </>
                 )}
-                <Box>Copy text</Box>
+                <Box role="button" onClick={handleCopy}>
+                  Copy text
+                </Box>
               </VStack>
             </ModalBody>
           </ModalContent>
