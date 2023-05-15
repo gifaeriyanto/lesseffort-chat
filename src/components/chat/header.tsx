@@ -16,7 +16,7 @@ import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatHeader: React.FC = () => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { isTyping, messagesLength } = useChat((state) => ({
+  const { messagesLength } = useChat((state) => ({
     messagesLength: state.messages.length,
     isTyping: state.isTyping,
   }));

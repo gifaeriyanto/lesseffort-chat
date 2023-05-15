@@ -17,9 +17,16 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
   Portal,
   Text,
   Tooltip,
+  useDisclosure,
+  useMediaQuery,
+  VStack,
 } from '@chakra-ui/react';
 import {
   TbBookmark,
@@ -129,8 +136,119 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   onEdit,
   onRegenerateResponse,
 }) => {
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [to, setTo] = useState<NodeJS.Timeout>();
+
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
+  };
+
+  const handleShowMobileActions = () => {
+    const holdTimeout = setTimeout(() => {
+      onOpen();
+    }, 300);
+    setTo(holdTimeout);
+  };
+
+  const onTouchEnd = () => {
+    clearTimeout(to);
+    setTo(undefined);
+  };
+
+  const renderActions = () => {
+    if (noActions) {
+      return null;
+    }
+
+    const handleClose = (action?: Function) => () => {
+      action?.();
+      onClose();
+    };
+
+    if (isLessThanMd) {
+      return (
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalBody py={4}>
+              <VStack spacing={4}>
+                {!!id && !isLockedChat && (
+                  <>
+                    {isMe ? (
+                      <Box onClick={handleClose(onEdit)}>Edit</Box>
+                    ) : (
+                      <Box onClick={handleClose(onRegenerateResponse)}>
+                        Regenerate Response
+                      </Box>
+                    )}
+                  </>
+                )}
+                <Box>Copy text</Box>
+                <Box onClick={onClose}>Cancel</Box>
+              </VStack>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      );
+    }
+
+    return (
+      <ButtonGroup
+        variant="outline"
+        bgColor="gray.700"
+        className="message-actions"
+        opacity={0}
+        float={{ md: 'right' }}
+        ml={4}
+      >
+        {!!id && !isLockedChat && (
+          <>
+            {isMe ? (
+              <ChatMessageAction
+                title="Edit Message"
+                icon={<TbPencil />}
+                onClick={onEdit}
+              />
+            ) : (
+              <ChatMessageAction
+                title="Regenerate Response"
+                icon={<TbReload />}
+                onClick={onRegenerateResponse}
+              />
+            )}
+          </>
+        )}
+        <ChatMessageAction
+          title="Copy Text"
+          icon={<TbCopy />}
+          onClick={handleCopy}
+          isLockedChat={isLockedChat}
+        />
+        {/* Coming soon feature */}
+        {false && (
+          <Menu>
+            <MenuButton
+              as={ChatMessageAction}
+              icon={<TbDotsVertical />}
+              title="More actions"
+            />
+            <Portal>
+              <MenuList>
+                <MenuItem onClick={comingSoon}>
+                  <TbBookmark />
+                  <Text ml={2}>Save message</Text>
+                </MenuItem>
+                <MenuItem onClick={comingSoon}>
+                  <TbTrash />
+                  <Text ml={2}>Delete message</Text>
+                </MenuItem>
+              </MenuList>
+            </Portal>
+          </Menu>
+        )}
+      </ButtonGroup>
+    );
   };
 
   return (
@@ -142,68 +260,14 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       gap={4}
       pos="relative"
       _hover={{
-        ['.message-actions']: {
-          opacity: 1,
+        md: {
+          ['.message-actions']: {
+            opacity: 1,
+          },
         },
       }}
       id={`message-${id || 0}`}
     >
-      {!noActions && (
-        <ButtonGroup
-          variant="outline"
-          pos="absolute"
-          top="0"
-          right="1rem"
-          bgColor="gray.700"
-          className="message-actions"
-          opacity="0"
-          transition="0.2s ease opacity"
-        >
-          {isMe ? (
-            <ChatMessageAction
-              title="Edit Message"
-              icon={<TbPencil />}
-              onClick={onEdit}
-              isLockedChat={isLockedChat}
-            />
-          ) : (
-            <ChatMessageAction
-              title="Regenerate Response"
-              icon={<TbReload />}
-              onClick={onRegenerateResponse}
-              isLockedChat={isLockedChat}
-            />
-          )}
-          <ChatMessageAction
-            title="Copy Text"
-            icon={<TbCopy />}
-            onClick={handleCopy}
-            isLockedChat={isLockedChat}
-          />
-          {/* Coming soon feature */}
-          {false && (
-            <Menu>
-              <MenuButton
-                as={ChatMessageAction}
-                icon={<TbDotsVertical />}
-                title="More actions"
-              />
-              <Portal>
-                <MenuList>
-                  <MenuItem onClick={comingSoon}>
-                    <TbBookmark />
-                    <Text ml={2}>Save message</Text>
-                  </MenuItem>
-                  <MenuItem onClick={comingSoon}>
-                    <TbTrash />
-                    <Text ml={2}>Delete message</Text>
-                  </MenuItem>
-                </MenuList>
-              </Portal>
-            </Menu>
-          )}
-        </ButtonGroup>
-      )}
       {isMe ? (
         <Avatar
           name="Demo"
@@ -229,6 +293,8 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         color={isMe ? 'gray.300' : 'gray.200'}
         maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
         w="full"
+        onTouchStart={handleShowMobileActions}
+        onTouchEnd={onTouchEnd}
         sx={{
           ['ul, ol']: {
             paddingLeft: '1.25rem',
@@ -289,6 +355,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           },
         }}
       >
+        {renderActions()}
         <ReactMarkdown
           components={{
             code: CodeBlock,
