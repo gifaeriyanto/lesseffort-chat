@@ -9,42 +9,45 @@ import {
   Box,
   Button,
   Flex,
-  Icon,
   IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
   LightMode,
   Text,
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
 import { defaultBotInstruction, OpenAIModel } from 'api/chat';
+import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { Search } from 'components/search';
-import { TbPlus, TbSearch, TbX } from 'react-icons/tb';
+import { getUnixTime } from 'date-fns';
+import { TbPlus, TbSearch } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { CustomColor } from 'theme/foundations/colors';
-import { debounce } from 'utils/common';
 
 export const ChatSidebar: React.FC = () => {
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { richEditorRef, getChatHistory, newChat } = useChat();
   const [search, setSearch] = useState('');
-
-  const debounceOnChange = debounce(
-    (setter: Function, value: unknown) => setter(value),
-    300,
-  );
+  const [usages, setUsages] = useState({
+    total: 0,
+    today: 0,
+  });
 
   useEffect(() => {
     getChatHistory();
-    // botDb.add({
-    //   name: 'Dinda',
-    //   instruction:
-    //     'You are a very smart humorous. Respond with casual language but friendly. Your name is Dinda. Use markdown format and if you write a code, please do with maximal 10 words per line. Always use bahasa and use supported emoticon for all devices',
-    // });
+    getUsages().then((res) => {
+      const todayUsageItems = res.data.daily_costs[
+        new Date().getDate() - 1
+      ].line_items.reduce((prev, curr) => {
+        return prev + curr.cost;
+      }, 0);
+
+      setUsages({
+        total: res.data.total_usage,
+        today: todayUsageItems,
+      });
+    });
   }, []);
 
   const handleNewChat = () => {
@@ -135,12 +138,15 @@ export const ChatSidebar: React.FC = () => {
           borderColor={CustomColor.border}
         >
           <Flex gap={4}>
-            <Avatar name="Demo" src="https://bit.ly/ryan-florence" />
+            {/* <Avatar name="Demo" src="https://bit.ly/ryan-florence" /> */}
             <Flex justify="space-between" w="full">
               <Box>
-                <Text fontWeight="bold">Demo</Text>
-                <Text fontSize="sm" color="gray.400">
-                  Trial user
+                <Text fontWeight="bold">Usages</Text>
+                <Text fontSize="sm" color="gray.300">
+                  This month:{' '}
+                  <Box as="b" color="blue.500">
+                    ${usages.total.toFixed(2)}
+                  </Box>
                 </Text>
               </Box>
               <AccordionButton w="auto" p={1} transform="rotate(180deg)">
@@ -149,8 +155,16 @@ export const ChatSidebar: React.FC = () => {
             </Flex>
           </Flex>
           <AccordionPanel p={0} mt={4}>
-            <Box py={2} borderTop="1px solid" borderColor={CustomColor.border}>
-              Your usage for today: $0.5
+            <Box
+              pt={4}
+              borderTop="1px solid"
+              color="gray.300"
+              borderColor={CustomColor.border}
+            >
+              Today is{' '}
+              <Box as="b" color="blue.500">
+                ${usages.today.toFixed(2)}
+              </Box>
             </Box>
           </AccordionPanel>
         </AccordionItem>
