@@ -283,6 +283,7 @@ export const ChatMessagesContainer: React.FC = () => {
                 }
               }
             }}
+            alignSelf="flex-end"
           />
         </LightMode>
       );
