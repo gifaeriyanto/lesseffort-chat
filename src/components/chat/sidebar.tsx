@@ -8,6 +8,11 @@ import {
   Avatar,
   Box,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   IconButton,
   LightMode,
@@ -19,12 +24,13 @@ import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { Search } from 'components/search';
-import { getUnixTime } from 'date-fns';
 import { TbPlus, TbSearch } from 'react-icons/tb';
 import { useChat } from 'store/openai';
+import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatSidebar: React.FC = () => {
+  const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { richEditorRef, getChatHistory, newChat } = useChat();
@@ -57,11 +63,65 @@ export const ChatSidebar: React.FC = () => {
       model: OpenAIModel.GPT_3_5,
       title: 'New Chat',
     });
+    onCloseSidebar();
     richEditorRef?.current?.focus();
   };
 
   if (isLessThanMd) {
-    return null;
+    return (
+      <Drawer isOpen={isOpenSidebar} placement="left" onClose={onCloseSidebar}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader>
+            <Flex align="center" justify="space-between">
+              <Text fontWeight="bold">
+                Effortless{' '}
+                <Text color="blue.500" as="span">
+                  AI
+                </Text>
+              </Text>
+              <LightMode>
+                <IconButton
+                  icon={<TbPlus />}
+                  aria-label="New chat"
+                  colorScheme="blue"
+                  fontSize="xl"
+                  onClick={handleNewChat}
+                  size="sm"
+                  borderRadius="full"
+                />
+              </LightMode>
+            </Flex>
+          </DrawerHeader>
+
+          <DrawerBody p={0}>
+            <Box p={2} h="3.571rem" flexShrink={0}>
+              <Search
+                onSearch={setSearch}
+                borderRadius="lg"
+                bgColor="gray.600"
+              />
+            </Box>
+            <Box overflowY="auto" h="calc(100% - 9.75rem)">
+              <ChatHistory search={search} />
+            </Box>
+            <Flex gap={4} p={4} borderTop={`1px solid ${CustomColor.border}`}>
+              <Flex justify="space-between" w="full">
+                <Box>
+                  <Text fontWeight="bold">Usages</Text>
+                  <Text fontSize="sm" color="gray.300">
+                    This month:{' '}
+                    <Box as="b" color="blue.500">
+                      ${usages.total.toFixed(2)}
+                    </Box>
+                  </Text>
+                </Box>
+              </Flex>
+            </Flex>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    );
   }
 
   return (
@@ -138,7 +198,6 @@ export const ChatSidebar: React.FC = () => {
           borderColor={CustomColor.border}
         >
           <Flex gap={4}>
-            {/* <Avatar name="Demo" src="https://bit.ly/ryan-florence" /> */}
             <Flex justify="space-between" w="full">
               <Box>
                 <Text fontWeight="bold">Usages</Text>
