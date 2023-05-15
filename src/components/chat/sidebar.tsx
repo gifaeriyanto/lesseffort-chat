@@ -49,8 +49,8 @@ export const ChatSidebar: React.FC = () => {
       }, 0);
 
       setUsages({
-        total: res.data.total_usage,
-        today: todayUsageItems,
+        total: res.data.total_usage * 0.01,
+        today: todayUsageItems * 0.01,
       });
     });
   };
