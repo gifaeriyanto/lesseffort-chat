@@ -40,8 +40,7 @@ export const ChatSidebar: React.FC = () => {
     today: 0,
   });
 
-  useEffect(() => {
-    getChatHistory();
+  const fetchUsages = () => {
     getUsages().then((res) => {
       const todayUsageItems = res.data.daily_costs[
         new Date().getDate() - 1
@@ -54,6 +53,15 @@ export const ChatSidebar: React.FC = () => {
         today: todayUsageItems,
       });
     });
+  };
+
+  useEffect(() => {
+    getChatHistory();
+    fetchUsages();
+
+    const intervalId = setInterval(fetchUsages, 60000); // 1 minute
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleNewChat = () => {
