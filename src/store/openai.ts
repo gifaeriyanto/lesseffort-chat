@@ -232,7 +232,6 @@ export const useChat = create<{
   getMessages: async (chatId) => {
     localStorage.setItem('lastOpenChatId', String(chatId));
     const filteredMessages = await getMessagesByChatID(chatId);
-    console.log(filteredMessages);
     set({ messages: reverse(filteredMessages) });
     return filteredMessages;
   },
