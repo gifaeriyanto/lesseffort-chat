@@ -1,5 +1,5 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
-import { Box } from '@chakra-ui/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, useMediaQuery } from '@chakra-ui/react';
 import { RichEditorTextareaStyle } from 'components/richEditor/richEditor.styles';
 import {
   ContentState,
@@ -29,6 +29,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   onSubmit,
   placeholder,
 }) => {
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const initialEditorState = defaultValue
     ? EditorState.createWithContent(ContentState.createFromText(defaultValue))
     : EditorState.createEmpty();
@@ -111,7 +112,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       return 'strikethrough';
     }
 
-    if (onSubmit && !e.shiftKey && e.key === 'Enter') {
+    if (!isLessThanMd && onSubmit && !e.shiftKey && e.key === 'Enter') {
       handleSubmit();
       return 'submit';
     }
