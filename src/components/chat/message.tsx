@@ -199,7 +199,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                     )}
                   </>
                 )}
-                <Box role="button" onClick={handleCopy}>
+                <Box role="button" onClick={handleClose(handleCopy)}>
                   Copy text
                 </Box>
               </VStack>
