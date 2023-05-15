@@ -150,13 +150,7 @@ export const ChatSidebar: React.FC = () => {
           </Flex>
           <AccordionPanel p={0} mt={4}>
             <Box py={2} borderTop="1px solid" borderColor={CustomColor.border}>
-              Clear conversations
-            </Box>
-            <Box py={2} borderTop="1px solid" borderColor={CustomColor.border}>
-              Setting
-            </Box>
-            <Box pt={2} borderTop="1px solid" borderColor={CustomColor.border}>
-              Log out
+              Your usage for today: $0.5
             </Box>
           </AccordionPanel>
         </AccordionItem>

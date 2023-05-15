@@ -151,10 +151,20 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     setTo(holdTimeout);
   };
 
-  const onTouchEnd = () => {
+  const handleClearTimeout = () => {
     clearTimeout(to);
     setTo(undefined);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      return;
+    }
+    window.addEventListener('scroll', handleClearTimeout);
+    return () => {
+      window.removeEventListener('scroll', handleClearTimeout);
+    };
+  }, [to, isOpen]);
 
   const renderActions = () => {
     if (noActions) {
@@ -185,7 +195,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                   </>
                 )}
                 <Box>Copy text</Box>
-                <Box onClick={onClose}>Cancel</Box>
               </VStack>
             </ModalBody>
           </ModalContent>
@@ -294,7 +303,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
         w="full"
         onTouchStart={handleShowMobileActions}
-        onTouchEnd={onTouchEnd}
+        onTouchEnd={handleClearTimeout}
         sx={{
           ['ul, ol']: {
             paddingLeft: '1.25rem',
