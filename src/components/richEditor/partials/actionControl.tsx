@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   HStack,
   IconButton,
@@ -31,7 +31,7 @@ export const ActionControl: React.FC<ActionControlProps> = ({
 }) => {
   const [isMac, { on }] = useBoolean(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (window.navigator.appVersion.indexOf('Mac') !== -1) {
       on();
     }

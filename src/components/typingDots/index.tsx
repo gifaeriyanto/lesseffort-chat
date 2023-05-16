@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 
 export const TypingDots: React.FC = () => {
   const [dots, setDots] = useState('.');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const intervalId = setInterval(() => {
       setDots((prevDots) => {
         const numDots = (prevDots.length % 3) + 1;

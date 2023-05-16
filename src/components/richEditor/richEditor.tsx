@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Box, useMediaQuery } from '@chakra-ui/react';
 import { RichEditorTextareaStyle } from 'components/richEditor/richEditor.styles';
 import {
@@ -38,7 +38,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   const richEditorRef = useRef<Editor>(null);
   const setRichEditorRef = useChat((state) => state.setRichEditorRef);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (richEditorRef.current) {
       setRichEditorRef(richEditorRef);
     }

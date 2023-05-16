@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -75,7 +75,7 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
     };
   }, [page]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setPage(1);
   }, [count, order]);
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   Box,
   Button,
@@ -56,7 +56,7 @@ const ChatSettings: React.FC = () => {
     watch,
   } = useForm<FormInputs>();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     selectedChat?.title && setValue('title', selectedChat?.title);
     setValue('botInstruction', botInstruction);
     setValue('model', model);

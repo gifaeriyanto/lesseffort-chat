@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   Button,
   Grid,
@@ -28,7 +28,7 @@ const ChatContainer: React.FC = () => {
   const { getPWAStatus } = usePWA();
   const { setSelectedChatId } = useChat();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getPWAStatus();
 
     if (localStorage.getItem('lastOpenChatId')) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   Icon,
   Input,
@@ -17,7 +17,7 @@ export const Search: React.FC<SearchProps> = ({ onSearch, ...props }) => {
   const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onSearch(search);
   }, [search]);
 

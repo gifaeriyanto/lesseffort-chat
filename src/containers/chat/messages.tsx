@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -72,11 +72,11 @@ export const ChatMessagesContainer: React.FC = () => {
     onClose: hideRuleOptions,
   } = useDisclosure();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getPhoto();
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (messages.length && !readyToUse) {
       setReadyToUse(true);
     }
@@ -94,19 +94,19 @@ export const ChatMessagesContainer: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (watchGeneratingMessage) {
       jumpToBottomMobile();
     }
   }, [generatingMessage, watchGeneratingMessage]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (readyToUse) {
       jumpToBottomMobile();
     }
   }, [readyToUse]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (selectedChatId) {
       const chat = chatHistory.find((item) => item.id === selectedChatId);
       setSelectedChat(chat);
@@ -115,7 +115,7 @@ export const ChatMessagesContainer: React.FC = () => {
     setTemplate(undefined);
   }, [selectedChatId, chatHistory]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     hideRuleOptions();
     if (!isTyping) {
       richEditorRef?.current?.focus();
@@ -159,7 +159,7 @@ export const ChatMessagesContainer: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     chatAreaRef.current?.addEventListener('scroll', handleShowJumpToBottom);
     return () => {
       chatAreaRef.current?.removeEventListener(
@@ -169,7 +169,7 @@ export const ChatMessagesContainer: React.FC = () => {
     };
   }, [chatAreaRef]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isLessThanMd) {
       return;
     }

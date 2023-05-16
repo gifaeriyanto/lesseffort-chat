@@ -1,7 +1,7 @@
 import React, {
   memo,
   PropsWithChildren,
-  useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -96,7 +96,7 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
   const textInput = useRef<HTMLElement>(null);
   const [lang, setLang] = useState('');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let className = props.className;
     setLang(className?.replace('hljs language-', '') || '');
   }, []);
@@ -112,7 +112,7 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
   return (
     <Box pos="relative">
       {!!lang && (
-        <Box fontSize="sm" color="gray.400" pl={2} pt={2} mb={4}>
+        <Box fontSize="sm" color="gray.400" mb={4}>
           {lang}
         </Box>
       )}
@@ -122,8 +122,8 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
         aria-label="Copy code"
         onClick={handleCopy}
         pos="absolute"
-        top={0}
-        right={0}
+        top={-2}
+        right={-2}
         size="sm"
         fontSize="md"
       />
@@ -160,7 +160,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     setTo(undefined);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isOpen) {
       return;
     }
@@ -320,7 +320,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             maxWidth: 'full',
             borderRadius: 'md',
             bgColor: '#000 !important',
-            p: 2,
+            p: 4,
           },
           table: {
             marginBottom: '1rem',
@@ -339,6 +339,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             maxWidth: 'full',
             overflow: 'auto',
             fontSize: '0.938rem',
+            p: 0,
           },
           ['pre code:not(.hljs)']: {
             maxWidth: 'full',

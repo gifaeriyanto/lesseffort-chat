@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { HStack, IconButton, Select, SelectProps } from '@chakra-ui/react';
 import { TbX } from 'react-icons/tb';
 import { CustomColor } from 'theme/foundations/colors';
@@ -40,7 +40,7 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
     }, 0);
   }, [rules]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getActiveRules?.(activeRulesCount);
   }, [activeRulesCount]);
 
@@ -57,7 +57,7 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
     onClose?.();
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const prompts = [];
     if (rules.outputLanguage) {
       prompts.push(`${rules.outputLanguage} language`);

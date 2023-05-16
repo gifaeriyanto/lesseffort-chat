@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -54,7 +54,7 @@ export const ChatSidebar: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getChatHistory();
     fetchUsages();
 
