@@ -92,7 +92,7 @@ export const ChatHeader: React.FC = () => {
         </Box>
       </Flex>
       {!!messagesLength ? (
-        <HistoryActions id={selectedChat?.id} />
+        <HistoryActions id={selectedChat?.id} bgColor="gray.700" />
       ) : (
         // to keep chat title centered
         <Box w="2.188rem" />

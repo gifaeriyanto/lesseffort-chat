@@ -5,6 +5,7 @@ import {
   FormControl,
   FormLabel,
   IconButton,
+  IconButtonProps,
   Input,
   Menu,
   MenuButton,
@@ -26,11 +27,15 @@ import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { formatDateFromTimestamp } from 'utils/common';
 
-export interface HistoryActionsProps {
+export interface HistoryActionsProps
+  extends Partial<Omit<IconButtonProps, 'id'>> {
   id?: number;
 }
 
-export const HistoryActions: React.FC<HistoryActionsProps> = ({ id }) => {
+export const HistoryActions: React.FC<HistoryActionsProps> = ({
+  id,
+  ...props
+}) => {
   const {
     isOpen: isOpenInfoModal,
     onOpen: onOpenInfoModal,
@@ -80,6 +85,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({ id }) => {
             bgColor: 'gray.500',
           }}
           onClick={(e) => e.stopPropagation()}
+          {...props}
         />
         <Portal>
           <MenuList>
