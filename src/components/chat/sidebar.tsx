@@ -107,7 +107,11 @@ export const ChatSidebar: React.FC = () => {
                 bgColor="gray.600"
               />
             </Box>
-            <Box overflowY="auto" h="calc(100% - 9.75rem)">
+            <Box
+              overflowY="auto"
+              h="calc(100% - 9.75rem)"
+              className="history-scroll-container"
+            >
               <ChatHistory search={search} />
             </Box>
             <Flex gap={4} p={4} borderTop={`1px solid ${CustomColor.border}`}>

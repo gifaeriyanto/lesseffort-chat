@@ -108,12 +108,17 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   }
 
   return (
-    <Box w="full" overflow="auto" id="scroll-container" mb="-1px">
+    <Box
+      w="full"
+      overflow="auto"
+      className="history-scroll-container"
+      mb="-1px"
+    >
       {filteredChatHistory.map((item, index) => (
         <LazyLoad
           key={item.id || index}
           height="5.125rem"
-          scrollContainer="#scroll-container"
+          scrollContainer=".history-scroll-container"
         >
           <ChatHistoryItem
             id={item.id}
