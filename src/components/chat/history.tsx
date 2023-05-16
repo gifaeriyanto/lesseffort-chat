@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react';
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, useMediaQuery } from '@chakra-ui/react';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
 import LazyLoad from 'react-lazyload';
@@ -23,6 +23,8 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   description,
   onSelect,
 }) => {
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+
   return (
     <Box
       borderLeft={isActive ? '1px solid' : undefined}
@@ -42,18 +44,10 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
           '& > .history-actions': {
             opacity: '1',
           },
-          '& > .history-content': {
-            w: 'calc(100% - 2rem)',
-          },
         }}
         justify="space-between"
       >
-        <Box
-          className="history-content"
-          flexGrow={0}
-          overflow="hidden"
-          w={{ base: 'calc(100% - 3rem)', md: 'initial' }}
-        >
+        <Box flexGrow={0} overflow="hidden">
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
             {title}
           </Text>
@@ -66,7 +60,8 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
           className="history-actions"
           pos="absolute"
           right="0.5rem"
-          opacity={{ base: 1, md: 0 }}
+          opacity={0}
+          hidden={isLessThanMd}
         >
           <HistoryActions id={id} />
         </Box>
