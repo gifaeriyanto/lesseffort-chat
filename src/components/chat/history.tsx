@@ -119,6 +119,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           key={item.id || index}
           height="5.125rem"
           scrollContainer=".history-scroll-container"
+          offset={200}
         >
           <ChatHistoryItem
             id={item.id}
