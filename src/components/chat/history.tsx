@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
+import LazyLoad from 'react-lazyload';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
@@ -22,10 +23,6 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   description,
   onSelect,
 }) => {
-  const { chatHistoryCount } = useChat((state) => ({
-    chatHistoryCount: state.chatHistory.length,
-  }));
-
   return (
     <Box
       borderLeft={isActive ? '1px solid' : undefined}
@@ -33,11 +30,11 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       borderBottom={`1px solid ${CustomColor.border}`}
       bgColor={isActive ? 'gray.600' : 'transparent'}
       w="full"
+      h="5.125rem"
       p={4}
       pl={isActive ? 'calc(1rem - 1px)' : 4}
       role="button"
       onClick={() => id && onSelect(id)}
-      _last={chatHistoryCount > 8 ? { borderBottom: 0 } : undefined}
     >
       <HStack
         sx={{
@@ -104,20 +101,25 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   }
 
   return (
-    <Box w="full" overflow="auto">
+    <Box w="full" overflow="auto" id="scroll-container" mb="-1px">
       {filteredChatHistory.map((item, index) => (
-        <ChatHistoryItem
+        <LazyLoad
           key={item.id || index}
-          id={item.id}
-          title={item.title}
-          description={item.last_message}
-          onDelete={deleteChat}
-          onSelect={(id) => {
-            setSelectedChatId(id);
-            onCloseSidebar();
-          }}
-          isActive={selectedChatId === item.id}
-        />
+          height="5.125rem"
+          scrollContainer="#scroll-container"
+        >
+          <ChatHistoryItem
+            id={item.id}
+            title={item.title}
+            description={item.last_message}
+            onDelete={deleteChat}
+            onSelect={(id) => {
+              setSelectedChatId(id);
+              onCloseSidebar();
+            }}
+            isActive={selectedChatId === item.id}
+          />
+        </LazyLoad>
       ))}
     </Box>
   );
