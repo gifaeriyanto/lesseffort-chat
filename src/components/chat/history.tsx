@@ -38,11 +38,6 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       pos="relative"
     >
       <HStack
-        sx={{
-          '& > .history-actions': {
-            opacity: '0',
-          },
-        }}
         _hover={{
           '& > .history-actions': {
             opacity: '1',
@@ -63,6 +58,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
           className="history-actions"
           pos="absolute"
           right="0.5rem"
+          opacity={{ base: 1, md: 0 }}
         >
           <HistoryActions id={id} />
         </Box>
