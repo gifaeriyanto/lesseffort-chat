@@ -14,7 +14,11 @@ export const ProfilePhoto = () => {
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (file) {
+    if (!file) {
+      return;
+    }
+
+    if (file.type === 'image/jpeg' || file.type === 'image/png') {
       const reader = new FileReader();
 
       reader.onload = function (event) {
@@ -60,6 +64,7 @@ export const ProfilePhoto = () => {
         type="file"
         ref={fileInputRef}
         onChange={handleFileInputChange}
+        accept="image/jpeg, image/png"
         hidden
       />
     </>
