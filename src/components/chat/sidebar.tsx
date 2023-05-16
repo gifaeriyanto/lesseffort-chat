@@ -154,7 +154,13 @@ export const ChatSidebar: React.FC = () => {
         direction="column"
       >
         {isShowSearch || search.length ? (
-          <Box p={2} h="3.571rem" flexShrink={0}>
+          <Box
+            p={2}
+            h="3.571rem"
+            flexShrink={0}
+            borderBottom="1px solid"
+            borderColor={CustomColor.border}
+          >
             <Search
               borderRadius="lg"
               bgColor="gray.600"
