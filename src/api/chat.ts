@@ -28,11 +28,9 @@ export enum OpenAIModel {
   // GPT_4 = 'gpt-4', coming soon
 }
 
-export const defaultBotInstruction = `You are a very smart humorous.
-Respond with casual language but friendly.
-Use markdown format and if you write a code,
-please tell us the languange code in markdown format.
-Always use supported emoticon for all devices`;
+export const defaultBotInstruction = `Act like a human and respond user with casual language and friendly.
+Use markdown format and if you write a code, please tell us the languange code.
+Always use supported emoticon for all devices.`;
 
 export const generateResponse = (
   messages: Message[],
