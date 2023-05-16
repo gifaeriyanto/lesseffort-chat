@@ -34,8 +34,8 @@ import {
 } from 'store/supabase';
 import { CustomColor } from 'theme/foundations/colors';
 import {
-  capitalizeWords,
   createIncrementArray,
+  formatLocaleNumber,
   formatNumber,
 } from 'utils/common';
 
@@ -73,7 +73,7 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
     const { from, to } = getPage(page, pageSize);
     return {
       from: from + 1,
-      to: to + 1,
+      to: count < pageSize ? count : to + 1,
     };
   }, [page]);
 
@@ -110,10 +110,10 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
             Prompts
           </Box>
           <Box fontSize="sm" color="gray.400">
-            {count ? (
+            {!!count ? (
               <>
                 <Box as="b" color="gray.300">
-                  {count}
+                  {formatLocaleNumber(count)}
                 </Box>{' '}
                 {keyword ? 'prompts match your filter' : 'available prompts'}
               </>
@@ -259,9 +259,11 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
         justify="space-between"
         fontSize="sm"
         align="center"
+        hidden={count < pageSize && page === 1}
       >
         <Box pl={2} color="gray.400">
-          Results: {pageFromTo.from} - {pageFromTo.to} of {count}
+          Results: {pageFromTo.from} - {pageFromTo.to} of{' '}
+          {formatLocaleNumber(count)}
         </Box>
         <ButtonGroup size="sm" variant="outline">
           <Button
@@ -270,7 +272,12 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
           >
             Prev
           </Button>
-          <Button onClick={() => setPage((prev) => prev + 1)}>Next</Button>
+          <Button
+            onClick={() => setPage((prev) => prev + 1)}
+            isDisabled={count < pageSize}
+          >
+            Next
+          </Button>
         </ButtonGroup>
       </Flex>
     </Box>

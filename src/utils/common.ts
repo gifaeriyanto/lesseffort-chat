@@ -48,6 +48,10 @@ export const formatNumber = (number: number) => {
   }
 };
 
+export const formatLocaleNumber = (number: number) => {
+  return number.toLocaleString('de-DE', { minimumFractionDigits: 0 });
+};
+
 export const createIncrementArray = (length: number) =>
   Array.from({ length }, (_, i) => i + 1);
 
