@@ -1,7 +1,8 @@
 import React, { useMemo, useRef } from 'react';
-import { Box, Flex, HStack, Text, useMediaQuery } from '@chakra-ui/react';
+import { Box, Flex, HStack, Icon, Text, useMediaQuery } from '@chakra-ui/react';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
+import { TbLock } from 'react-icons/tb';
 import LazyLoad from 'react-lazyload';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
@@ -12,6 +13,7 @@ export interface ChatHistoryItemProps {
   isActive?: boolean;
   title: string;
   description: string;
+  isLocked?: boolean;
   onDelete: (id: number) => void;
   onSelect: (id: number) => void;
 }
@@ -21,6 +23,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   isActive,
   title,
   description,
+  isLocked,
   onSelect,
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
@@ -49,6 +52,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       >
         <Box flexGrow={0} overflow="hidden">
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
+            {isLocked && <Icon as={TbLock} color="gray.400" mr={2} />}
             {title}
           </Text>
           <Text fontSize="sm" color="gray.400" isTruncated>
@@ -131,6 +135,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
               onCloseSidebar();
             }}
             isActive={selectedChatId === item.id}
+            isLocked={item.locked}
           />
         </LazyLoad>
       ))}

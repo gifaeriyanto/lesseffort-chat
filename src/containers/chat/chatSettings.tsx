@@ -108,12 +108,17 @@ const ChatSettings: React.FC = () => {
 
   return (
     <>
-      <Box fontSize="xl" fontWeight="bold" mb={4}>
+      <Box fontSize="xl" fontWeight="bold">
         <Text color="blue.500" as="span">
           Chat
         </Text>{' '}
         Settings
       </Box>
+
+      <Box color="gray.400" fontSize="sm" mb={4}>
+        This setting will only affect this conversation
+      </Box>
+
       <form onSubmit={handleSubmit(handleSaveSettings)}>
         <VStack spacing={8}>
           <FormControl isInvalid={!!errors['title']}>

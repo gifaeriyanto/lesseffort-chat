@@ -110,7 +110,7 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
   }
 
   return (
-    <Box pos="relative" p={lang ? 0 : 2}>
+    <Box pos="relative">
       {!!lang && (
         <Box fontSize="sm" color="gray.400" pl={2} pt={2} mb={4}>
           {lang}
