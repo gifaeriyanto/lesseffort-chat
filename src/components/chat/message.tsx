@@ -43,7 +43,11 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
+import remarkHTMLKatex from 'remark-html-katex';
+import remarkMath from 'remark-math';
 import { comingSoon } from 'utils/common';
+
+import 'katex/dist/katex.min.css';
 
 export interface ChatMessageProps {
   isLockedChat?: boolean;
@@ -370,7 +374,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           components={{
             code: CodeBlock,
           }}
-          remarkPlugins={[remarkGfm, remarkBreaks]}
+          remarkPlugins={[remarkGfm, remarkBreaks, remarkMath, remarkHTMLKatex]}
           rehypePlugins={[
             [
               rehypeHighlight,
