@@ -223,18 +223,19 @@ export const ChatMessagesContainer: React.FC = () => {
     streamChatCompletion({
       value,
       template: template ? prompt.content : undefined,
+      isLocked: selectedChat?.locked,
     });
     setTemplate(undefined);
   };
 
   const renderMessageInput = () => {
-    if (selectedChat?.locked) {
-      return (
-        <Box p={4}>
-          Hey there! Time to start a new chat as you've reached the limit. 😊
-        </Box>
-      );
-    }
+    // if (selectedChat?.locked) {
+    //   return (
+    //     <Box p={4}>
+    //       Hey there! Time to start a new chat as you've reached the limit. 😊
+    //     </Box>
+    //   );
+    // }
 
     if (isTyping) {
       return (
@@ -260,22 +261,22 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessageInputCTA = () => {
-    if (selectedChat?.locked) {
-      return (
-        <LightMode>
-          <Button
-            borderRadius="lg"
-            colorScheme="blue"
-            size={{ base: 'md', md: 'sm' }}
-            onClick={handleNewChat}
-            w={{ base: 'calc(100% - 2rem)', md: 'auto' }}
-            mb={{ base: 4, md: 0 }}
-          >
-            New Chat
-          </Button>
-        </LightMode>
-      );
-    }
+    // if (selectedChat?.locked) {
+    //   return (
+    //     <LightMode>
+    //       <Button
+    //         borderRadius="lg"
+    //         colorScheme="blue"
+    //         size={{ base: 'md', md: 'sm' }}
+    //         onClick={handleNewChat}
+    //         w={{ base: 'calc(100% - 2rem)', md: 'auto' }}
+    //         mb={{ base: 4, md: 0 }}
+    //       >
+    //         New Chat
+    //       </Button>
+    //     </LightMode>
+    //   );
+    // }
 
     if (isTyping) {
       return (
@@ -344,7 +345,7 @@ export const ChatMessagesContainer: React.FC = () => {
             onRegenerateResponse={() =>
               message.id && regenerateResponse(message.id)
             }
-            isLockedChat={selectedChat?.locked}
+            // isLockedChat={selectedChat?.locked}
           />
         ))}
       </>

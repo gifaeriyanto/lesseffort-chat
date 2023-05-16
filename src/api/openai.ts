@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { format, lastDayOfMonth } from 'date-fns';
+import { format } from 'date-fns';
 
 const openaiAPI = axios.create({
   baseURL: 'https://api.openai.com',
