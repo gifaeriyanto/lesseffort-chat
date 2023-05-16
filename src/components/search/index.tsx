@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Icon,
   Input,
@@ -15,6 +15,7 @@ export interface SearchProps extends InputProps {
 
 export const Search: React.FC<SearchProps> = ({ onSearch, ...props }) => {
   const [search, setSearch] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     onSearch(search);
@@ -30,10 +31,18 @@ export const Search: React.FC<SearchProps> = ({ onSearch, ...props }) => {
       <Input
         placeholder="Search"
         onChange={(e) => debounceOnChange(setSearch, e.currentTarget.value)}
+        ref={inputRef}
         {...props}
       />
       {!!search.length ? (
-        <InputRightElement onClick={() => setSearch('')}>
+        <InputRightElement
+          onClick={() => {
+            setSearch('');
+            if (inputRef.current) {
+              (inputRef.current as HTMLInputElement).value = '';
+            }
+          }}
+        >
           <Icon as={TbX} color="gray.400" />
         </InputRightElement>
       ) : (
