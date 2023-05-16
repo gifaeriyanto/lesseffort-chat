@@ -319,6 +319,7 @@ export const useChat = create<{
     const dbMessages = useIndexedDB('messages');
     dbChatHistory.add<Chat>({
       ...data,
+      createdAt: getUnixTime(new Date()),
       bot_instruction: get().botInstruction,
       model: get().model,
     });

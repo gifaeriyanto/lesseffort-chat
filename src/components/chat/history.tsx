@@ -35,16 +35,17 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       pl={isActive ? 'calc(1rem - 1px)' : 4}
       role="button"
       onClick={() => id && onSelect(id)}
+      pos="relative"
     >
       <HStack
         sx={{
-          '& > button': {
-            display: 'none',
+          '& > .history-actions': {
+            opacity: '0',
           },
         }}
         _hover={{
-          '& > button': {
-            display: 'flex',
+          '& > .history-actions': {
+            opacity: '1',
           },
         }}
         justify="space-between"
@@ -57,7 +58,14 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
             {description || 'No messages yet'}
           </Text>
         </Box>
-        <HistoryActions id={id} />
+        <Box
+          onClick={(e) => e.stopPropagation()}
+          className="history-actions"
+          pos="absolute"
+          right="0.5rem"
+        >
+          <HistoryActions id={id} />
+        </Box>
       </HStack>
     </Box>
   );

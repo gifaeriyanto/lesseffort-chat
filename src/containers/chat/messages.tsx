@@ -38,7 +38,6 @@ import { sanitizeString } from 'utils/common';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
-    botInstruction,
     chatHistory,
     editingMessage,
     generatingMessage,

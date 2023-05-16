@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { pipe } from 'framer-motion';
 import { standaloneToast } from 'index';
 import { join, map, replace, split, toLower } from 'ramda';
@@ -59,3 +60,9 @@ export const sanitizeString = pipe(
   toLower,
   uppercaseFirstLetter,
 );
+
+export const formatDateFromTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  const formattedDate = format(date, 'MMMM dd, yyyy p');
+  return formattedDate;
+};
