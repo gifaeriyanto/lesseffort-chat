@@ -447,7 +447,7 @@ export const ChatMessagesContainer: React.FC = () => {
             _hover={{ bgColor: 'gray.600' }}
           >
             {isShowRuleOptions ? 'Hide' : 'Show'} Rules
-            {!!chatRulesCount && (
+            {!!chatRulesCount && !isShowRuleOptions && (
               <Tag ml={2} size="sm" borderRadius="full">
                 {chatRulesCount}
               </Tag>
