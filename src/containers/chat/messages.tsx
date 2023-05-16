@@ -439,7 +439,7 @@ export const ChatMessagesContainer: React.FC = () => {
           pointerEvents="none"
           className="rules"
           pos="absolute"
-          hidden={isTyping}
+          hidden={isTyping || isLessThanMd}
         >
           <Button
             leftIcon={<TbMenu />}
@@ -462,7 +462,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
         {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
 
-        <Box mb={4} hidden={!isShowRuleOptions || isTyping}>
+        <Box mb={4} hidden={!isShowRuleOptions || isTyping || isLessThanMd}>
           <ChatRules
             onChange={setChatRules}
             hidden={template ? ['format', 'writingStyle'] : []}
