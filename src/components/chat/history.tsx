@@ -42,10 +42,18 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
           '& > .history-actions': {
             opacity: '1',
           },
+          '& > .history-content': {
+            w: 'calc(100% - 2rem)',
+          },
         }}
         justify="space-between"
       >
-        <Box flexGrow={0} overflow="hidden">
+        <Box
+          className="history-content"
+          flexGrow={0}
+          overflow="hidden"
+          w={{ base: 'calc(100% - 3rem)', md: 'initial' }}
+        >
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
             {title}
           </Text>
