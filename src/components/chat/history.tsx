@@ -1,30 +1,7 @@
 import React, { useMemo } from 'react';
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  HStack,
-  IconButton,
-  Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
-import { useForm } from 'react-hook-form';
-import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
@@ -43,108 +20,49 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   isActive,
   title,
   description,
-  onDelete,
   onSelect,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { register, handleSubmit } = useForm();
-  const { renameChat, chatHistoryCount } = useChat((state) => ({
-    renameChat: state.renameChat,
+  const { chatHistoryCount } = useChat((state) => ({
     chatHistoryCount: state.chatHistory.length,
   }));
 
-  const handleSaveOpenaiKey = ({ title: newTitle = '' }) => {
-    if (id) {
-      renameChat(id, newTitle);
-    }
-    onClose();
-  };
-
   return (
-    <>
-      <Box
-        borderLeft={isActive ? '1px solid' : undefined}
-        borderColor="blue.500"
-        borderBottom={`1px solid ${CustomColor.border}`}
-        bgColor={isActive ? 'gray.600' : 'transparent'}
-        w="full"
-        p={4}
-        pl={isActive ? 'calc(1rem - 1px)' : 4}
-        role="button"
-        onClick={() => id && onSelect(id)}
-        _last={chatHistoryCount > 8 ? { borderBottom: 0 } : undefined}
+    <Box
+      borderLeft={isActive ? '1px solid' : undefined}
+      borderColor="blue.500"
+      borderBottom={`1px solid ${CustomColor.border}`}
+      bgColor={isActive ? 'gray.600' : 'transparent'}
+      w="full"
+      p={4}
+      pl={isActive ? 'calc(1rem - 1px)' : 4}
+      role="button"
+      onClick={() => id && onSelect(id)}
+      _last={chatHistoryCount > 8 ? { borderBottom: 0 } : undefined}
+    >
+      <HStack
+        sx={{
+          '& > button': {
+            display: 'none',
+          },
+        }}
+        _hover={{
+          '& > button': {
+            display: 'flex',
+          },
+        }}
+        justify="space-between"
       >
-        <HStack
-          sx={{
-            '& > button': {
-              display: 'none',
-            },
-          }}
-          _hover={{
-            '& > button': {
-              display: 'flex',
-            },
-          }}
-          justify="space-between"
-        >
-          <Box flexGrow={0} overflow="hidden">
-            <Text isTruncated fontWeight={isActive ? '600' : '500'}>
-              {title}
-            </Text>
-            <Text fontSize="sm" color="gray.400" isTruncated>
-              {description || 'No messages yet'}
-            </Text>
-          </Box>
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={<TbChevronDown />}
-              aria-label="Action menu"
-              variant="ghost"
-              color="gray.400"
-              fontSize="xl"
-              borderRadius="xl"
-              size="sm"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <MenuList>
-              <MenuItem onClick={onOpen}>Rename</MenuItem>
-              <MenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  id && onDelete(id);
-                }}
-              >
-                Delete
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </HStack>
-      </Box>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Rename chat</ModalHeader>
-          <ModalCloseButton />
-          <form onSubmit={handleSubmit(handleSaveOpenaiKey)}>
-            <ModalBody pb={6}>
-              <FormControl>
-                <FormLabel>Chat title</FormLabel>
-                <Input defaultValue={title} {...register('title')} />
-              </FormControl>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} type="submit">
-                Save
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
-    </>
+        <Box flexGrow={0} overflow="hidden">
+          <Text isTruncated fontWeight={isActive ? '600' : '500'}>
+            {title}
+          </Text>
+          <Text fontSize="sm" color="gray.400" isTruncated>
+            {description || 'No messages yet'}
+          </Text>
+        </Box>
+        <HistoryActions id={id} />
+      </HStack>
+    </Box>
   );
 };
 

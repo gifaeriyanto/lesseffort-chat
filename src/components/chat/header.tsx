@@ -2,14 +2,13 @@ import React from 'react';
 import {
   Box,
   Flex,
-  HStack,
   Icon,
   IconButton,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { TypingDots } from 'components/typingDots';
-import { TbBrandOpenai, TbMenu2, TbSearch } from 'react-icons/tb';
+import { HistoryActions } from 'components/chat/historyActions';
+import { TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
@@ -92,14 +91,7 @@ export const ChatHeader: React.FC = () => {
           </Text>
         </Box>
       </Flex>
-      <HStack>
-        <IconButton
-          icon={<TbSearch />}
-          aria-label="Menu"
-          variant="ghost"
-          fontSize="xl"
-        />
-      </HStack>
+      <HistoryActions id={selectedChat?.id} />
     </Flex>
   );
 };

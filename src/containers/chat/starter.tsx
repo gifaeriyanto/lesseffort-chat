@@ -136,7 +136,7 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
             <PopoverContent>
               <PopoverArrow />
               <PopoverBody>
-                <VStack px={2} py={4} spacing={4}>
+                <VStack spacing={4}>
                   <FormControl>
                     <FormLabel>Sort by</FormLabel>
                     <Select onChange={(e) => setOrder(e.currentTarget.value)}>
