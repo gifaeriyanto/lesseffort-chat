@@ -1,3 +1,4 @@
+import { Chat } from 'api/chat';
 import { Message } from 'react-hook-form';
 import { DBVersion } from 'store/db/config';
 

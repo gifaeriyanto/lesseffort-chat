@@ -1,5 +1,11 @@
 import { RefObject } from 'react';
-import { Chat, generateResponse, Message, OpenAIModel } from 'api/chat';
+import {
+  Chat,
+  defaultBotInstruction,
+  generateResponse,
+  Message,
+  OpenAIModel,
+} from 'api/chat';
 import { getUsages } from 'api/openai';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
@@ -58,6 +64,7 @@ export const useProfilePhoto = create<{
 }));
 
 export const useChat = create<{
+  botInstruction: string;
   chatHistory: Chat[];
   editingMessage?: Message;
   generatingMessage: string;
@@ -67,12 +74,14 @@ export const useChat = create<{
   selectedChatId: number | undefined;
   xhr?: XMLHttpRequest;
   richEditorRef: RefObject<Editor> | null;
+  setBotInstruction: (instruction: string) => Promise<void>;
+  setModel: (model: OpenAIModel) => void;
   deleteChat: (chatId: number) => void;
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
   updateMessage: (message: string) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
-  newChat: (data: Chat) => Promise<void>;
+  newChat: (data: Omit<Chat, 'bot_instruction' | 'model'>) => Promise<void>;
   regenerateResponse: (messageId: number) => void;
   renameChat: (chatId: number, newTitle: string) => void;
   reset: () => void;
@@ -86,6 +95,7 @@ export const useChat = create<{
     template?: string;
   }) => void;
 }>((set, get) => ({
+  botInstruction: defaultBotInstruction,
   editingMessage: undefined,
   generatingMessage: '',
   isTyping: false,
@@ -93,6 +103,34 @@ export const useChat = create<{
   model: OpenAIModel.GPT_3_5,
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
+  setBotInstruction: async (botInstruction) => {
+    set({ botInstruction });
+    const { selectedChatId, getChatHistory } = get();
+    const dbChatHistory = useIndexedDB('chatHistory');
+
+    if (selectedChatId) {
+      const res = await dbChatHistory.getByID(selectedChatId);
+      await dbChatHistory.update({
+        ...res,
+        bot_instruction: botInstruction,
+      });
+      await getChatHistory();
+    }
+  },
+  setModel: (model) => {
+    set({ model });
+    const { selectedChatId } = get();
+    const dbChatHistory = useIndexedDB('chatHistory');
+
+    if (selectedChatId) {
+      dbChatHistory.getByID(selectedChatId).then((res) => {
+        dbChatHistory.update({
+          ...res,
+          model,
+        });
+      });
+    }
+  },
   stopStream: () => {
     const dbMessages = useIndexedDB('messages');
     const { xhr, generatingMessage, selectedChatId } = get();
@@ -125,6 +163,7 @@ export const useChat = create<{
     template = '',
   }) => {
     const {
+      botInstruction,
       messages,
       model,
       getChatHistory,
@@ -240,10 +279,17 @@ export const useChat = create<{
       }
     };
 
-    const stream = generateResponse(reverse(updatedMessages), model, {
-      onContent,
-      onError,
-    });
+    const stream = generateResponse(
+      reverse(updatedMessages),
+      model,
+      {
+        onContent,
+        onError,
+      },
+      {
+        botInstruction,
+      },
+    );
     set({ xhr: stream });
   },
   xhr: undefined,
@@ -267,11 +313,16 @@ export const useChat = create<{
     set({ chatHistory: reverse(chatHistory) });
   },
   newChat: async (data) => {
-    get().reset();
+    const { reset, getChatHistory } = get();
+    reset();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
-    dbChatHistory.add<Chat>(data);
-    await get().getChatHistory();
+    dbChatHistory.add<Chat>({
+      ...data,
+      bot_instruction: get().botInstruction,
+      model: get().model,
+    });
+    await getChatHistory();
 
     const chatId = get().chatHistory[0]?.id;
     if (data.last_message) {
@@ -290,11 +341,15 @@ export const useChat = create<{
   selectedChatId: undefined,
   setSelectedChatId: (chatId) => {
     const { getMessages, setEditingMessage, stopStream } = get();
+    const dbChatHistory = useIndexedDB('chatHistory');
     stopStream();
     setEditingMessage(undefined);
     set({ selectedChatId: chatId });
     if (chatId) {
-      getMessages(chatId);
+      dbChatHistory.getByID(chatId).then((res) => {
+        set({ botInstruction: res.bot_instruction, model: res.model });
+        getMessages(chatId);
+      });
     }
   },
   reset: () => {
@@ -304,6 +359,8 @@ export const useChat = create<{
       messages: [],
       generatingMessage: '',
       isTyping: false,
+      botInstruction: defaultBotInstruction,
+      model: OpenAIModel.GPT_3_5,
     });
   },
   setEditingMessage: (message) => {

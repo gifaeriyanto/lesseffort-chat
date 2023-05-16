@@ -1,7 +1,6 @@
 import { pipe } from 'framer-motion';
 import { standaloneToast } from 'index';
 import { join, map, replace, split, toLower } from 'ramda';
-import { PipeFunction } from 'utils/types/functional';
 
 type Func<T extends any[], R> = (...a: T) => R;
 

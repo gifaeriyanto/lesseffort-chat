@@ -19,7 +19,6 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { Search } from 'components/search';
@@ -65,9 +64,7 @@ export const ChatSidebar: React.FC = () => {
 
   const handleNewChat = () => {
     newChat({
-      bot_instruction: defaultBotInstruction,
       last_message: '',
-      model: OpenAIModel.GPT_3_5,
       title: 'New Chat',
     });
     onCloseSidebar();

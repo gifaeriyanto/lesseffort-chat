@@ -13,7 +13,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { Chat, defaultBotInstruction, Message, OpenAIModel } from 'api/chat';
+import { Chat, Message } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { ChatRules } from 'components/chat/rules';
 import SelectedMessage from 'components/chat/selectedMessage';
@@ -38,6 +38,7 @@ import { sanitizeString } from 'utils/common';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
+    botInstruction,
     chatHistory,
     editingMessage,
     generatingMessage,
@@ -181,9 +182,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const handleNewChat = () => {
     newChat({
-      bot_instruction: defaultBotInstruction,
       last_message: '',
-      model: OpenAIModel.GPT_3_5,
       title: 'New Chat',
     });
     richEditorRef?.current?.focus();
@@ -218,9 +217,7 @@ export const ChatMessagesContainer: React.FC = () => {
       });
     } else {
       await newChat({
-        bot_instruction: defaultBotInstruction,
         last_message: value,
-        model: OpenAIModel.GPT_3_5,
         title: value,
       });
     }

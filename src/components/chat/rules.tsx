@@ -75,7 +75,7 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
       prompt += rules.format;
     }
 
-    onChange?.(`\n\n${prompt}`, rules);
+    onChange?.(prompt ? `\n\n${prompt}` : '', rules);
   }, [rules]);
 
   const selectProps = (name: keyof Rules, placeholder: string): SelectProps => {
