@@ -31,7 +31,7 @@ import {
   TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { modifyTemplate, useChat } from 'store/openai';
+import { modifyTemplate, useChat, useProfilePhoto } from 'store/openai';
 import { Prompt } from 'store/supabase';
 import { CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
@@ -52,6 +52,7 @@ export const ChatMessagesContainer: React.FC = () => {
     streamChatCompletion,
     updateMessage,
   } = useChat();
+  const { getPhoto } = useProfilePhoto();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const dbMessages = useIndexedDB('messages');
   const [
@@ -70,6 +71,10 @@ export const ChatMessagesContainer: React.FC = () => {
     onToggle: toggleShowRuleOptions,
     onClose: hideRuleOptions,
   } = useDisclosure();
+
+  useEffect(() => {
+    getPhoto();
+  }, []);
 
   useEffect(() => {
     if (messages.length && !readyToUse) {

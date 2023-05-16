@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import {
-  Avatar,
   Box,
   ButtonGroup,
   Flex,
@@ -28,6 +27,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { ProfilePhoto } from 'components/chat/profilePhoto';
 import {
   TbBookmark,
   TbBrandOpenai,
@@ -284,12 +284,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       id={`message-${id || 0}`}
     >
       {isMe ? (
-        <Avatar
-          name="Demo"
-          src="https://bit.ly/ryan-florence"
-          w="2.188rem"
-          h="2.188rem"
-        />
+        <ProfilePhoto />
       ) : (
         <Flex
           p={4}

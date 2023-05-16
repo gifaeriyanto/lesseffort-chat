@@ -35,6 +35,28 @@ export const useUsage = create<{
   },
 }));
 
+export const useProfilePhoto = create<{
+  photo: string | null;
+  setPhoto: (image: string) => void;
+  getPhoto: () => string | null;
+}>((set, get) => ({
+  photo: null,
+  setPhoto: (image: string) => {
+    localStorage.setItem('photoProfile', image);
+    set({ photo: image });
+  },
+  getPhoto: () => {
+    const { photo } = get();
+
+    const localImage = localStorage.getItem('photoProfile');
+    if (localImage && !photo) {
+      set({ photo: localImage });
+    }
+
+    return photo;
+  },
+}));
+
 export const useChat = create<{
   chatHistory: Chat[];
   editingMessage?: Message;
