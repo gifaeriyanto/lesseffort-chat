@@ -7,6 +7,7 @@ import {
   OpenAIModel,
 } from 'api/chat';
 import { getUsages } from 'api/openai';
+import { Rules } from 'components/chat/rules';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
 import { standaloneToast } from 'index';
@@ -15,11 +16,16 @@ import { useIndexedDB } from 'react-indexed-db';
 import { getMessagesByChatID } from 'store/db/queries';
 import { create } from 'zustand';
 
-export const modifyTemplate = (prompt: string, template: string) => {
+export const modifyTemplate = (
+  prompt: string,
+  template: string,
+  rules?: Rules,
+) => {
   return (
     template
       .replaceAll('[PROMPT]', prompt)
-      .replaceAll('[TARGETLANGUAGE]', 'English') +
+      .replaceAll('[TARGETLANGUAGE]', rules?.outputLanguage || '')
+      .replaceAll('[TONE]', rules?.tone || '') +
     '\n\nAlways use markdown format.'
   );
 };
@@ -85,6 +91,7 @@ export const useChat = create<{
   regenerateResponse: (messageId: number) => void;
   renameChat: (chatId: number, newTitle: string) => void;
   reset: () => void;
+  resetChatSettings: () => void;
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (chatId: number | undefined) => void;
@@ -356,12 +363,17 @@ export const useChat = create<{
     }
   },
   reset: () => {
+    get().stopStream();
     set({
       editingMessage: undefined,
       selectedChatId: undefined,
       messages: [],
       generatingMessage: '',
       isTyping: false,
+    });
+  },
+  resetChatSettings: () => {
+    set({
       botInstruction: defaultBotInstruction,
       model: OpenAIModel.GPT_3_5,
     });

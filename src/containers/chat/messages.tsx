@@ -15,7 +15,12 @@ import {
 } from '@chakra-ui/react';
 import { Chat, Message } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
-import { ChatRules } from 'components/chat/rules';
+import {
+  ChatRules,
+  chatRulesPrompt,
+  defaultRules,
+  Rules,
+} from 'components/chat/rules';
 import SelectedMessage from 'components/chat/selectedMessage';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
@@ -65,7 +70,7 @@ export const ChatMessagesContainer: React.FC = () => {
   const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
   const [template, setTemplate] = useState<Prompt | undefined>(undefined);
   const [chatRulesCount, setChatRulesCount] = useState(0);
-  const [chatRules, setChatRules] = useState('');
+  const [chatRules, setChatRules] = useState<Rules>(defaultRules);
   const {
     isOpen: isShowRuleOptions,
     onToggle: toggleShowRuleOptions,
@@ -123,7 +128,7 @@ export const ChatMessagesContainer: React.FC = () => {
   }, [isTyping, richEditorRef]);
 
   const handleClearRules = () => {
-    setChatRules('');
+    setChatRules(defaultRules);
   };
 
   const handleJumpToBottom = () => {
@@ -190,20 +195,20 @@ export const ChatMessagesContainer: React.FC = () => {
   const handleSubmitChat = async (message: string) => {
     handleJumpToBottom();
 
-    const value = message + chatRules;
+    const messageWithRules = message + chatRulesPrompt(chatRules);
 
     if (editingMessage) {
-      updateMessage(value);
+      updateMessage(messageWithRules);
       return;
     }
 
     const prompt = template
       ? {
-          content: modifyTemplate(value, template.Prompt),
-          originalContent: value,
+          content: modifyTemplate(message, template.Prompt, chatRules),
+          originalContent: message,
         }
       : {
-          content: value,
+          content: messageWithRules,
         };
 
     if (selectedChatId) {
@@ -216,12 +221,12 @@ export const ChatMessagesContainer: React.FC = () => {
       });
     } else {
       await newChat({
-        last_message: value,
-        title: value,
+        last_message: message,
+        title: message,
       });
     }
     streamChatCompletion({
-      value,
+      value: template ? message : messageWithRules,
       template: template ? prompt.content : undefined,
       isLocked: selectedChat?.locked,
     });

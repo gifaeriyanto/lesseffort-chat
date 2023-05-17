@@ -12,10 +12,39 @@ export interface Rules {
 
 export interface ChatRulesProps {
   getActiveRules?: (activeRulesCount: number) => void;
-  onChange?: (prompt: string, rules: Rules) => void;
+  onChange?: (rules: Rules) => void;
   onClose?: () => void;
   hidden?: Array<keyof Rules>;
 }
+
+export const chatRulesPrompt = (rules: Rules) => {
+  const prompts = [];
+
+  if (rules.outputLanguage) {
+    prompts.push(`${rules.outputLanguage} language`);
+  }
+  if (rules.tone) {
+    prompts.push(`${rules.tone} tone`);
+  }
+  if (rules.writingStyle) {
+    prompts.push(`${rules.writingStyle} style`);
+  }
+
+  let prompt =
+    prompts.length > 0 ? `Please respond with ${prompts.join(', ')}. ` : '';
+  if (rules.format) {
+    prompt += rules.format;
+  }
+
+  return prompt ? `\n\n${prompt}` : '';
+};
+
+export const defaultRules: Rules = {
+  outputLanguage: '',
+  tone: '',
+  writingStyle: '',
+  format: '',
+};
 
 export const ChatRules: React.FC<ChatRulesProps> = ({
   getActiveRules,
@@ -23,12 +52,6 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
   onClose,
   hidden,
 }) => {
-  const defaultRules: Rules = {
-    outputLanguage: '',
-    tone: '',
-    writingStyle: '',
-    format: '',
-  };
   const [rules, setRules] = useState(defaultRules);
 
   const activeRulesCount = useMemo(() => {
@@ -58,24 +81,7 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
   };
 
   useLayoutEffect(() => {
-    const prompts = [];
-    if (rules.outputLanguage) {
-      prompts.push(`${rules.outputLanguage} language`);
-    }
-    if (rules.tone) {
-      prompts.push(`${rules.tone} tone`);
-    }
-    if (rules.writingStyle) {
-      prompts.push(`${rules.writingStyle} style`);
-    }
-
-    let prompt =
-      prompts.length > 0 ? `Please respond with ${prompts.join(', ')}. ` : '';
-    if (rules.format) {
-      prompt += rules.format;
-    }
-
-    onChange?.(prompt ? `\n\n${prompt}` : '', rules);
+    onChange?.(rules);
   }, [rules]);
 
   const selectProps = (name: keyof Rules, placeholder: string): SelectProps => {

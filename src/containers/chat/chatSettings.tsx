@@ -52,7 +52,6 @@ const ChatSettings: React.FC = () => {
     formState: { errors },
     handleSubmit,
     setValue,
-    getValues,
     watch,
   } = useForm<FormInputs>();
 

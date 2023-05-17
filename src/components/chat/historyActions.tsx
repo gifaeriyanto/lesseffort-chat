@@ -149,12 +149,14 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
                 </Box>
                 <Box>{selectedChat?.model}</Box>
               </Box>
-              <Box>
-                <Box color="gray.400" fontSize="sm">
-                  System Instruction
+              {selectedChat?.bot_instruction && (
+                <Box>
+                  <Box color="gray.400" fontSize="sm">
+                    System Instruction
+                  </Box>
+                  <Box>{selectedChat?.bot_instruction}</Box>
                 </Box>
-                <Box>{selectedChat?.bot_instruction}</Box>
-              </Box>
+              )}
               {selectedChat?.createdAt && (
                 <Box>
                   <Box color="gray.400" fontSize="sm">
