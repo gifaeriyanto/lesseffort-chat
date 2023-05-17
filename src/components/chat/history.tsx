@@ -1,5 +1,6 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { Box, Flex, HStack, Icon, Text, useMediaQuery } from '@chakra-ui/react';
+import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
 import { TbLock } from 'react-icons/tb';
@@ -93,7 +94,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
         }
       },
       chatHistory.filter((item) => item.title.match(new RegExp(search, 'i'))),
-    );
+    ) as Chat[];
   }, [chatHistory, search]);
 
   if (!filteredChatHistory.length) {
