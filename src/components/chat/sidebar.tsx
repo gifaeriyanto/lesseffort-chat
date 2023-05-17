@@ -32,7 +32,7 @@ export const ChatSidebar: React.FC = () => {
   const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { richEditorRef, getChatHistory, newChat } = useChat();
+  const { richEditorRef, getChatHistory, reset } = useChat();
   const [search, setSearch] = useState('');
   const [usages, setUsages] = useState({
     total: 0,
@@ -64,10 +64,7 @@ export const ChatSidebar: React.FC = () => {
   }, []);
 
   const handleNewChat = () => {
-    newChat({
-      last_message: '',
-      title: 'New Chat',
-    });
+    reset();
     onCloseSidebar();
     richEditorRef?.current?.focus();
   };
