@@ -8,7 +8,7 @@ export interface Chat {
   last_message: string;
   model: OpenAIModel;
   title: string;
-  locked?: boolean;
+  limited?: boolean;
   rules?: Rules;
   createdAt?: number;
   updatedAt?: number;

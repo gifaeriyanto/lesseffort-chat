@@ -1,4 +1,4 @@
-export const DBVersion = 6;
+export const DBVersion = 7;
 
 export const DBConfig = {
   name: 'effortlesschat',
@@ -20,7 +20,7 @@ export const DBConfig = {
           keypath: 'bot_instruction',
           options: { unique: false },
         },
-        { name: 'locked', keypath: 'locked', options: { unique: false } },
+        { name: 'limited', keypath: 'limited', options: { unique: false } },
         { name: 'rules', keypath: 'rules', options: { unique: false } },
         { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },
         { name: 'updatedAt', keypath: 'updatedAt', options: { unique: false } },

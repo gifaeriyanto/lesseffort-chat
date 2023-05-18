@@ -14,7 +14,7 @@ export interface ChatHistoryItemProps {
   isActive?: boolean;
   title: string;
   description: string;
-  isLocked?: boolean;
+  isLimited?: boolean;
   onDelete: (id: number) => void;
   onSelect: (id: number) => void;
 }
@@ -24,7 +24,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   isActive,
   title,
   description,
-  isLocked,
+  isLimited,
   onSelect,
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
@@ -53,7 +53,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       >
         <Box flexGrow={0} overflow="hidden">
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
-            {isLocked && <Icon as={TbLock} color="gray.400" mr={2} />}
+            {isLimited && <Icon as={TbLock} color="gray.400" mr={2} />}
             {title}
           </Text>
           <Text fontSize="sm" color="gray.400" isTruncated>
@@ -136,7 +136,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
               onCloseSidebar();
             }}
             isActive={selectedChatId === item.id}
-            isLocked={item.locked}
+            isLimited={item.limited}
           />
         </LazyLoad>
       ))}

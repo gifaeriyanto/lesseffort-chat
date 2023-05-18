@@ -218,7 +218,7 @@ export const ChatMessagesContainer: React.FC = () => {
     streamChatCompletion({
       value: message,
       template: template?.Prompt || '',
-      isLocked: selectedChat?.locked,
+      isLimited: selectedChat?.limited,
     });
     setTemplate(undefined);
   };
@@ -441,7 +441,7 @@ export const ChatMessagesContainer: React.FC = () => {
         <Flex
           p={2}
           pb={{ base: 6, md: 2 }}
-          pr={selectedChat?.locked && isLessThanMd ? 2 : 4}
+          pr={selectedChat?.limited && isLessThanMd ? 2 : 4}
           bgColor={isTyping ? 'gray.700' : CustomColor.card}
           borderRadius={{ base: 0, md: '2xl' }}
           border="1px solid"
@@ -451,7 +451,7 @@ export const ChatMessagesContainer: React.FC = () => {
           }}
           align="center"
           justify="center"
-          direction={selectedChat?.locked && isLessThanMd ? 'column' : 'row'}
+          direction={selectedChat?.limited && isLessThanMd ? 'column' : 'row'}
         >
           {isShowJumpToBottomButton && (
             <Tooltip label="Jump to the last message" openDelay={500}>

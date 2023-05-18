@@ -103,7 +103,7 @@ export const useChat = create<{
     value: string;
     notNewMessage?: boolean;
     template?: string;
-    isLocked?: boolean;
+    isLimited?: boolean;
   }) => void;
 }>((set, get) => ({
   botInstruction: defaultBotInstruction,
@@ -172,7 +172,7 @@ export const useChat = create<{
     value = '',
     notNewMessage = false,
     template = '',
-    isLocked,
+    isLimited,
   }) => {
     const {
       botInstruction,
@@ -249,7 +249,7 @@ export const useChat = create<{
             await dbChatHistory.getByID<Chat>(chatId).then((res) => {
               dbChatHistory.update({
                 ...res,
-                locked: true,
+                limited: true,
               });
             });
             await getChatHistory();
@@ -284,7 +284,9 @@ export const useChat = create<{
     };
 
     const stream = generateResponse(
-      isLocked ? reverse(updatedMessages).slice(-10) : reverse(updatedMessages),
+      isLimited
+        ? reverse(updatedMessages).slice(-10)
+        : reverse(updatedMessages),
       model,
       {
         onContent,
