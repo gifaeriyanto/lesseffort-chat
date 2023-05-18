@@ -100,10 +100,9 @@ export const useChat = create<{
   setSelectedChatId: (chatId: number | undefined) => void;
   stopStream: () => Promise<void>;
   streamChatCompletion: (params: {
-    value: string;
     notNewMessage?: boolean;
-    template?: string;
     isLimited?: boolean;
+    userMessage: Message;
   }) => void;
 }>((set, get) => ({
   botInstruction: defaultBotInstruction,
@@ -168,12 +167,7 @@ export const useChat = create<{
       isTyping: false,
     });
   },
-  streamChatCompletion: ({
-    value = '',
-    notNewMessage = false,
-    template = '',
-    isLimited,
-  }) => {
+  streamChatCompletion: ({ notNewMessage = false, isLimited, userMessage }) => {
     const {
       botInstruction,
       messages,
@@ -186,15 +180,6 @@ export const useChat = create<{
     const dbMessages = useIndexedDB('messages');
 
     set({ isTyping: true });
-
-    const userMessage: Message = {
-      chatId,
-      role: 'user',
-      createdAt: getUnixTime(new Date()),
-      updatedAt: getUnixTime(new Date()),
-      content: value,
-      template,
-    };
 
     const updatedMessages = notNewMessage
       ? messages
@@ -227,7 +212,10 @@ export const useChat = create<{
             .then((res) => {
               dbChatHistory.update({
                 ...res,
-                title: res.title === 'New Chat' ? value : res.title,
+                title:
+                  res.title === 'New Chat'
+                    ? userMessage.content.slice(0, 50)
+                    : res.title,
                 last_message: content.slice(0, 50),
                 updatedAt: getUnixTime(new Date()),
               });
@@ -401,7 +389,7 @@ export const useChat = create<{
     await deleteTheNextMessages(editingMessage.chatId, editingMessage.id);
     await getMessages(editingMessage.chatId);
     streamChatCompletion({
-      value: message,
+      userMessage: editingMessage,
       notNewMessage: true,
     });
     set({ editingMessage: undefined });
@@ -427,7 +415,7 @@ export const useChat = create<{
 
     await deleteTheNextMessages(userMessage.chatId, userMessage.id);
     await getMessages(userMessage.chatId);
-    streamChatCompletion({ value: userMessage.content, notNewMessage: true });
+    streamChatCompletion({ userMessage, notNewMessage: true });
   },
   renameChat: async (chatId, newTitle) => {
     const { update, getByID } = useIndexedDB('chatHistory');

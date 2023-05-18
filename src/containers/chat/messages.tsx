@@ -187,10 +187,8 @@ export const ChatMessagesContainer: React.FC = () => {
   const handleSubmitChat = async (message: string) => {
     handleJumpToBottom();
 
-    const messageWithRules = message + chatRulesPrompt(chatRules);
-
     if (editingMessage) {
-      updateMessage(messageWithRules);
+      updateMessage(message);
       return;
     }
 
@@ -201,6 +199,7 @@ export const ChatMessagesContainer: React.FC = () => {
       updatedAt: getUnixTime(new Date()),
       content: message,
       template: template?.Prompt || '',
+      rules: chatRules,
     };
 
     if (selectedChatId) {
@@ -216,9 +215,8 @@ export const ChatMessagesContainer: React.FC = () => {
     }
 
     streamChatCompletion({
-      value: message,
-      template: template?.Prompt || '',
       isLimited: selectedChat?.limited,
+      userMessage,
     });
     setTemplate(undefined);
   };
@@ -434,7 +432,6 @@ export const ChatMessagesContainer: React.FC = () => {
             hidden={template ? ['format', 'writingStyle'] : []}
             onClose={handleClearRules}
             getActiveRules={setChatRulesCount}
-            key={selectedChatId}
           />
         </Box>
 

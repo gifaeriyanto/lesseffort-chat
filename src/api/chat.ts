@@ -9,7 +9,6 @@ export interface Chat {
   model: OpenAIModel;
   title: string;
   limited?: boolean;
-  rules?: Rules;
   createdAt?: number;
   updatedAt?: number;
 }
@@ -20,6 +19,7 @@ export interface Message {
   content: string;
   chatId?: number;
   template?: string;
+  rules?: Rules;
   createdAt?: number;
   updatedAt?: number;
 }
