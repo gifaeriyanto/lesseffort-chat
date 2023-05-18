@@ -187,21 +187,13 @@ export const useChat = create<{
 
     set({ isTyping: true });
 
-    const userContent = template
-      ? {
-          content: modifyTemplate(value, template),
-          originalContent: value,
-        }
-      : {
-          content: value,
-        };
-
     const userMessage: Message = {
       chatId,
       role: 'user',
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
-      ...userContent,
+      content: value,
+      template,
     };
 
     const updatedMessages = notNewMessage

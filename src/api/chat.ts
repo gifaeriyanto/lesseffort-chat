@@ -1,3 +1,4 @@
+import { Rules } from 'components/chat/rules';
 import { ClientStreamChatCompletionConfig, OpenAIExt } from 'openai-ext';
 import { mapMessage } from 'store/utils/parser';
 
@@ -8,6 +9,7 @@ export interface Chat {
   model: OpenAIModel;
   title: string;
   locked?: boolean;
+  rules?: Rules;
   createdAt?: number;
   updatedAt?: number;
 }
@@ -17,7 +19,7 @@ export interface Message {
   role: 'user' | 'system' | 'assistant';
   content: string;
   chatId?: number;
-  originalContent?: string;
+  template?: string;
   createdAt?: number;
   updatedAt?: number;
 }

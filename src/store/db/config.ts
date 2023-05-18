@@ -21,6 +21,7 @@ export const DBConfig = {
           options: { unique: false },
         },
         { name: 'locked', keypath: 'locked', options: { unique: false } },
+        { name: 'rules', keypath: 'rules', options: { unique: false } },
         { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },
         { name: 'updatedAt', keypath: 'updatedAt', options: { unique: false } },
       ],
@@ -33,8 +34,8 @@ export const DBConfig = {
         { name: 'content', keypath: 'content', options: { unique: false } },
         { name: 'role', keypath: 'role', options: { unique: false } },
         {
-          name: 'originalContent',
-          keypath: 'originalContent',
+          name: 'template',
+          keypath: 'template',
           options: { unique: false },
         },
         { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },

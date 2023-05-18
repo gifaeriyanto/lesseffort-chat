@@ -194,21 +194,13 @@ export const ChatMessagesContainer: React.FC = () => {
       return;
     }
 
-    const prompt = template
-      ? {
-          content: modifyTemplate(message, template.Prompt, chatRules),
-          originalContent: message,
-        }
-      : {
-          content: messageWithRules,
-        };
-
     const userMessage: Message = {
       chatId: selectedChatId,
       role: 'user',
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
-      ...prompt,
+      content: message,
+      template: template?.Prompt || '',
     };
 
     if (selectedChatId) {
@@ -224,8 +216,8 @@ export const ChatMessagesContainer: React.FC = () => {
     }
 
     streamChatCompletion({
-      value: template ? message : messageWithRules,
-      template: template ? prompt.content : undefined,
+      value: message,
+      template: template?.Prompt || '',
       isLocked: selectedChat?.locked,
     });
     setTemplate(undefined);
@@ -318,7 +310,7 @@ export const ChatMessagesContainer: React.FC = () => {
             key={message.id || message.createdAt}
             isMe={message.role === 'user'}
             id={message.id}
-            message={message.originalContent || message.content}
+            message={message.content}
             onEdit={() => setEditingMessage(message)}
             onRegenerateResponse={() =>
               message.id && regenerateResponse(message.id)
