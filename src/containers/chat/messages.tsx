@@ -184,14 +184,6 @@ export const ChatMessagesContainer: React.FC = () => {
     };
   }, [isLessThanMd]);
 
-  const handleNewChat = () => {
-    newChat({
-      last_message: '',
-      title: 'New Chat',
-    });
-    richEditorRef?.current?.focus();
-  };
-
   const handleSubmitChat = async (message: string) => {
     handleJumpToBottom();
 
@@ -211,20 +203,26 @@ export const ChatMessagesContainer: React.FC = () => {
           content: messageWithRules,
         };
 
+    const userMessage: Message = {
+      chatId: selectedChatId,
+      role: 'user',
+      createdAt: getUnixTime(new Date()),
+      updatedAt: getUnixTime(new Date()),
+      ...prompt,
+    };
+
     if (selectedChatId) {
-      await dbMessages.add<Message>({
-        chatId: selectedChatId,
-        role: 'user',
-        createdAt: getUnixTime(new Date()),
-        updatedAt: getUnixTime(new Date()),
-        ...prompt,
-      });
+      await dbMessages.add<Message>(userMessage);
     } else {
-      await newChat({
-        last_message: message,
-        title: message,
-      });
+      await newChat(
+        {
+          last_message: message,
+          title: message,
+        },
+        userMessage,
+      );
     }
+
     streamChatCompletion({
       value: template ? message : messageWithRules,
       template: template ? prompt.content : undefined,
@@ -234,14 +232,6 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessageInput = () => {
-    // if (selectedChat?.locked) {
-    //   return (
-    //     <Box p={4}>
-    //       Hey there! Time to start a new chat as you've reached the limit. 😊
-    //     </Box>
-    //   );
-    // }
-
     if (isTyping) {
       return (
         <Box p={4}>
@@ -266,23 +256,6 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessageInputCTA = () => {
-    // if (selectedChat?.locked) {
-    //   return (
-    //     <LightMode>
-    //       <Button
-    //         borderRadius="lg"
-    //         colorScheme="blue"
-    //         size={{ base: 'md', md: 'sm' }}
-    //         onClick={handleNewChat}
-    //         w={{ base: 'calc(100% - 2rem)', md: 'auto' }}
-    //         mb={{ base: 4, md: 0 }}
-    //       >
-    //         New Chat
-    //       </Button>
-    //     </LightMode>
-    //   );
-    // }
-
     if (isTyping) {
       return (
         <ChatMessageAction
@@ -350,7 +323,6 @@ export const ChatMessagesContainer: React.FC = () => {
             onRegenerateResponse={() =>
               message.id && regenerateResponse(message.id)
             }
-            // isLockedChat={selectedChat?.locked}
           />
         ))}
       </>

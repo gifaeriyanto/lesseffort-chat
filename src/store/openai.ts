@@ -87,7 +87,10 @@ export const useChat = create<{
   updateMessage: (message: string) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
-  newChat: (data: Omit<Chat, 'bot_instruction' | 'model'>) => Promise<void>;
+  newChat: (
+    data: Omit<Chat, 'bot_instruction' | 'model'>,
+    userMessage: Message,
+  ) => Promise<void>;
   regenerateResponse: (messageId: number) => void;
   renameChat: (chatId: number, newTitle: string) => void;
   reset: () => void;
@@ -95,7 +98,7 @@ export const useChat = create<{
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
   setSelectedChatId: (chatId: number | undefined) => void;
-  stopStream: () => void;
+  stopStream: () => Promise<void>;
   streamChatCompletion: (params: {
     value: string;
     notNewMessage?: boolean;
@@ -139,14 +142,10 @@ export const useChat = create<{
       });
     }
   },
-  stopStream: () => {
+  stopStream: async () => {
     const dbMessages = useIndexedDB('messages');
     const { xhr, generatingMessage, selectedChatId } = get();
     xhr?.abort();
-    set({
-      generatingMessage: '',
-      isTyping: false,
-    });
 
     if (generatingMessage) {
       const content =
@@ -158,12 +157,16 @@ export const useChat = create<{
         createdAt: getUnixTime(new Date()),
         updatedAt: getUnixTime(new Date()),
       });
-      set((prev) => ({
-        messages: generatingMessage
-          ? [{ role: 'assistant', content }, ...prev.messages]
-          : prev.messages,
-      }));
+
+      if (selectedChatId) {
+        await get().getMessages(selectedChatId);
+      }
     }
+
+    set({
+      generatingMessage: '',
+      isTyping: false,
+    });
   },
   streamChatCompletion: ({
     value = '',
@@ -321,7 +324,7 @@ export const useChat = create<{
     const chatHistory = await db.getAll<Chat>();
     set({ chatHistory: reverse(chatHistory) });
   },
-  newChat: async (data) => {
+  newChat: async (data, userMessage) => {
     const { reset, getChatHistory } = get();
     reset();
     const dbChatHistory = useIndexedDB('chatHistory');
@@ -335,28 +338,20 @@ export const useChat = create<{
     await getChatHistory();
 
     const chatId = get().chatHistory[0]?.id;
-    if (data.last_message) {
-      dbMessages.add<Message>({
-        chatId,
-        content: data.last_message,
-        role: 'user',
-        createdAt: getUnixTime(new Date()),
-        updatedAt: getUnixTime(new Date()),
-      });
-    }
+    await dbMessages.add<Message>({ ...userMessage, chatId });
     set({
       selectedChatId: chatId,
     });
   },
   selectedChatId: undefined,
-  setSelectedChatId: (chatId) => {
+  setSelectedChatId: async (chatId) => {
     const { getMessages, setEditingMessage, stopStream } = get();
     const dbChatHistory = useIndexedDB('chatHistory');
-    stopStream();
+    await stopStream();
     setEditingMessage(undefined);
     set({ selectedChatId: chatId });
     if (chatId) {
-      dbChatHistory.getByID(chatId).then((res) => {
+      await dbChatHistory.getByID(chatId).then((res) => {
         set({ botInstruction: res.bot_instruction, model: res.model });
         getMessages(chatId);
       });
