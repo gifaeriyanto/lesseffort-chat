@@ -13,7 +13,7 @@ import { Editor } from 'draft-js';
 import { standaloneToast } from 'index';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
-import { getMessagesByChatID } from 'store/db/queries';
+import { getMessagesDB } from 'store/db/queries';
 import { create } from 'zustand';
 
 export const modifyTemplate = (
@@ -85,6 +85,7 @@ export const useChat = create<{
   deleteChat: (chatId: number) => void;
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
   updateMessage: (message: string) => void;
+  updateMessageTemplate: (template: string) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
   newChat: (
@@ -297,7 +298,7 @@ export const useChat = create<{
   },
   getMessages: async (chatId) => {
     localStorage.setItem('lastOpenChatId', String(chatId));
-    const filteredMessages = await getMessagesByChatID(chatId);
+    const filteredMessages = await getMessagesDB(chatId);
     set({ messages: reverse(filteredMessages) });
     return filteredMessages;
   },
@@ -393,6 +394,20 @@ export const useChat = create<{
       notNewMessage: true,
     });
     set({ editingMessage: undefined });
+  },
+  updateMessageTemplate: async (template) => {
+    const { update } = useIndexedDB('messages');
+    const { editingMessage, setEditingMessage } = get();
+
+    if (editingMessage?.chatId) {
+      const newMessage: Message = {
+        ...editingMessage,
+        template,
+      };
+      await update(newMessage);
+      setEditingMessage(newMessage);
+      await get().getMessages(editingMessage.chatId);
+    }
   },
   regenerateResponse: async (messageId) => {
     const {

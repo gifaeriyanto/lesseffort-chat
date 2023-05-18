@@ -11,6 +11,7 @@ export interface Rules {
 }
 
 export interface ChatRulesProps {
+  value?: Rules;
   getActiveRules?: (activeRulesCount: number) => void;
   onChange?: (rules: Rules) => void;
   onClose?: () => void;
@@ -47,12 +48,19 @@ export const defaultRules: Rules = {
 };
 
 export const ChatRules: React.FC<ChatRulesProps> = ({
+  value,
   getActiveRules,
   onChange,
   onClose,
   hidden,
 }) => {
   const [rules, setRules] = useState(defaultRules);
+
+  useLayoutEffect(() => {
+    if (value) {
+      setRules(value);
+    }
+  }, [value]);
 
   const activeRulesCount = useMemo(() => {
     return Object.entries(rules).reduce((prev, [key, value]) => {

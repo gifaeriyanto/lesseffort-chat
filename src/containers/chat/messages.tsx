@@ -15,28 +15,26 @@ import {
 } from '@chakra-ui/react';
 import { Chat, Message } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
-import {
-  ChatRules,
-  chatRulesPrompt,
-  defaultRules,
-  Rules,
-} from 'components/chat/rules';
+import { ChatRules, defaultRules, Rules } from 'components/chat/rules';
 import SelectedMessage from 'components/chat/selectedMessage';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';
 import { getUnixTime } from 'date-fns';
-import { MdSend, MdSubdirectoryArrowLeft } from 'react-icons/md';
+import {
+  MdOutlineChecklist,
+  MdSend,
+  MdSubdirectoryArrowLeft,
+} from 'react-icons/md';
 import {
   TbChevronDown,
   TbInfoCircle,
-  TbMenu,
   TbPencil,
   TbPlayerStopFilled,
   TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { modifyTemplate, useChat, useProfilePhoto } from 'store/openai';
+import { useChat, useProfilePhoto } from 'store/openai';
 import { Prompt } from 'store/supabase';
 import { CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
@@ -56,6 +54,7 @@ export const ChatMessagesContainer: React.FC = () => {
     stopStream,
     streamChatCompletion,
     updateMessage,
+    updateMessageTemplate,
   } = useChat();
   const { getPhoto } = useProfilePhoto();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
@@ -73,6 +72,7 @@ export const ChatMessagesContainer: React.FC = () => {
   const [chatRules, setChatRules] = useState<Rules>(defaultRules);
   const {
     isOpen: isShowRuleOptions,
+    onOpen: showRuleOptions,
     onToggle: toggleShowRuleOptions,
     onClose: hideRuleOptions,
   } = useDisclosure();
@@ -121,9 +121,10 @@ export const ChatMessagesContainer: React.FC = () => {
   }, [selectedChatId, chatHistory]);
 
   useLayoutEffect(() => {
-    hideRuleOptions();
     if (!isTyping) {
       richEditorRef?.current?.focus();
+    } else {
+      hideRuleOptions();
     }
   }, [isTyping, richEditorRef]);
 
@@ -309,7 +310,10 @@ export const ChatMessagesContainer: React.FC = () => {
             isMe={message.role === 'user'}
             id={message.id}
             message={message.content}
-            onEdit={() => setEditingMessage(message)}
+            onEdit={() => {
+              setEditingMessage(message);
+              message.rules && setChatRules(message.rules);
+            }}
             onRegenerateResponse={() =>
               message.id && regenerateResponse(message.id)
             }
@@ -351,7 +355,11 @@ export const ChatMessagesContainer: React.FC = () => {
         {!!editingMessage && (
           <SelectedMessage
             icon={TbPencil}
-            onClose={() => setEditingMessage(undefined)}
+            onClose={() => {
+              setEditingMessage(undefined);
+              hideRuleOptions();
+              handleClearRules();
+            }}
             title={editingMessage.content}
             info={
               <>
@@ -371,6 +379,8 @@ export const ChatMessagesContainer: React.FC = () => {
                 </Tooltip>
               </>
             }
+            template={editingMessage.template}
+            onSaveTemplate={updateMessageTemplate}
           />
         )}
 
@@ -406,7 +416,7 @@ export const ChatMessagesContainer: React.FC = () => {
           hidden={isTyping || isLessThanMd}
         >
           <Button
-            leftIcon={<TbMenu />}
+            leftIcon={<MdOutlineChecklist />}
             aria-label="Show rule options"
             size="sm"
             pointerEvents="initial"
@@ -428,10 +438,16 @@ export const ChatMessagesContainer: React.FC = () => {
 
         <Box mb={4} hidden={!isShowRuleOptions || isTyping || isLessThanMd}>
           <ChatRules
+            value={chatRules}
             onChange={setChatRules}
             hidden={template ? ['format', 'writingStyle'] : []}
             onClose={handleClearRules}
-            getActiveRules={setChatRulesCount}
+            getActiveRules={(count) => {
+              setChatRulesCount(count);
+              if (editingMessage) {
+                showRuleOptions();
+              }
+            }}
           />
         </Box>
 
