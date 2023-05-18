@@ -50,7 +50,6 @@ import { comingSoon } from 'utils/common';
 import 'katex/dist/katex.min.css';
 
 export interface ChatMessageProps {
-  isLockedChat?: boolean;
   isMe?: boolean;
   id?: number;
   message: string;
@@ -63,18 +62,13 @@ export interface ChatMessageActionProps
   extends Omit<IconButtonProps, 'aria-label'> {
   title: string;
   icon: React.ReactElement;
-  isLockedChat?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export const ChatMessageAction = React.forwardRef<
   HTMLButtonElement,
   ChatMessageActionProps
->(({ title, icon, isLockedChat, onClick, ...props }, ref) => {
-  if (isLockedChat) {
-    return null;
-  }
-
+>(({ title, icon, onClick, ...props }, ref) => {
   return (
     <Tooltip label={title} openDelay={500}>
       <IconButton
@@ -132,7 +126,6 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
 });
 
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
-  isLockedChat,
   isMe,
   id,
   message,
@@ -187,7 +180,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ModalContent userSelect="none">
             <ModalBody py={4}>
               <VStack spacing={4}>
-                {!!id && !isLockedChat && (
+                {!!id && (
                   <>
                     {isMe ? (
                       <Box role="button" onClick={handleClose(onEdit)}>
@@ -222,7 +215,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         float={{ md: 'right' }}
         ml={4}
       >
-        {!!id && !isLockedChat && (
+        {!!id && (
           <>
             {isMe ? (
               <ChatMessageAction
