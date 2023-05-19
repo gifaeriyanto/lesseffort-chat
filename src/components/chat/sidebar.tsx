@@ -234,7 +234,7 @@ export const ChatSidebar: React.FC = () => {
             >
               Today usage is{' '}
               <Box as="b" color="blue.500">
-                ${usages.today.toFixed(2)}
+                ${usages.today.toFixed(4)}
               </Box>
             </Box>
           </AccordionPanel>
