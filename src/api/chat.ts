@@ -34,8 +34,7 @@ export const defaultBotInstruction =
   'Act like a human and respond to users with casual language and friendly.';
 
 const mandatoryInstruction = `\nPlease always use markdown format.
-If you write a code, please tell us the language code.
-Always use supported emoticons for all devices.`;
+If you write a code, please tell us the language code.`;
 
 export const generateResponse = (
   messages: Message[],
