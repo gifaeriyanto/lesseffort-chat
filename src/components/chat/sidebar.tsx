@@ -40,8 +40,14 @@ export const ChatSidebar: React.FC = () => {
 
   const fetchUsages = () => {
     getUsages().then((res) => {
+      const todayItemIndex = res.data.daily_costs.findIndex((item) => {
+        return (
+          new Date(item.timestamp * 1000).getDate() === new Date().getUTCDate()
+        );
+      });
+
       const todayUsageItems = res.data.daily_costs[
-        new Date().getDate() - 1
+        todayItemIndex
       ].line_items.reduce((prev, curr) => {
         return prev + curr.cost;
       }, 0);
