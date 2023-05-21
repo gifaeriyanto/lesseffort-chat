@@ -135,6 +135,14 @@ export const ChatSidebar: React.FC = () => {
                     </Box>
                   </Text>
                 </Box>
+
+                <IconButton
+                  variant="ghost"
+                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+                  aria-label="Toggle color mode"
+                  onClick={toggleColorMode}
+                  color="gray.400"
+                />
               </Flex>
             </Flex>
           </DrawerBody>
