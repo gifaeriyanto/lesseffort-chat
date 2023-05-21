@@ -7,6 +7,7 @@ export const selectTheme: ComponentStyleConfig = {
   variants: {
     outline: {
       field: {
+        bgColor: 'gray.100',
         borderColor: CustomColor.border,
         _hover: {
           borderColor: CustomColor.border,
@@ -17,6 +18,7 @@ export const selectTheme: ComponentStyleConfig = {
           bgColor: 'blackAlpha.300',
         },
         _light: {
+          bgColor: 'gray.100',
           borderColor: CustomColor.lightBorder,
           _hover: {
             borderColor: CustomColor.lightBorder,

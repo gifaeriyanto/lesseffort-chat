@@ -2,6 +2,7 @@ import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 import { CustomColor } from 'theme/foundations/colors';
 
 const outline = defineStyle({
+  bgColor: 'gray.700',
   borderColor: CustomColor.border,
   _hover: {
     borderColor: CustomColor.border,
@@ -12,6 +13,7 @@ const outline = defineStyle({
     bgColor: 'blackAlpha.300',
   },
   _light: {
+    bgColor: 'gray.100',
     borderColor: CustomColor.lightBorder,
     _hover: {
       borderColor: CustomColor.lightBorder,

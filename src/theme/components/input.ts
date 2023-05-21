@@ -7,6 +7,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const outline = definePartsStyle({
   field: {
+    bgColor: 'gray.700',
     borderColor: CustomColor.border,
     _hover: {
       borderColor: CustomColor.border,
@@ -17,6 +18,7 @@ const outline = definePartsStyle({
       bgColor: 'blackAlpha.300',
     },
     _light: {
+      bgColor: 'gray.100',
       borderColor: CustomColor.lightBorder,
       _hover: {
         borderColor: CustomColor.lightBorder,
