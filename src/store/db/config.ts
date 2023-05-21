@@ -1,4 +1,4 @@
-export const DBVersion = 7;
+export const DBVersion = 8;
 
 export const DBConfig = {
   name: 'lesseffortchat',
