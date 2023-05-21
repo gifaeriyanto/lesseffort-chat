@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {
   Box,
+  Button,
   ButtonGroup,
   Flex,
   Icon,
@@ -218,32 +219,43 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         bgColor="gray.700"
         className="message-actions"
         opacity={0}
-        float={{ md: 'right' }}
-        ml={4}
+        ml="1rem"
         _light={{ bgColor: 'gray.200' }}
       >
         {!!id && (
           <>
             {isMe ? (
-              <ChatMessageAction
-                title="Edit Message"
-                icon={<TbPencil />}
+              <Button
                 onClick={onEdit}
-              />
+                variant="ghost"
+                borderRadius="lg"
+                size="xs"
+                color="gray.400"
+              >
+                Edit
+              </Button>
             ) : (
-              <ChatMessageAction
-                title="Regenerate Response"
-                icon={<TbReload />}
+              <Button
                 onClick={onRegenerateResponse}
-              />
+                variant="ghost"
+                borderRadius="lg"
+                size="xs"
+                color="gray.400"
+              >
+                Regenerate response
+              </Button>
             )}
           </>
         )}
-        <ChatMessageAction
-          title="Copy Text"
-          icon={<TbCopy />}
-          onClick={handleCopy}
-        />
+        <Button
+          onClick={onEdit}
+          variant="ghost"
+          borderRadius="lg"
+          size="xs"
+          color="gray.400"
+        >
+          Copy text
+        </Button>
         {/* Coming soon feature */}
         {false && (
           <Menu>
@@ -288,7 +300,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       id={`message-${id || 0}`}
     >
       {isMe ? (
-        <ProfilePhoto />
+        <ProfilePhoto mt="0.5rem" />
       ) : (
         <Flex
           p={4}
@@ -299,6 +311,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           justify="center"
           borderRadius="full"
           color="white"
+          mt="0.5rem"
         >
           <Icon as={TbBrandOpenai} fontSize="2xl" />
         </Flex>
@@ -378,9 +391,22 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             borderColor: 'gray.400',
             pl: 4,
           },
+          '.md-wrapper': {
+            bgColor: 'gray.500',
+            display: 'inline-block',
+            py: 2,
+            px: 4,
+            mb: '1rem',
+            borderRadius: 'xl',
+            '& > *:last-child': {
+              mb: 0,
+            },
+            _light: {
+              bgColor: 'gray.100',
+            },
+          },
         }}
       >
-        {renderActions()}
         <ReactMarkdown
           components={{
             code: CodeBlock,
@@ -388,6 +414,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           remarkPlugins={[remarkGfm, remarkBreaks]}
           // Math support conflicting with using usd symbol ($)
           // remarkPlugins={[remarkGfm, remarkBreaks, remarkMath, remarkHTMLKatex]}
+          className="md-wrapper"
           rehypePlugins={[
             [
               rehypeHighlight,
@@ -406,6 +433,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         >
           {message}
         </ReactMarkdown>
+        {renderActions()}
       </Box>
     </Flex>
   );

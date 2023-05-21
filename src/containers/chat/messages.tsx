@@ -424,8 +424,16 @@ export const ChatMessagesContainer: React.FC = () => {
             borderBottomRadius="0"
             bgColor="gray.500"
             onClick={toggleShowRuleOptions}
+            border="1px solid"
+            borderBottom={0}
+            borderColor={CustomColor.border}
             _hover={{ bgColor: 'gray.600' }}
-            _light={{ bgColor: 'gray.100' }}
+            _light={{
+              bgColor: 'gray.100',
+              border: '1px solid',
+              borderBottom: 0,
+              borderColor: CustomColor.lightBorder,
+            }}
           >
             {isShowRuleOptions ? 'Hide' : 'Show'} Rules
             {!!chatRulesCount && !isShowRuleOptions && (

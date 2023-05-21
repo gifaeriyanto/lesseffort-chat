@@ -1,9 +1,16 @@
 import React, { useRef } from 'react';
-import { Avatar, Flex, Icon, Tooltip } from '@chakra-ui/react';
+import {
+  Avatar,
+  AvatarProps,
+  BoxProps,
+  Flex,
+  Icon,
+  Tooltip,
+} from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
 import { useProfilePhoto } from 'store/openai';
 
-export const ProfilePhoto = () => {
+export const ProfilePhoto: React.FC<BoxProps> = (props) => {
   const { photo, setPhoto } = useProfilePhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,6 +49,7 @@ export const ProfilePhoto = () => {
           h="2.188rem"
           role="button"
           onClick={handleTriggerUpload}
+          {...(props as AvatarProps)}
         />
       ) : (
         <Tooltip label="Upload your own photo" openDelay={500}>
@@ -56,6 +64,7 @@ export const ProfilePhoto = () => {
             role="button"
             onClick={handleTriggerUpload}
             _light={{ bgColor: 'gray.300' }}
+            {...props}
           >
             <Icon as={TbUser} fontSize="2xl" color="gray.400" />
           </Flex>

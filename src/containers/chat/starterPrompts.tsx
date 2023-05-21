@@ -219,6 +219,7 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
                     }}
                     onClick={() => onSelectPrompt(item)}
                     _light={{
+                      bgColor: 'gray.100',
                       borderColor: CustomColor.lightBorder,
                     }}
                   >
