@@ -248,7 +248,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           </>
         )}
         <Button
-          onClick={onEdit}
+          onClick={handleCopy}
           variant="ghost"
           borderRadius="lg"
           size="xs"
