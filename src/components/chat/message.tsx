@@ -304,7 +304,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       ) : (
         <Flex
           p={4}
-          bgColor="blue.500"
+          bgColor="#74AA9C"
           w="2.188rem"
           h="2.188rem"
           align="center"
@@ -392,7 +392,8 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             pl: 4,
           },
           '.md-wrapper': {
-            bgColor: 'gray.500',
+            color: isMe ? 'white' : 'inherit',
+            bgColor: isMe ? 'blue.500' : 'gray.500',
             display: 'inline-block',
             py: 2,
             px: 4,
@@ -402,7 +403,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               mb: 0,
             },
             _light: {
-              bgColor: 'gray.100',
+              bgColor: isMe ? 'blue.500' : 'gray.100',
             },
           },
         }}

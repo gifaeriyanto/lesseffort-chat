@@ -63,7 +63,7 @@ export const ChatHeader: React.FC = () => {
         {!isLessThanMd && (
           <Flex
             p={4}
-            bgColor="blue.500"
+            bgColor="#74AA9C"
             w="2.188rem"
             h="2.188rem"
             align="center"
