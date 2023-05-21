@@ -3,7 +3,7 @@ import { DBVersion } from 'store/db/config';
 
 export const getMessagesDB = (chatId: number): Promise<any> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('effortlesschat', DBVersion);
+    const request = indexedDB.open('lesseffortchat', DBVersion);
 
     request.onsuccess = (event: any) => {
       const db = event.target.result;

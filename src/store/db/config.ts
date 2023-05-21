@@ -1,7 +1,7 @@
 export const DBVersion = 7;
 
 export const DBConfig = {
-  name: 'effortlesschat',
+  name: 'lesseffortchat',
   version: DBVersion,
   objectStoresMeta: [
     {

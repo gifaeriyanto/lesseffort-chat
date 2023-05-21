@@ -86,7 +86,7 @@ export const ChatSidebar: React.FC = () => {
           <DrawerHeader>
             <Flex align="center" justify="space-between">
               <Text fontWeight="bold">
-                Effortless{' '}
+                Lesseffort{' '}
                 <Text color="blue.500" as="span">
                   AI
                 </Text>
