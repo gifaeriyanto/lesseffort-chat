@@ -14,7 +14,7 @@ function App() {
         <Flex justify="center" align="center" h="100vh" w="full">
           <Box>
             We have moved to{' '}
-            <Link href="https://chat.lesseffort.io" as="span" color="blue.500">
+            <Link href="https://chat.lesseffort.io" color="blue.500">
               lesseffort.io
             </Link>
           </Box>
