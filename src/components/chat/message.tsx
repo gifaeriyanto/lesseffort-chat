@@ -280,7 +280,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         )}
       </ButtonGroup>
     );
-  }, [isLessThanMd, noActions]);
+  }, [isLessThanMd, noActions, isOpen]);
 
   return (
     <Flex
