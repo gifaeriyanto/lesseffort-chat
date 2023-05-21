@@ -18,6 +18,7 @@ import ChatSettings from 'containers/chat/chatSettings';
 import StarterPrompts from 'containers/chat/starterPrompts';
 import { TbSettings, TbTemplate } from 'react-icons/tb';
 import { Prompt } from 'store/supabase';
+import { CustomColor } from 'theme/foundations/colors';
 
 export interface StarterContainerProps {
   onSelectPrompt: (prompt: Prompt) => void;
@@ -35,6 +36,12 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
     borderColor: tabIndex === index ? 'blue.500' : 'gray.500',
     color: tabIndex === index ? 'blue.500' : 'gray.400',
     py: 4,
+    _light: {
+      borderColor: tabIndex === index ? 'blue.500' : CustomColor.lightBorder,
+    },
+    _focus: {
+      boxShadow: 'none',
+    },
   });
 
   const wrapperPadding = { base: '1rem', md: '0 2rem 2rem 2rem' };

@@ -1,7 +1,9 @@
 export enum CustomColor {
   background = 'gray.700',
   card = 'gray.600',
+  lightCard = 'gray.100',
   border = '#303435',
+  lightBorder = '#c6d2d3',
 }
 
 export const colors = {

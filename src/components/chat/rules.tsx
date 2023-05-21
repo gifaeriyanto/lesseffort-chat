@@ -104,6 +104,11 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
       isDisabled: hidden?.includes(name),
       borderColor: rules[name] ? 'blue.500' : CustomColor.border,
       focusBorderColor: 'blue.300',
+      _light: {
+        // border: rules[name] ? '2px solid' : '1px solid',
+        borderColor: rules[name] ? 'blue.500' : CustomColor.lightBorder,
+        bgColor: rules[name] ? 'white' : 'inherit',
+      },
     };
   };
 

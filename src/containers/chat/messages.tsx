@@ -351,6 +351,7 @@ export const ChatMessagesContainer: React.FC = () => {
         w="full"
         zIndex={1}
         bgColor="gray.700"
+        _light={{ bgColor: 'gray.200' }}
       >
         {!!editingMessage && (
           <SelectedMessage
@@ -424,17 +425,30 @@ export const ChatMessagesContainer: React.FC = () => {
             bgColor="gray.500"
             onClick={toggleShowRuleOptions}
             _hover={{ bgColor: 'gray.600' }}
+            _light={{ bgColor: 'gray.100' }}
           >
             {isShowRuleOptions ? 'Hide' : 'Show'} Rules
             {!!chatRulesCount && !isShowRuleOptions && (
-              <Tag ml={2} size="sm" borderRadius="full">
+              <Tag
+                ml={2}
+                size="sm"
+                borderRadius="full"
+                _light={{ bgColor: 'gray.200' }}
+              >
                 {chatRulesCount}
               </Tag>
             )}
           </Button>
         </Flex>
 
-        {!isLessThanMd && <Box h="1px" bgColor={CustomColor.border} mb={4} />}
+        {!isLessThanMd && (
+          <Box
+            h="1px"
+            bgColor={CustomColor.border}
+            _light={{ bgColor: CustomColor.lightBorder }}
+            mb={4}
+          />
+        )}
 
         <Box mb={4} hidden={!isShowRuleOptions || isTyping || isLessThanMd}>
           <ChatRules
@@ -465,6 +479,10 @@ export const ChatMessagesContainer: React.FC = () => {
           align="center"
           justify="center"
           direction={selectedChat?.limited && isLessThanMd ? 'column' : 'row'}
+          _light={{
+            bgColor: isTyping ? 'gray.200' : CustomColor.lightCard,
+            borderColor: CustomColor.lightBorder,
+          }}
         >
           {isShowJumpToBottomButton && (
             <Tooltip label="Jump to the last message" openDelay={500}>

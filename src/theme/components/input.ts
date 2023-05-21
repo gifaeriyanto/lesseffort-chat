@@ -16,6 +16,17 @@ const outline = definePartsStyle({
       boxShadow: 'none',
       bgColor: 'blackAlpha.300',
     },
+    _light: {
+      borderColor: CustomColor.lightBorder,
+      _hover: {
+        borderColor: CustomColor.lightBorder,
+      },
+      _focus: {
+        borderColor: CustomColor.lightBorder,
+        boxShadow: 'none',
+        bgColor: 'gray.100',
+      },
+    },
   },
 });
 

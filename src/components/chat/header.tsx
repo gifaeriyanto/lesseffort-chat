@@ -32,7 +32,6 @@ export const ChatHeader: React.FC = () => {
       align="center"
       borderBottom="1px solid"
       borderColor={CustomColor.border}
-      bgColor={CustomColor.background}
       p={{ base: 4, md: 0 }}
       pb={{ base: 3, md: 2 }}
       w={{ base: 'full', md: 'auto' }}
@@ -40,6 +39,11 @@ export const ChatHeader: React.FC = () => {
       zIndex={1}
       top={0}
       left={0}
+      bgColor="gray.700"
+      _light={{
+        borderColor: CustomColor.lightBorder,
+        bgColor: { base: 'gray.100', md: 'gray.200' },
+      }}
     >
       {isLessThanMd && (
         <IconButton
@@ -65,6 +69,7 @@ export const ChatHeader: React.FC = () => {
             align="center"
             justify="center"
             borderRadius="full"
+            color="white"
           >
             <Icon as={TbBrandOpenai} fontSize="2xl" />
           </Flex>
@@ -92,7 +97,16 @@ export const ChatHeader: React.FC = () => {
         </Box>
       </Flex>
       {!!messagesLength ? (
-        <HistoryActions id={selectedChat?.id} bgColor="gray.700" />
+        <HistoryActions
+          id={selectedChat?.id}
+          bgColor="transparent"
+          _hover={{
+            bgColor: 'gray.500',
+            _light: {
+              bgColor: 'gray.100',
+            },
+          }}
+        />
       ) : (
         // to keep chat title centered
         <Box w="2.188rem" />

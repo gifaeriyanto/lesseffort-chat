@@ -81,6 +81,7 @@ export const ChatMessageAction = React.forwardRef<
         fontSize="md"
         color="gray.300"
         onClick={onClick}
+        _light={{ color: 'gray.400' }}
         {...props}
       />
     </Tooltip>
@@ -121,6 +122,10 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
         right={-2}
         size="sm"
         fontSize="md"
+        _light={{
+          color: 'white',
+          bgColor: 'whiteAlpha.400',
+        }}
       />
     </Box>
   );
@@ -215,6 +220,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         opacity={0}
         float={{ md: 'right' }}
         ml={4}
+        _light={{ bgColor: 'gray.200' }}
       >
         {!!id && (
           <>
@@ -292,6 +298,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           align="center"
           justify="center"
           borderRadius="full"
+          color="white"
         >
           <Icon as={TbBrandOpenai} fontSize="2xl" />
         </Flex>
@@ -299,6 +306,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       <Box
         mt="0.286rem"
         color={isMe ? 'gray.300' : 'gray.200'}
+        _light={{
+          color: isMe ? 'gray.700' : 'gray.600',
+        }}
         maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
         w="full"
         onTouchStart={handleShowMobileActions}
@@ -328,6 +338,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           a: {
             color: 'blue.300',
             textDecor: 'underline',
+            _light: {
+              color: 'blue.600',
+            },
           },
           ['.hljs']: {
             maxWidth: 'full',
@@ -339,6 +352,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             maxWidth: 'full',
             overflow: 'auto',
             whiteSpace: 'pre-wrap',
+            _light: {
+              color: '#fff',
+            },
           },
           ['table td, table th']: {
             fontSize: '0.938rem',

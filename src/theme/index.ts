@@ -1,8 +1,9 @@
 import { extendTheme, ThemeOverride } from '@chakra-ui/react';
 import { inputTheme } from 'theme/components/input';
 import { popoverTheme } from 'theme/components/popover';
-import { SelectTheme } from 'theme/components/select';
+import { selectTheme } from 'theme/components/select';
 import { skeletonTheme } from 'theme/components/skeleton';
+import { textareaTheme } from 'theme/components/textarea';
 import { colors, CustomColor } from 'theme/foundations/colors';
 
 const config: ThemeOverride = {
@@ -10,11 +11,12 @@ const config: ThemeOverride = {
   components: {
     Input: inputTheme,
     Popover: popoverTheme,
-    Select: SelectTheme,
+    Select: selectTheme,
     Skeleton: skeletonTheme,
+    Textarea: textareaTheme,
   },
   config: {
-    initialColorMode: 'dark',
+    // initialColorMode: 'dark',
     useSystemColorMode: false,
   },
   fonts: {
@@ -32,12 +34,12 @@ const config: ThemeOverride = {
     sm: '0.143rem',
   },
   styles: {
-    global: () => ({
+    global: ({ colorMode }) => ({
       'html, body': {
         fontSize: '16px',
         fontWeight: 500,
         lineHeight: 'tall',
-        bgColor: CustomColor.background,
+        bgColor: colorMode === 'dark' ? CustomColor.background : 'gray.200',
       },
       html: {
         h: '100%',

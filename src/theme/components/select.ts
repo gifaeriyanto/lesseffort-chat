@@ -1,7 +1,7 @@
 import { ComponentStyleConfig } from '@chakra-ui/react';
 import { CustomColor } from 'theme/foundations/colors';
 
-export const SelectTheme: ComponentStyleConfig = {
+export const selectTheme: ComponentStyleConfig = {
   baseStyle: {},
   parts: ['field', 'icon'],
   variants: {
@@ -15,6 +15,17 @@ export const SelectTheme: ComponentStyleConfig = {
           borderColor: 'whiteAlpha.200',
           boxShadow: 'none',
           bgColor: 'blackAlpha.300',
+        },
+        _light: {
+          borderColor: CustomColor.lightBorder,
+          _hover: {
+            borderColor: CustomColor.lightBorder,
+          },
+          _focus: {
+            borderColor: CustomColor.lightBorder,
+            boxShadow: 'none',
+            bgColor: 'gray.100',
+          },
         },
       },
     },

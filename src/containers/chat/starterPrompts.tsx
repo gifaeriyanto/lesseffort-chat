@@ -110,7 +110,7 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
           <Box fontSize="sm" color="gray.400">
             {!!count ? (
               <>
-                <Box as="b" color="gray.300">
+                <Box as="b" color="gray.300" _light={{ color: 'gray.400' }}>
                   {formatLocaleNumber(count)}
                 </Box>{' '}
                 {keyword ? 'prompts match your filter' : 'available prompts'}
@@ -177,6 +177,9 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
                 p={4}
                 h="full"
                 borderRadius="xl"
+                _light={{
+                  borderColor: CustomColor.lightBorder,
+                }}
               >
                 <VStack spacing={4} align="flex-start">
                   <Skeleton height="1.2rem" w="80%" />
@@ -208,8 +211,16 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
                     borderRadius="xl"
                     direction="column"
                     role="button"
-                    _hover={{ bgColor: 'gray.600' }}
+                    _hover={{
+                      bgColor: 'gray.600',
+                      _light: {
+                        bgColor: 'gray.100',
+                      },
+                    }}
                     onClick={() => onSelectPrompt(item)}
+                    _light={{
+                      borderColor: CustomColor.lightBorder,
+                    }}
                   >
                     <Box fontWeight="bold" fontSize="lg">
                       {item.Title}
@@ -224,7 +235,11 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
                       </Link>{' '}
                       . {COMMUNITIES[item.Community]}
                     </Box>
-                    <Box fontSize="sm" color="gray.300">
+                    <Box
+                      fontSize="sm"
+                      color="gray.300"
+                      _light={{ color: 'gray.400' }}
+                    >
                       {item.Teaser}
                     </Box>
 
@@ -234,6 +249,7 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
                       spacing={2}
                       mt="auto"
                       pt={4}
+                      _light={{ color: 'gray.400' }}
                     >
                       <Box>{formatNumber(item.Views)} views</Box>
                       <Box>.</Box>
@@ -258,6 +274,9 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
         fontSize="sm"
         align="center"
         hidden={count < pageSize && page === 1}
+        _light={{
+          borderColor: CustomColor.lightBorder,
+        }}
       >
         <Box pl={2} color="gray.400">
           Results: {pageFromTo.from} - {pageFromTo.to} of{' '}

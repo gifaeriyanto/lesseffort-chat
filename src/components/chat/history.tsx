@@ -34,7 +34,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       borderLeft={isActive ? '1px solid' : undefined}
       borderColor="blue.500"
       borderBottom={`1px solid ${CustomColor.border}`}
-      bgColor={isActive ? 'gray.600' : 'transparent'}
+      bgColor={isActive ? 'gray.700' : 'transparent'}
       w="full"
       h="5.125rem"
       p={4}
@@ -42,6 +42,10 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       role="button"
       onClick={() => id && onSelect(id)}
       pos="relative"
+      _light={{
+        bgColor: isActive ? 'gray.200' : 'transparent',
+        borderBottom: `1px solid ${CustomColor.lightBorder}`,
+      }}
     >
       <HStack
         _hover={{

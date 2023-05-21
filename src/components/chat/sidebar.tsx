@@ -13,16 +13,18 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  HStack,
   IconButton,
   LightMode,
   Text,
+  useColorMode,
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { Search } from 'components/search';
-import { TbPlus, TbSearch } from 'react-icons/tb';
+import { TbMoonFilled, TbPlus, TbSearch, TbSun } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
@@ -37,6 +39,7 @@ export const ChatSidebar: React.FC = () => {
     total: 0,
     today: 0,
   });
+  const { toggleColorMode, colorMode } = useColorMode();
 
   const fetchUsages = () => {
     getUsages().then((res) => {
@@ -159,6 +162,10 @@ export const ChatSidebar: React.FC = () => {
         borderColor={CustomColor.border}
         overflow="hidden"
         direction="column"
+        _light={{
+          bgColor: CustomColor.lightCard,
+          borderColor: CustomColor.lightBorder,
+        }}
       >
         {isShowSearch || search.length ? (
           <Box
@@ -167,10 +174,12 @@ export const ChatSidebar: React.FC = () => {
             flexShrink={0}
             borderBottom="1px solid"
             borderColor={CustomColor.border}
+            _light={{
+              borderColor: CustomColor.lightBorder,
+            }}
           >
             <Search
               borderRadius="lg"
-              bgColor="gray.600"
               autoFocus
               onBlur={onToggle}
               onSearch={setSearch}
@@ -189,6 +198,9 @@ export const ChatSidebar: React.FC = () => {
             align="center"
             onClick={onToggle}
             cursor="text"
+            _light={{
+              borderColor: CustomColor.lightBorder,
+            }}
           >
             <Text color="gray.400" fontSize="sm">
               Chat History
@@ -214,6 +226,10 @@ export const ChatSidebar: React.FC = () => {
           p={4}
           border="1px solid"
           borderColor={CustomColor.border}
+          _light={{
+            bgColor: CustomColor.lightCard,
+            borderColor: CustomColor.lightBorder,
+          }}
         >
           <Flex gap={4}>
             <Flex justify="space-between" w="full">
@@ -226,9 +242,18 @@ export const ChatSidebar: React.FC = () => {
                   </Box>
                 </Text>
               </Box>
-              <AccordionButton w="auto" p={1} transform="rotate(180deg)">
-                <AccordionIcon color="gray.400" fontSize="2xl" />
-              </AccordionButton>
+              <HStack>
+                <IconButton
+                  variant="ghost"
+                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+                  aria-label="Toggle color mode"
+                  onClick={toggleColorMode}
+                  color="gray.400"
+                />
+                <AccordionButton w="auto" p={1} transform="rotate(180deg)">
+                  <AccordionIcon color="gray.400" fontSize="2xl" />
+                </AccordionButton>
+              </HStack>
             </Flex>
           </Flex>
           <AccordionPanel p={0} mt={4}>
@@ -237,6 +262,9 @@ export const ChatSidebar: React.FC = () => {
               borderTop="1px solid"
               color="gray.300"
               borderColor={CustomColor.border}
+              _light={{
+                borderColor: CustomColor.lightBorder,
+              }}
             >
               Today usage is{' '}
               <Box as="b" color="blue.500">

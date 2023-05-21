@@ -85,6 +85,9 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
             bgColor: 'gray.500',
           }}
           onClick={(e) => e.stopPropagation()}
+          _light={{
+            bgColor: 'gray.200',
+          }}
           {...props}
         />
         <Portal>

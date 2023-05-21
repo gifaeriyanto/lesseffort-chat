@@ -7,6 +7,7 @@ import {
   InputRightElement,
 } from '@chakra-ui/react';
 import { TbSearch, TbX } from 'react-icons/tb';
+import { CustomColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';
 
 export interface SearchProps extends InputProps {
