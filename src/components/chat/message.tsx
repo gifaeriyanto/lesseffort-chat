@@ -318,9 +318,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       )}
       <Box
         mt="0.286rem"
-        color={isMe ? 'gray.300' : 'gray.200'}
+        color="gray.200"
         _light={{
-          color: isMe ? 'gray.700' : 'gray.600',
+          color: 'gray.600',
         }}
         maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
         w="full"
