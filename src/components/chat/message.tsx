@@ -1,6 +1,7 @@
 import React, {
   memo,
   PropsWithChildren,
+  useCallback,
   useLayoutEffect,
   useRef,
   useState,
@@ -163,7 +164,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     };
   }, [to, isOpen]);
 
-  const renderActions = () => {
+  const renderActions = useCallback(() => {
     if (noActions) {
       return null;
     }
@@ -261,7 +262,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         )}
       </ButtonGroup>
     );
-  };
+  }, [isLessThanMd, noActions]);
 
   return (
     <Flex

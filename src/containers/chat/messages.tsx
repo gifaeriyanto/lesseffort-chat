@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -294,16 +294,13 @@ export const ChatMessagesContainer: React.FC = () => {
     );
   };
 
-  const renderMessages = () => {
+  const renderMessages = useCallback(() => {
     if (!messages.length) {
       return <StarterContainer onSelectPrompt={setTemplate} />;
     }
 
     return (
       <>
-        {!!generatingMessage && (
-          <ChatMessage key="message-0" message={generatingMessage} noActions />
-        )}
         {messages.map((message) => (
           <ChatMessage
             key={message.id || message.createdAt}
@@ -321,7 +318,7 @@ export const ChatMessagesContainer: React.FC = () => {
         ))}
       </>
     );
-  };
+  }, [messages]);
 
   return (
     <>
@@ -341,6 +338,9 @@ export const ChatMessagesContainer: React.FC = () => {
           },
         }}
       >
+        {!!generatingMessage && (
+          <ChatMessage key="message-0" message={generatingMessage} noActions />
+        )}
         {renderMessages()}
       </Flex>
 
