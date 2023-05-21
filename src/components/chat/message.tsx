@@ -392,6 +392,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             pl: 4,
           },
           '.md-wrapper': {
+            maxW: 'full',
             color: isMe ? 'white' : 'inherit',
             bgColor: isMe ? 'blue.500' : 'gray.500',
             display: 'inline-block',
