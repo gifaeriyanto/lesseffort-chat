@@ -94,6 +94,7 @@ export const useChat = create<{
   ) => Promise<void>;
   regenerateResponse: (messageId: number) => void;
   renameChat: (chatId: number, newTitle: string) => void;
+  resendLastMessage: () => Promise<void>;
   reset: () => void;
   resetChatSettings: () => void;
   setEditingMessage: (message?: Message) => void;
@@ -337,6 +338,25 @@ export const useChat = create<{
       await dbChatHistory.getByID(chatId).then((res) => {
         set({ botInstruction: res.bot_instruction, model: res.model });
         getMessages(chatId);
+      });
+    }
+  },
+  resendLastMessage: async () => {
+    const { update } = useIndexedDB('messages');
+    const { messages, selectedChatId, getMessages, streamChatCompletion } =
+      get();
+
+    if (!messages.length) {
+      return;
+    }
+
+    const lastMessage = messages[0];
+    await update(lastMessage);
+    if (lastMessage.chatId) {
+      await getMessages(lastMessage.chatId);
+      streamChatCompletion({
+        userMessage: lastMessage,
+        notNewMessage: true,
       });
     }
   },

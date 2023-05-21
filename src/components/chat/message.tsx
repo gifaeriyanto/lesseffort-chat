@@ -35,8 +35,6 @@ import {
   TbBrandOpenai,
   TbCopy,
   TbDotsVertical,
-  TbPencil,
-  TbReload,
   TbTrash,
 } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
@@ -45,6 +43,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
+import { useChat } from 'store/openai';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
 import { comingSoon } from 'utils/common';
@@ -56,6 +55,7 @@ export interface ChatMessageProps {
   id?: number;
   message: string;
   noActions?: boolean;
+  onResend?: () => void;
   onEdit?: () => void;
   onRegenerateResponse?: () => void;
 }
@@ -137,12 +137,17 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   id,
   message,
   noActions,
+  onResend,
   onEdit,
   onRegenerateResponse,
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [to, setTo] = useState<NodeJS.Timeout>();
+  const isLastMessageFailed = useChat((state) => {
+    const lastMessage = state.messages[0];
+    return lastMessage.id === id && lastMessage.role === 'user';
+  });
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
@@ -222,6 +227,17 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         ml="1rem"
         _light={{ bgColor: 'gray.200' }}
       >
+        {isLastMessageFailed && (
+          <Button
+            onClick={onResend}
+            variant="ghost"
+            borderRadius="lg"
+            size="xs"
+            color="red.400"
+          >
+            Resend
+          </Button>
+        )}
         {!!id && (
           <>
             {isMe ? (
@@ -280,7 +296,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         )}
       </ButtonGroup>
     );
-  }, [isLessThanMd, noActions, isOpen]);
+  }, [isLessThanMd, noActions, isOpen, isLastMessageFailed]);
 
   return (
     <Flex
@@ -388,7 +404,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           },
           blockquote: {
             borderLeft: '2px solid',
-            borderColor: 'gray.400',
+            borderColor: isMe ? 'blue.200' : 'gray.400',
             pl: 4,
           },
           '.md-wrapper': {

@@ -48,6 +48,7 @@ export const ChatMessagesContainer: React.FC = () => {
     messages,
     newChat,
     regenerateResponse,
+    resendLastMessage,
     richEditorRef,
     selectedChatId,
     setEditingMessage,
@@ -311,6 +312,7 @@ export const ChatMessagesContainer: React.FC = () => {
             isMe={message.role === 'user'}
             id={message.id}
             message={message.content}
+            onResend={resendLastMessage}
             onEdit={() => {
               setEditingMessage(message);
               message.rules && setChatRules(message.rules);
