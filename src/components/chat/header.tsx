@@ -99,13 +99,7 @@ export const ChatHeader: React.FC = () => {
       {!!messagesLength ? (
         <HistoryActions
           id={selectedChat?.id}
-          bgColor="transparent"
-          _hover={{
-            bgColor: 'gray.500',
-            _light: {
-              bgColor: 'gray.100',
-            },
-          }}
+          bgColor="transparent !important"
         />
       ) : (
         // to keep chat title centered
