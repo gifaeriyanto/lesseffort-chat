@@ -156,7 +156,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   const handleShowMobileActions = () => {
     const holdTimeout = setTimeout(() => {
       onOpen();
-    }, 600);
+    }, 500);
     setTo(holdTimeout);
   };
 
@@ -192,6 +192,11 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ModalContent userSelect="none">
             <ModalBody py={4}>
               <VStack spacing={4}>
+                {isLastMessageFailed && (
+                  <Box onClick={onResend} role="button" color="red.400">
+                    Resend
+                  </Box>
+                )}
                 {!!id && (
                   <>
                     {isMe ? (
