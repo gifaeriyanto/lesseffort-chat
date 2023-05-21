@@ -390,6 +390,12 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               color: '#fff',
             },
           },
+          ['table th']: {
+            bgColor: 'gray.700',
+            _light: {
+              bgColor: 'gray.200',
+            },
+          },
           ['table td, table th']: {
             fontSize: '0.938rem',
             verticalAlign: 'baseline',
