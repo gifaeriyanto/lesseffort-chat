@@ -254,6 +254,10 @@ export const ChatMessagesContainer: React.FC = () => {
           icon={<TbPlayerStopFilled />}
           color="red.500"
           onClick={stopStream}
+          _light={{
+            // TODO: find where style that replace this
+            color: 'red.500',
+          }}
         />
       );
     }
