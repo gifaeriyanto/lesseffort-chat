@@ -83,14 +83,14 @@ export const ChatSidebar: React.FC = () => {
       <Drawer isOpen={isOpenSidebar} placement="left" onClose={onCloseSidebar}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader>
+          <DrawerHeader pl="1rem">
             <Flex align="center" justify="space-between">
-              <Text fontWeight="bold">
-                Lesseffort{' '}
-                <Text color="blue.500" as="span">
-                  AI
+              <Flex gap={4}>
+                <Box as="img" src="/favicon-32x32.png" />
+                <Text color="blue.500" as="span" fontWeight="bold">
+                  Less Effort
                 </Text>
-              </Text>
+              </Flex>
               <LightMode>
                 <IconButton
                   icon={<TbPlus />}
@@ -107,11 +107,7 @@ export const ChatSidebar: React.FC = () => {
 
           <DrawerBody p={0}>
             <Box p={2} h="3.571rem" flexShrink={0}>
-              <Search
-                onSearch={setSearch}
-                borderRadius="lg"
-                bgColor="gray.600"
-              />
+              <Search onSearch={setSearch} borderRadius="lg" />
             </Box>
             <Box
               overflowY="auto"
@@ -120,7 +116,15 @@ export const ChatSidebar: React.FC = () => {
             >
               <ChatHistory search={search} />
             </Box>
-            <Flex gap={4} p={4} borderTop={`1px solid ${CustomColor.border}`}>
+            <Flex
+              gap={4}
+              p={4}
+              borderTop="1px solid"
+              borderColor={CustomColor.border}
+              _light={{
+                borderColor: CustomColor.lightBorder,
+              }}
+            >
               <Flex justify="space-between" w="full">
                 <Box>
                   <Text fontWeight="bold">Usages</Text>
