@@ -55,6 +55,7 @@ export const ProfilePhoto = () => {
             borderRadius="full"
             role="button"
             onClick={handleTriggerUpload}
+            _light={{ bgColor: 'gray.300' }}
           >
             <Icon as={TbUser} fontSize="2xl" color="gray.400" />
           </Flex>
