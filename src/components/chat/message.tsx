@@ -151,7 +151,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   const handleShowMobileActions = () => {
     const holdTimeout = setTimeout(() => {
       onOpen();
-    }, 1000);
+    }, 600);
     setTo(holdTimeout);
   };
 
