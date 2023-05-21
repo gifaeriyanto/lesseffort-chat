@@ -16,7 +16,7 @@ const config: ThemeOverride = {
     Textarea: textareaTheme,
   },
   config: {
-    // initialColorMode: 'dark',
+    initialColorMode: 'dark',
     useSystemColorMode: false,
   },
   fonts: {
