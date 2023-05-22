@@ -97,7 +97,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           return (b.id || 0) - (a.id || 0);
         }
       },
-      chatHistory.filter((item) => item.title.match(new RegExp(search, 'i'))),
+      chatHistory.filter((item) => item.title?.match(new RegExp(search, 'i'))),
     ) as Chat[];
   }, [chatHistory, search]);
 

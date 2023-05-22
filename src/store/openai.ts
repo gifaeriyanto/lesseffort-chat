@@ -336,15 +336,17 @@ export const useChat = create<{
     set({ selectedChatId: chatId });
     if (chatId) {
       await dbChatHistory.getByID(chatId).then((res) => {
-        set({ botInstruction: res.bot_instruction, model: res.model });
+        set({
+          botInstruction: res.bot_instruction || defaultBotInstruction,
+          model: res.model,
+        });
         getMessages(chatId);
       });
     }
   },
   resendLastMessage: async () => {
     const { update } = useIndexedDB('messages');
-    const { messages, selectedChatId, getMessages, streamChatCompletion } =
-      get();
+    const { messages, getMessages, streamChatCompletion } = get();
 
     if (!messages.length) {
       return;
