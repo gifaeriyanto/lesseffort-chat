@@ -72,7 +72,7 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
     const _to = to + 1;
     return {
       from: from + 1,
-      to: _to > count ? count : _to,
+      to: (_to > count ? count : _to) || pageSize,
     };
   }, [page]);
 
@@ -281,8 +281,17 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
         }}
       >
         <Box pl={2} color="gray.400">
-          Results: {pageFromTo.from} - {pageFromTo.to} of{' '}
-          {formatLocaleNumber(count)}
+          {pageFromTo.from === pageFromTo.to ? (
+            <>
+              Results: {formatLocaleNumber(count)} of{' '}
+              {formatLocaleNumber(count)}
+            </>
+          ) : (
+            <>
+              Results: {formatLocaleNumber(pageFromTo.from)} -{' '}
+              {formatLocaleNumber(pageFromTo.to)} of {formatLocaleNumber(count)}
+            </>
+          )}
         </Box>
         <ButtonGroup size="sm" variant="outline">
           <Button
