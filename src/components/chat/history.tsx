@@ -4,7 +4,7 @@ import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
 import { TbLock } from 'react-icons/tb';
-import LazyLoad from 'react-lazyload';
+// import LazyLoad from 'react-lazyload';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
@@ -124,25 +124,26 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
       mb="-1px"
     >
       {filteredChatHistory.map((item, index) => (
-        <LazyLoad
+        // <LazyLoad
+        //   key={item.id || index}
+        //   height="5.125rem"
+        //   scrollContainer=".history-scroll-container"
+        //   offset={200}
+        // >
+        <ChatHistoryItem
           key={item.id || index}
-          height="5.125rem"
-          scrollContainer=".history-scroll-container"
-          offset={200}
-        >
-          <ChatHistoryItem
-            id={item.id}
-            title={item.title}
-            description={item.last_message}
-            onDelete={deleteChat}
-            onSelect={(id) => {
-              setSelectedChatId(id);
-              onCloseSidebar();
-            }}
-            isActive={selectedChatId === item.id}
-            isLimited={item.limited}
-          />
-        </LazyLoad>
+          id={item.id}
+          title={item.title}
+          description={item.last_message}
+          onDelete={deleteChat}
+          onSelect={(id) => {
+            setSelectedChatId(id);
+            onCloseSidebar();
+          }}
+          isActive={selectedChatId === item.id}
+          isLimited={item.limited}
+        />
+        // </LazyLoad>
       ))}
     </Box>
   );
