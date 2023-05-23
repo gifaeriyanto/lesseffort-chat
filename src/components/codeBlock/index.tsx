@@ -37,6 +37,10 @@ export const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
           lang={lang}
           size="sm"
           fontSize="md"
+          _light={{
+            color: 'white',
+            bgColor: 'whiteAlpha.400',
+          }}
         />
         <IconButton
           icon={<TbCopy />}
