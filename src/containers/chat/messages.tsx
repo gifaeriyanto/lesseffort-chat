@@ -496,8 +496,11 @@ export const ChatMessagesContainer: React.FC = () => {
           justify="center"
           direction={selectedChat?.limited && isLessThanMd ? 'column' : 'row'}
           _light={{
-            bgColor: isTyping ? 'gray.200' : CustomColor.lightCard,
-            borderColor: CustomColor.lightBorder,
+            bgColor: isTyping ? 'gray.100' : CustomColor.lightCard,
+            borderColor: {
+              base: 'transparent',
+              md: isTyping ? 'blue.500' : CustomColor.lightBorder,
+            },
           }}
         >
           {isShowJumpToBottomButton && (
