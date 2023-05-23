@@ -7,6 +7,7 @@ import { DBConfig } from 'store/db/config';
 import { theme } from 'theme';
 
 Sentry.init({
+  environment: 'production',
   dsn: 'https://4041f547d61845bfb2242755892a5323@o4505234435276800.ingest.sentry.io/4505234436259840',
   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   // Performance Monitoring
