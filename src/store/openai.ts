@@ -1,4 +1,5 @@
 import { RefObject } from 'react';
+import { captureException } from '@sentry/react';
 import {
   Chat,
   defaultBotInstruction,
@@ -42,7 +43,7 @@ export const useUsage = create<{
       set({ usage: total_usage });
       return total_usage;
     } catch (error) {
-      console.error(error);
+      captureException(error);
     }
   },
 }));
@@ -229,7 +230,8 @@ export const useChat = create<{
       }
     };
 
-    const onError = async (_: Error, status: number) => {
+    const onError = async (error: Error, status: number) => {
+      captureException(error);
       set({
         isTyping: false,
       });

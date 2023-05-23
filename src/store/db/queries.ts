@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react';
 import { Message } from 'react-hook-form';
 import { DBVersion } from 'store/db/config';
 
@@ -25,11 +26,13 @@ export const getMessagesDB = (chatId: number): Promise<any> => {
       };
 
       request.onerror = (event: any) => {
+        captureException(event.target.error);
         reject(event.target.error);
       };
     };
 
     request.onerror = (event: any) => {
+      captureException(event.target.error);
       reject(event.target.error);
     };
   });
