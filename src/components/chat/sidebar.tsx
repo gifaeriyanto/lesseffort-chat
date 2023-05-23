@@ -143,8 +143,15 @@ export const ChatSidebar: React.FC = () => {
                   aria-label="Toggle color mode"
                   onClick={() => {
                     toggleColorMode();
+                    console.log(
+                      `Switch to ${
+                        colorMode === 'light' ? 'dark' : 'light'
+                      } mode`,
+                    );
                     ReactGA.event({
-                      action: `Switch to ${colorMode} mode`,
+                      action: `Switch to ${
+                        colorMode === 'light' ? 'dark' : 'light'
+                      } mode`,
                       category: 'UX',
                       label: 'mobile',
                     });
@@ -270,7 +277,9 @@ export const ChatSidebar: React.FC = () => {
                   onClick={() => {
                     toggleColorMode();
                     ReactGA.event({
-                      action: `Switch to ${colorMode} mode`,
+                      action: `Switch to ${
+                        colorMode === 'light' ? 'dark' : 'light'
+                      } mode`,
                       category: 'UX',
                       label: 'desktop',
                     });
