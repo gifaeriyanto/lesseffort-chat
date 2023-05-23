@@ -1,10 +1,8 @@
 import React, {
-  memo,
   PropsWithChildren,
   useCallback,
   useLayoutEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import {
@@ -32,15 +30,14 @@ import {
 } from '@chakra-ui/react';
 import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
+import { CodeBlock } from 'components/codeBlock';
 import {
   TbBookmark,
   TbBrandOpenai,
-  TbCopy,
   TbDotsVertical,
   TbTrash,
 } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
-import { CodeProps } from 'react-markdown/lib/ast-to-react';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
@@ -86,49 +83,6 @@ export const ChatMessageAction = React.forwardRef<
         {...props}
       />
     </Tooltip>
-  );
-});
-
-const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
-  const textInput = useRef<HTMLElement>(null);
-  const [lang, setLang] = useState('');
-
-  useLayoutEffect(() => {
-    let className = props.className;
-    setLang(className?.replace('hljs language-', '') || '');
-  }, []);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(textInput?.current?.textContent || '');
-  };
-
-  if (inline) {
-    return <code {...props} />;
-  }
-
-  return (
-    <Box pos="relative">
-      {!!lang && (
-        <Box fontSize="sm" color="gray.400" mb={4}>
-          {lang}
-        </Box>
-      )}
-      <Box as="code" ref={textInput} {...props} />
-      <IconButton
-        icon={<TbCopy />}
-        aria-label="Copy code"
-        onClick={handleCopy}
-        pos="absolute"
-        top={-2}
-        right={-2}
-        size="sm"
-        fontSize="md"
-        _light={{
-          color: 'white',
-          bgColor: 'whiteAlpha.400',
-        }}
-      />
-    </Box>
   );
 });
 
@@ -456,7 +410,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             },
             _after: rulesCount
               ? {
-                  content: `"${rulesCount} rules applied"`,
+                  content: `"${rulesCount} ${
+                    rulesCount > 1 ? 'rules' : 'rule'
+                  } applied"`,
                   display: 'block',
                   color: 'blue.300',
                   fontSize: 'sm',

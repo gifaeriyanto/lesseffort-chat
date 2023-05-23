@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   IconButton,
   IconButtonProps,
@@ -32,6 +33,10 @@ export interface HistoryActionsProps
   id?: number;
 }
 
+interface FormInputs {
+  title: string;
+}
+
 export const HistoryActions: React.FC<HistoryActionsProps> = ({
   id,
   ...props
@@ -46,7 +51,11 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     onOpen: onOpenRenameModal,
     onClose: onCloseRenameModal,
   } = useDisclosure();
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<FormInputs>();
   const { selectedChat, deleteChat, renameChat } = useChat((state) => {
     const selectedChat = state.chatHistory.find((item) => item.id === id);
     return {
@@ -113,12 +122,20 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
           <ModalCloseButton />
           <form onSubmit={handleSubmit(handleRename)}>
             <ModalBody pb={6}>
-              <FormControl>
+              <FormControl isInvalid={!!errors.title}>
                 <FormLabel>Chat title</FormLabel>
                 <Input
                   defaultValue={selectedChat?.title}
-                  {...register('title')}
+                  {...register('title', {
+                    required: {
+                      message: 'Chat title cannot be empty',
+                      value: true,
+                    },
+                  })}
                 />
+                {errors.title && (
+                  <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+                )}
               </FormControl>
             </ModalBody>
 
