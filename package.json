@@ -60,7 +60,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "SENTRY_DSN=https://4041f547d61845bfb2242755892a5323@o4505234435276800.ingest.sentry.io/4505234436259840 react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "get-prompts": "bash ./scripts/getPrompts.sh",
