@@ -3,6 +3,7 @@ import React, {
   PropsWithChildren,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -29,6 +30,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import {
   TbBookmark,
@@ -51,9 +53,7 @@ import { comingSoon } from 'utils/common';
 // import 'katex/dist/katex.min.css';
 
 export interface ChatMessageProps {
-  isMe?: boolean;
-  id?: number;
-  message: string;
+  message: Message;
   noActions?: boolean;
   onResend?: () => void;
   onEdit?: () => void;
@@ -133,8 +133,6 @@ const CodeBlock = memo(({ node, inline, ...props }: CodeProps) => {
 });
 
 export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
-  isMe,
-  id,
   message,
   noActions,
   onResend,
@@ -146,11 +144,25 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   const [to, setTo] = useState<NodeJS.Timeout>();
   const isLastMessageFailed = useChat((state) => {
     const lastMessage = state.messages[0];
-    return lastMessage.id === id && lastMessage.role === 'user';
+    return (
+      lastMessage.id === message.id &&
+      lastMessage.role === 'user' &&
+      !state.isTyping
+    );
   });
+  const { isMe, regeneratedMessageIndex, rulesCount } = useMemo(() => {
+    return {
+      isMe: message.role === 'user',
+      regeneratedMessageIndex:
+        message.allContents?.findIndex((item) => item === message.content) || 0,
+      rulesCount: message.rules
+        ? Object.values(message.rules).filter(Boolean).length
+        : 0,
+    };
+  }, [message]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(message);
+    navigator.clipboard.writeText(message.content);
   };
 
   const handleShowMobileActions = () => {
@@ -197,7 +209,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                     Resend
                   </Box>
                 )}
-                {!!id && (
+                {!!message.id && (
                   <>
                     {isMe ? (
                       <Box role="button" onClick={handleClose(onEdit)}>
@@ -243,7 +255,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             Resend
           </Button>
         )}
-        {!!id && (
+        {!!message.id && (
           <>
             {isMe ? (
               <Button
@@ -301,7 +313,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         )}
       </ButtonGroup>
     );
-  }, [isLessThanMd, noActions, isOpen, isLastMessageFailed]);
+  }, [message, isLessThanMd, noActions, isOpen, isLastMessageFailed]);
 
   return (
     <Flex
@@ -318,25 +330,34 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           },
         },
       }}
-      id={`message-${id || 0}`}
+      id={`message-${message.id || 0}`}
     >
-      {isMe ? (
-        <ProfilePhoto mt="0.5rem" />
-      ) : (
-        <Flex
-          p={4}
-          bgColor="#74AA9C"
-          w="2.188rem"
-          h="2.188rem"
-          align="center"
-          justify="center"
-          borderRadius="full"
-          color="white"
-          mt="0.5rem"
-        >
-          <Icon as={TbBrandOpenai} fontSize="2xl" />
-        </Flex>
-      )}
+      <Box>
+        {isMe ? (
+          <ProfilePhoto mt="0.5rem" />
+        ) : (
+          <Flex
+            p={4}
+            bgColor="#74AA9C"
+            w="2.188rem"
+            h="2.188rem"
+            align="center"
+            justify="center"
+            borderRadius="full"
+            color="white"
+            mt="0.5rem"
+          >
+            <Icon as={TbBrandOpenai} fontSize="2xl" />
+          </Flex>
+        )}
+        {message.allContents?.length &&
+          typeof regeneratedMessageIndex === 'number' && (
+            <Box hidden>
+              {regeneratedMessageIndex + 1} / {message.allContents.length}
+            </Box>
+          )}
+      </Box>
+
       <Box
         mt="0.286rem"
         color="gray.200"
@@ -433,6 +454,14 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             _light: {
               bgColor: isMe ? 'blue.500' : 'gray.100',
             },
+            _after: rulesCount
+              ? {
+                  content: `"${rulesCount} rules applied"`,
+                  display: 'block',
+                  color: 'blue.300',
+                  fontSize: 'sm',
+                }
+              : undefined,
           },
         }}
       >
@@ -460,7 +489,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             ],
           ]}
         >
-          {message}
+          {message.content}
         </ReactMarkdown>
         {renderActions()}
       </Box>

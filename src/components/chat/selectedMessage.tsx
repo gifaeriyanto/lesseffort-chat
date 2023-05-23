@@ -24,6 +24,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { IconType } from 'react-icons';
 import { TbTemplate, TbX } from 'react-icons/tb';
+import { CustomColor } from 'theme/foundations/colors';
 
 export interface SelectedMessageProps {
   title: string;
@@ -60,6 +61,11 @@ const SelectedMessage: React.FC<SelectedMessageProps> = ({
         align="center"
         py={2}
         maxW={{ base: 'calc(100vw - 2rem)', md: 'auto' }}
+        borderTop="1px solid"
+        borderColor={CustomColor.border}
+        _light={{
+          borderColor: CustomColor.lightBorder,
+        }}
       >
         <Box w="4rem" textAlign="center" flexGrow="0" flexShrink="0">
           <Icon as={icon} fontSize="2xl" color="blue.500" />

@@ -1,4 +1,4 @@
-export const DBVersion = 9;
+export const DBVersion = 10;
 
 export const DBConfig = {
   name: 'lesseffortchat',
@@ -31,6 +31,11 @@ export const DBConfig = {
       storeSchema: [
         { name: 'chatId', keypath: 'chatId', options: { unique: false } },
         { name: 'content', keypath: 'content', options: { unique: false } },
+        {
+          name: 'allContents',
+          keypath: 'allContents',
+          options: { unique: false },
+        },
         { name: 'role', keypath: 'role', options: { unique: false } },
         {
           name: 'template',

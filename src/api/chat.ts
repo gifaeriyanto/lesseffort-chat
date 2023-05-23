@@ -17,6 +17,7 @@ export interface Message {
   id?: number;
   role: 'user' | 'system' | 'assistant';
   content: string;
+  allContents?: string[];
   chatId?: number;
   template?: string;
   rules?: Rules;

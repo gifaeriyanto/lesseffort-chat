@@ -106,6 +106,7 @@ export const useChat = create<{
     notNewMessage?: boolean;
     isLimited?: boolean;
     userMessage: Message;
+    allGeneratedMessages?: string[];
   }) => void;
 }>((set, get) => ({
   botInstruction: defaultBotInstruction,
@@ -170,7 +171,12 @@ export const useChat = create<{
       isTyping: false,
     });
   },
-  streamChatCompletion: ({ notNewMessage = false, isLimited, userMessage }) => {
+  streamChatCompletion: ({
+    notNewMessage = false,
+    isLimited,
+    userMessage,
+    allGeneratedMessages,
+  }) => {
     const {
       botInstruction,
       messages,
@@ -199,6 +205,10 @@ export const useChat = create<{
           createdAt: getUnixTime(new Date()),
           updatedAt: getUnixTime(new Date()),
         };
+
+        if (notNewMessage && allGeneratedMessages) {
+          newMessage.allContents = [...allGeneratedMessages, content];
+        }
 
         await dbMessages.add<Message>(newMessage);
 
@@ -446,6 +456,8 @@ export const useChat = create<{
       return;
     }
 
+    const oldMessage = messages[messageIndex];
+    const allGeneratedMessages = oldMessage.allContents || [oldMessage.content];
     const userMessage = messages[messageIndex + 1];
 
     if (!userMessage.chatId || !userMessage.id) {
@@ -454,7 +466,11 @@ export const useChat = create<{
 
     await deleteTheNextMessages(userMessage.chatId, userMessage.id);
     await getMessages(userMessage.chatId);
-    streamChatCompletion({ userMessage, notNewMessage: true });
+    streamChatCompletion({
+      userMessage,
+      notNewMessage: true,
+      allGeneratedMessages,
+    });
   },
   renameChat: async (chatId, newTitle) => {
     const { update, getByID } = useIndexedDB('chatHistory');

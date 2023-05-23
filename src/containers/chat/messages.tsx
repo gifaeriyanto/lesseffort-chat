@@ -309,9 +309,7 @@ export const ChatMessagesContainer: React.FC = () => {
         {messages.map((message) => (
           <ChatMessage
             key={message.id || message.createdAt}
-            isMe={message.role === 'user'}
-            id={message.id}
-            message={message.content}
+            message={message}
             onResend={resendLastMessage}
             onEdit={() => {
               setEditingMessage(message);
@@ -345,7 +343,11 @@ export const ChatMessagesContainer: React.FC = () => {
         }}
       >
         {!!generatingMessage && (
-          <ChatMessage key="message-0" message={generatingMessage} noActions />
+          <ChatMessage
+            key="message-0"
+            message={{ content: generatingMessage, role: 'assistant' }}
+            noActions
+          />
         )}
         {renderMessages()}
       </Flex>
