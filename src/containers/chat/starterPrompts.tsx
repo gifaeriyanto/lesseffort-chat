@@ -69,9 +69,10 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
 
   const pageFromTo = useMemo(() => {
     const { from, to } = getPage(page, pageSize);
+    const _to = to + 1;
     return {
       from: from + 1,
-      to: count < pageSize ? count : to + 1,
+      to: _to > count ? count : _to,
     };
   }, [page]);
 
