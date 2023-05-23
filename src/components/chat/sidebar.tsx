@@ -24,6 +24,7 @@ import {
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { Search } from 'components/search';
+import ReactGA from 'react-ga4';
 import { TbMoonFilled, TbPlus, TbSearch, TbSun } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
@@ -140,7 +141,13 @@ export const ChatSidebar: React.FC = () => {
                   variant="ghost"
                   icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
                   aria-label="Toggle color mode"
-                  onClick={toggleColorMode}
+                  onClick={() => {
+                    toggleColorMode();
+                    ReactGA.event({
+                      action: `Switch to ${colorMode} mode on mobile`,
+                      category: 'UX',
+                    });
+                  }}
                   color="gray.400"
                 />
               </Flex>
@@ -259,7 +266,13 @@ export const ChatSidebar: React.FC = () => {
                   variant="ghost"
                   icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
                   aria-label="Toggle color mode"
-                  onClick={toggleColorMode}
+                  onClick={() => {
+                    toggleColorMode();
+                    ReactGA.event({
+                      action: `Switch to ${colorMode} mode on desktop`,
+                      category: 'UX',
+                    });
+                  }}
                   color="gray.400"
                 />
                 <AccordionButton w="auto" p={1} transform="rotate(180deg)">
