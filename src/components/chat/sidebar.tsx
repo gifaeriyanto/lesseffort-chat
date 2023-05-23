@@ -144,8 +144,9 @@ export const ChatSidebar: React.FC = () => {
                   onClick={() => {
                     toggleColorMode();
                     ReactGA.event({
-                      action: `Switch to ${colorMode} mode on mobile`,
+                      action: `Switch to ${colorMode} mode`,
                       category: 'UX',
+                      label: 'mobile',
                     });
                   }}
                   color="gray.400"
@@ -269,8 +270,9 @@ export const ChatSidebar: React.FC = () => {
                   onClick={() => {
                     toggleColorMode();
                     ReactGA.event({
-                      action: `Switch to ${colorMode} mode on desktop`,
+                      action: `Switch to ${colorMode} mode`,
                       category: 'UX',
+                      label: 'desktop',
                     });
                   }}
                   color="gray.400"
