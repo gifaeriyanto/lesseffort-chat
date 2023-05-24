@@ -1,9 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { env } from 'utils/env';
 
-const supabase = createClient(
-  'https://rdlbbmvmqgumfwvtouns.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkbGJibXZtcWd1bWZ3dnRvdW5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODM4NzYwNjgsImV4cCI6MTk5OTQ1MjA2OH0.aJQrMc40pUcHHotnnA8QRM27DF9C03ZpRRpjnY3HNxo',
-);
+const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
 export interface Prompt {
   AuthorName: string;
