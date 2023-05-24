@@ -507,7 +507,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                   onClick={handleSelectPrevMessage}
                   isDisabled={selectedGeneratedMessage === 0}
                 />
-                <Box>
+                <Box fontSize="sm">
                   {selectedGeneratedMessage + 1} / {oldGeneratedMessages.length}
                 </Box>
                 <IconButton
