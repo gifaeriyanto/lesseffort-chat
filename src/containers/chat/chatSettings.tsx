@@ -15,6 +15,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
 import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { standaloneToast } from 'index';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -71,15 +72,19 @@ const ChatSettings: React.FC = () => {
     botInstruction: _botInstruction,
     model: _model,
   }) => {
-    await setBotInstruction(_botInstruction);
-    setModel(_model);
-    selectedChat?.id && renameChat(selectedChat.id, title);
-    standaloneToast({
-      title: 'Configuration saved successfully!',
-      description:
-        'Your chat settings have been updated. You can now start chatting using your new configuration.',
-      status: 'success',
-    });
+    try {
+      await setBotInstruction(_botInstruction);
+      setModel(_model);
+      selectedChat?.id && renameChat(selectedChat.id, title);
+      standaloneToast({
+        title: 'Configuration saved successfully!',
+        description:
+          'Your chat settings have been updated. You can now start chatting using your new configuration.',
+        status: 'success',
+      });
+    } catch (error) {
+      captureException(error);
+    }
   };
 
   const undoButton = (name: keyof FormInputs, defaultValue: string) => {

@@ -13,6 +13,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
 import { Chat, Message } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { ChatRules, defaultRules, Rules } from 'components/chat/rules';
@@ -205,16 +206,20 @@ export const ChatMessagesContainer: React.FC = () => {
       rules: chatRules,
     };
 
-    if (selectedChatId) {
-      await dbMessages.add<Message>(userMessage);
-    } else {
-      await newChat(
-        {
-          last_message: message,
-          title: message,
-        },
-        userMessage,
-      );
+    try {
+      if (selectedChatId) {
+        await dbMessages.add<Message>(userMessage);
+      } else {
+        await newChat(
+          {
+            last_message: message,
+            title: message,
+          },
+          userMessage,
+        );
+      }
+    } catch (error) {
+      captureException(error);
     }
 
     streamChatCompletion({

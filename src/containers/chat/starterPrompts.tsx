@@ -22,6 +22,7 @@ import {
   useBoolean,
   VStack,
 } from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
 import { ChatMessageAction } from 'components/chat/message';
 import { Search } from 'components/search';
 import { TbFilter, TbThumbUp } from 'react-icons/tb';
@@ -90,6 +91,7 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
         setPrompts(res[0].data as Prompt[]);
         setCount(res[1].count || 0);
       })
+      .catch(captureException)
       .finally(offLoading);
   }, [page, pageSize, keyword, order, community]);
 

@@ -21,6 +21,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { Search } from 'components/search';
@@ -43,24 +44,27 @@ export const ChatSidebar: React.FC = () => {
   const { toggleColorMode, colorMode } = useColorMode();
 
   const fetchUsages = () => {
-    getUsages().then((res) => {
-      const todayItemIndex = res.data.daily_costs.findIndex((item) => {
-        return (
-          new Date(item.timestamp * 1000).getDate() === new Date().getUTCDate()
-        );
-      });
+    getUsages()
+      .then((res) => {
+        const todayItemIndex = res.data.daily_costs.findIndex((item) => {
+          return (
+            new Date(item.timestamp * 1000).getDate() ===
+            new Date().getUTCDate()
+          );
+        });
 
-      const todayUsageItems = res.data.daily_costs[
-        todayItemIndex
-      ].line_items.reduce((prev, curr) => {
-        return prev + curr.cost;
-      }, 0);
+        const todayUsageItems = res.data.daily_costs[
+          todayItemIndex
+        ].line_items.reduce((prev, curr) => {
+          return prev + curr.cost;
+        }, 0);
 
-      setUsages({
-        total: res.data.total_usage * 0.01,
-        today: todayUsageItems * 0.01,
-      });
-    });
+        setUsages({
+          total: res.data.total_usage * 0.01,
+          today: todayUsageItems * 0.01,
+        });
+      })
+      .catch(captureException);
   };
 
   useLayoutEffect(() => {
