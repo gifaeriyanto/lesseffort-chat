@@ -10,6 +10,7 @@ import {
   Button,
   ButtonGroup,
   Flex,
+  HStack,
   Icon,
   IconButton,
   IconButtonProps,
@@ -19,7 +20,10 @@ import {
   MenuList,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
+  ModalFooter,
+  ModalHeader,
   ModalOverlay,
   Portal,
   Text,
@@ -32,6 +36,8 @@ import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
 import {
+  TbArrowLeft,
+  TbArrowRight,
   TbBookmark,
   TbBrandOpenai,
   TbDotsVertical,
@@ -95,25 +101,48 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenAllMessages,
+    onOpen: onOpenAllMessages,
+    onClose: onCloseAllMessages,
+  } = useDisclosure();
   const [to, setTo] = useState<NodeJS.Timeout>();
-  const isLastMessageFailed = useChat((state) => {
+  const { isLastMessageFailed, selectGeneratedMessage } = useChat((state) => {
     const lastMessage = state.messages[0];
-    return (
-      lastMessage.id === message.id &&
-      lastMessage.role === 'user' &&
-      !state.isTyping
-    );
+    return {
+      isLastMessageFailed:
+        lastMessage.id === message.id &&
+        lastMessage.role === 'user' &&
+        !state.isTyping,
+      selectGeneratedMessage: state.selectGeneratedMessage,
+    };
   });
-  const { isMe, regeneratedMessageIndex, rulesCount } = useMemo(() => {
+  const { isMe, rulesCount, oldGeneratedMessages } = useMemo(() => {
     return {
       isMe: message.role === 'user',
-      regeneratedMessageIndex:
-        message.allContents?.findIndex((item) => item === message.content) || 0,
       rulesCount: message.rules
         ? Object.values(message.rules).filter(Boolean).length
         : 0,
+      oldGeneratedMessages: message.allContents || [],
     };
   }, [message]);
+  const [selectedGeneratedMessage, setSelectedGeneratedMessage] = useState(
+    oldGeneratedMessages.findIndex((item) => item === message.content),
+  );
+
+  const handleSelectPrevMessage = () => {
+    setSelectedGeneratedMessage((prev) => prev - 1);
+    selectGeneratedMessage(message, selectedGeneratedMessage - 1);
+  };
+  const handleSelectNextMessage = () => {
+    setSelectedGeneratedMessage((prev) => prev + 1);
+    selectGeneratedMessage(message, selectedGeneratedMessage + 1);
+  };
+  const handleSelectMessage = (index: number) => {
+    selectGeneratedMessage(message, index);
+    setSelectedGeneratedMessage(index);
+    onCloseAllMessages();
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -270,185 +299,248 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   }, [message, isLessThanMd, noActions, isOpen, isLastMessageFailed]);
 
   return (
-    <Flex
-      py={2}
-      pr={2}
-      w="full"
-      align="flex-start"
-      gap={4}
-      pos="relative"
-      _hover={{
-        md: {
-          ['.message-actions']: {
-            opacity: 1,
-          },
-        },
-      }}
-      id={`message-${message.id || 0}`}
-    >
-      <Box>
-        {isMe ? (
-          <ProfilePhoto mt="0.5rem" />
-        ) : (
-          <Flex
-            p={4}
-            bgColor="#74AA9C"
-            w="2.188rem"
-            h="2.188rem"
-            align="center"
-            justify="center"
-            borderRadius="full"
-            color="white"
-            mt="0.5rem"
-          >
-            <Icon as={TbBrandOpenai} fontSize="2xl" />
-          </Flex>
-        )}
-        {message.allContents?.length &&
-          typeof regeneratedMessageIndex === 'number' && (
-            <Box hidden>
-              {regeneratedMessageIndex + 1} / {message.allContents.length}
-            </Box>
-          )}
-      </Box>
-
-      <Box
-        mt="0.286rem"
-        color="gray.200"
-        _light={{
-          color: 'gray.600',
-        }}
-        maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
+    <>
+      <Flex
+        py={2}
+        pr={2}
         w="full"
-        onTouchStart={handleShowMobileActions}
-        onTouchEnd={handleClearTimeout}
-        sx={{
-          ['ul, ol']: {
-            paddingLeft: '1.25rem',
-          },
-          ['p, li, pre, hr']: {
-            marginBottom: '1rem',
-          },
-          ['pre']: {
-            maxWidth: 'full',
-            borderRadius: 'md',
-            bgColor: '#000 !important',
-            p: 4,
-          },
-          table: {
-            marginBottom: '1rem',
-            w: 'full',
-          },
-          ['td, th']: {
-            p: 2,
-            border: '1px solid',
-            borderColor: 'gray.400',
-          },
-          a: {
-            color: 'blue.300',
-            textDecor: 'underline',
-            _light: {
-              color: 'blue.600',
+        align="flex-start"
+        gap={4}
+        pos="relative"
+        _hover={{
+          md: {
+            ['.message-actions']: {
+              opacity: 1,
             },
-          },
-          ['.hljs']: {
-            maxWidth: 'full',
-            overflow: 'auto',
-            fontSize: '0.938rem',
-            p: 0,
-          },
-          ['pre code:not(.hljs)']: {
-            maxWidth: 'full',
-            overflow: 'auto',
-            whiteSpace: 'pre-wrap',
-            _light: {
-              color: '#fff',
-            },
-          },
-          ['table th']: {
-            bgColor: 'gray.700',
-            _light: {
-              bgColor: 'gray.200',
-            },
-          },
-          ['table td, table th']: {
-            fontSize: '0.938rem',
-            verticalAlign: 'baseline',
-          },
-          ['h1, h2, h3']: {
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-          },
-          h1: {
-            fontSize: '1.8rem',
-          },
-          h2: {
-            fontSize: '1.4rem',
-          },
-          h3: {
-            fontSize: '1.2rem',
-          },
-          blockquote: {
-            borderLeft: '2px solid',
-            borderColor: isMe ? 'blue.200' : 'gray.400',
-            pl: 4,
-          },
-          '.md-wrapper': {
-            maxW: 'full',
-            color: isMe ? 'white' : 'inherit',
-            bgColor: isMe ? 'blue.500' : 'gray.500',
-            display: 'inline-block',
-            py: 2,
-            px: 4,
-            mb: '1rem',
-            borderRadius: 'xl',
-            '& > *:last-child': {
-              mb: 0,
-            },
-            _light: {
-              bgColor: isMe ? 'blue.500' : 'gray.100',
-            },
-            _after: rulesCount
-              ? {
-                  content: `"${rulesCount} ${
-                    rulesCount > 1 ? 'rules' : 'rule'
-                  } applied"`,
-                  display: 'block',
-                  color: 'blue.300',
-                  fontSize: 'sm',
-                }
-              : undefined,
           },
         }}
+        id={`message-${message.id || 0}`}
       >
-        <ReactMarkdown
-          components={{
-            code: CodeBlock,
+        <Box>
+          {isMe ? (
+            <ProfilePhoto mt="0.5rem" />
+          ) : (
+            <Flex
+              p={4}
+              bgColor="#74AA9C"
+              w="2.188rem"
+              h="2.188rem"
+              align="center"
+              justify="center"
+              borderRadius="full"
+              color="white"
+              mt="0.5rem"
+            >
+              <Icon as={TbBrandOpenai} fontSize="2xl" />
+            </Flex>
+          )}
+        </Box>
+
+        <Box
+          mt="0.286rem"
+          color="gray.200"
+          _light={{
+            color: 'gray.600',
           }}
-          remarkPlugins={[remarkGfm, remarkBreaks]}
-          // Math support conflicting with using usd symbol ($)
-          // remarkPlugins={[remarkGfm, remarkBreaks, remarkMath, remarkHTMLKatex]}
-          className="md-wrapper"
-          rehypePlugins={[
-            [
-              rehypeHighlight,
-              {
-                ignoreMissing: true,
+          maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
+          w="full"
+          onTouchStart={handleShowMobileActions}
+          onTouchEnd={handleClearTimeout}
+          sx={{
+            ['ul, ol']: {
+              paddingLeft: '1.25rem',
+            },
+            ['p, li, pre, hr']: {
+              marginBottom: '1rem',
+            },
+            ['pre']: {
+              maxWidth: 'full',
+              borderRadius: 'md',
+              bgColor: '#000 !important',
+              p: 4,
+            },
+            table: {
+              marginBottom: '1rem',
+              w: 'full',
+            },
+            ['td, th']: {
+              p: 2,
+              border: '1px solid',
+              borderColor: 'gray.400',
+            },
+            a: {
+              color: 'blue.300',
+              textDecor: 'underline',
+              _light: {
+                color: 'blue.600',
               },
-            ],
-            [
-              rehypeExternalLinks,
-              {
-                target: '_blank',
-                rel: 'noopener noreferrer',
+            },
+            ['.hljs']: {
+              maxWidth: 'full',
+              overflow: 'auto',
+              fontSize: '0.938rem',
+              p: 0,
+            },
+            ['pre code:not(.hljs)']: {
+              maxWidth: 'full',
+              overflow: 'auto',
+              whiteSpace: 'pre-wrap',
+              _light: {
+                color: '#fff',
               },
-            ],
-          ]}
+            },
+            ['table th']: {
+              bgColor: 'gray.700',
+              _light: {
+                bgColor: 'gray.200',
+              },
+            },
+            ['table td, table th']: {
+              fontSize: '0.938rem',
+              verticalAlign: 'baseline',
+            },
+            ['h1, h2, h3']: {
+              fontWeight: 'bold',
+              marginBottom: '1rem',
+            },
+            h1: {
+              fontSize: '1.8rem',
+            },
+            h2: {
+              fontSize: '1.4rem',
+            },
+            h3: {
+              fontSize: '1.2rem',
+            },
+            blockquote: {
+              borderLeft: '2px solid',
+              borderColor: isMe ? 'blue.200' : 'gray.400',
+              pl: 4,
+            },
+            '.md-wrapper': {
+              w: oldGeneratedMessages.length ? 'full' : 'auto',
+              maxW: 'full',
+              color: isMe ? 'white' : 'inherit',
+              bgColor: isMe ? 'blue.500' : 'gray.500',
+              display: 'inline-block',
+              py: 2,
+              px: 4,
+              mb: oldGeneratedMessages.length ? 0 : '1rem',
+              borderRadius: 'xl',
+              borderBottomRadius: oldGeneratedMessages.length ? 0 : 'xl',
+              '& > *:last-child': {
+                mb: 0,
+              },
+              _light: {
+                bgColor: isMe ? 'blue.500' : 'gray.100',
+              },
+              _after: rulesCount
+                ? {
+                    content: `"${rulesCount} ${
+                      rulesCount > 1 ? 'rules' : 'rule'
+                    } applied"`,
+                    display: 'block',
+                    color: 'blue.300',
+                    fontSize: 'sm',
+                  }
+                : undefined,
+            },
+          }}
         >
-          {message.content}
-        </ReactMarkdown>
-        {renderActions()}
-      </Box>
-    </Flex>
+          <ReactMarkdown
+            components={{
+              code: CodeBlock,
+            }}
+            remarkPlugins={[remarkGfm, remarkBreaks]}
+            // Math support conflicting with using usd symbol ($)
+            // remarkPlugins={[remarkGfm, remarkBreaks, remarkMath, remarkHTMLKatex]}
+            className="md-wrapper"
+            rehypePlugins={[
+              [
+                rehypeHighlight,
+                {
+                  ignoreMissing: true,
+                },
+              ],
+              [
+                rehypeExternalLinks,
+                {
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                },
+              ],
+            ]}
+          >
+            {message.content}
+          </ReactMarkdown>
+          {!!oldGeneratedMessages.length && (
+            <Flex
+              bgColor="gray.600"
+              p="0.5rem 1rem"
+              borderBottomRadius="xl"
+              mb={4}
+              justify="space-between"
+            >
+              <HStack>
+                <IconButton
+                  size="xs"
+                  icon={<TbArrowLeft />}
+                  aria-label="Prev"
+                  onClick={handleSelectPrevMessage}
+                  isDisabled={selectedGeneratedMessage === 0}
+                />
+                <Box>
+                  {selectedGeneratedMessage + 1} / {oldGeneratedMessages.length}
+                </Box>
+                <IconButton
+                  size="xs"
+                  icon={<TbArrowRight />}
+                  aria-label="Next"
+                  onClick={handleSelectNextMessage}
+                  isDisabled={
+                    selectedGeneratedMessage + 1 === oldGeneratedMessages.length
+                  }
+                />
+              </HStack>
+              <Button
+                size="xs"
+                variant="ghost"
+                color="gray.400"
+                _hover={{ color: 'gray.300' }}
+                onClick={onOpenAllMessages}
+              >
+                See all messages
+              </Button>
+            </Flex>
+          )}
+          {renderActions()}
+        </Box>
+      </Flex>
+
+      <Modal isOpen={isOpenAllMessages} onClose={onCloseAllMessages} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>All Generated Messages</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={8}>
+            <VStack>
+              {message.allContents?.map((item, index) => (
+                <Box key={index} bgColor="gray.500" p={4} borderRadius="xl">
+                  <Box>{item}</Box>
+                  <Flex justify="flex-end">
+                    <Button
+                      size="sm"
+                      onClick={() => handleSelectMessage(index)}
+                    >
+                      Use this
+                    </Button>
+                  </Flex>
+                </Box>
+              ))}
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };

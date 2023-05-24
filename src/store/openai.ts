@@ -87,6 +87,7 @@ export const useChat = create<{
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
   updateMessage: (message: string) => void;
   updateMessageTemplate: (template: string) => void;
+  selectGeneratedMessage: (message: Message, selectedIndex: number) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
   newChat: (
@@ -421,6 +422,7 @@ export const useChat = create<{
       content: message,
       updatedAt: getUnixTime(new Date()),
     });
+
     await deleteTheNextMessages(editingMessage.chatId, editingMessage.id);
     await getMessages(editingMessage.chatId);
     streamChatCompletion({
@@ -442,6 +444,21 @@ export const useChat = create<{
       setEditingMessage(newMessage);
       await get().getMessages(editingMessage.chatId);
     }
+  },
+  selectGeneratedMessage: async (message, selectedChatId) => {
+    const { update } = useIndexedDB('messages');
+
+    if (!message.allContents?.[selectedChatId] || !message.chatId) {
+      return;
+    }
+
+    await update({
+      ...message,
+      content: message.allContents[selectedChatId],
+      updatedAt: getUnixTime(new Date()),
+    });
+
+    await get().getMessages(message.chatId);
   },
   regenerateResponse: async (messageId) => {
     const {
