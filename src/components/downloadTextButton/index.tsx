@@ -25,7 +25,6 @@ interface DownloadTextButtonProps extends IconButtonProps {
 
 interface FormInputs {
   filename: string;
-  extension: string;
 }
 
 export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
@@ -50,7 +49,7 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
         return 'py';
 
       default:
-        return lang;
+        return lang || 'txt';
     }
   };
 
@@ -66,8 +65,8 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  const handleDownload = ({ filename, extension }: FormInputs) => {
-    downloadFile(`${filename}.${extension}`);
+  const handleDownload = ({ filename }: FormInputs) => {
+    downloadFile(filename);
     onClose();
     reset();
   };
@@ -86,6 +85,7 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
               <FormControl isInvalid={!!errors.filename} mb={4}>
                 <FormLabel>File name</FormLabel>
                 <Input
+                  defaultValue={`file.${langParser()}`}
                   {...register('filename', {
                     required: {
                       message: 'Filename cannot be empty',
@@ -96,23 +96,6 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
                 {errors.filename && (
                   <FormErrorMessage>
                     {errors.filename?.message}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl isInvalid={!!errors.extension}>
-                <FormLabel>Extension</FormLabel>
-                <Input
-                  defaultValue={langParser()}
-                  {...register('extension', {
-                    required: {
-                      message: 'Extension cannot be empty',
-                      value: true,
-                    },
-                  })}
-                />
-                {errors.extension && (
-                  <FormErrorMessage>
-                    {errors.extension?.message}
                   </FormErrorMessage>
                 )}
               </FormControl>
