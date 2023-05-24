@@ -129,7 +129,11 @@ export const ChatSidebar: React.FC = () => {
               <Flex justify="space-between" w="full">
                 <Box>
                   <Text fontWeight="bold">Usages</Text>
-                  <Text fontSize="sm" color="gray.300">
+                  <Text
+                    fontSize="sm"
+                    color="gray.300"
+                    _light={{ color: 'gray.400' }}
+                  >
                     This month:{' '}
                     <Box as="b" color="blue.500">
                       ${usages.total.toFixed(2)}
@@ -257,7 +261,11 @@ export const ChatSidebar: React.FC = () => {
             <Flex justify="space-between" w="full">
               <Box>
                 <Text fontWeight="bold">Usages</Text>
-                <Text fontSize="sm" color="gray.300">
+                <Text
+                  fontSize="sm"
+                  color="gray.300"
+                  _light={{ color: 'gray.400' }}
+                >
                   This month:{' '}
                   <Box as="b" color="blue.500">
                     ${usages.total.toFixed(2)}
@@ -295,6 +303,7 @@ export const ChatSidebar: React.FC = () => {
               borderColor={CustomColor.border}
               _light={{
                 borderColor: CustomColor.lightBorder,
+                color: 'gray.400',
               }}
             >
               Today usage is{' '}
