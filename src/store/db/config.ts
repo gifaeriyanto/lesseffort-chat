@@ -62,7 +62,7 @@ export const upgradeDB = () => {
 
   // Handle errors when connecting to IndexedDB
   request.onerror = function (event: any) {
-    console.error('IndexedDB error:', event.target.error);
+    captureException('IndexedDB error:', event.target.error);
   };
 
   // Handle upgrades needed when opening a connection to IndexedDB
