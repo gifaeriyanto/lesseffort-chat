@@ -213,6 +213,10 @@ export const ChatSidebar: React.FC = () => {
               autoFocus
               onBlur={onToggle}
               onSearch={setSearch}
+              _light={{
+                bgColor: 'gray.200',
+                borderColor: CustomColor.lightBorder,
+              }}
             />
           </Box>
         ) : (
