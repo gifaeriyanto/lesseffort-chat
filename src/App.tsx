@@ -1,9 +1,10 @@
+import { useLayoutEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import ChatContainer from 'containers/chat';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
-import { DBConfig } from 'store/db/config';
+import { DBConfig, upgradeDB } from 'store/db/config';
 import { theme } from 'theme';
 import { env } from 'utils/env';
 
@@ -22,6 +23,10 @@ ReactGA.initialize(env.GA_KEY);
 initDB(DBConfig);
 
 function App() {
+  useLayoutEffect(() => {
+    upgradeDB();
+  }, []);
+
   return (
     <ChakraProvider theme={theme}>
       <ChatContainer />
