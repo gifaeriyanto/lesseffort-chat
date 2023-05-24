@@ -21,6 +21,7 @@ import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';
 import { getUnixTime } from 'date-fns';
+import ReactGA from 'react-ga4';
 import {
   MdOutlineChecklist,
   MdSend,
@@ -310,14 +311,28 @@ export const ChatMessagesContainer: React.FC = () => {
           <ChatMessage
             key={message.id || message.createdAt}
             message={message}
-            onResend={resendLastMessage}
+            onResend={() => {
+              ReactGA.event({
+                action: 'Resend last message',
+                category: 'Action',
+              });
+              resendLastMessage();
+            }}
             onEdit={() => {
+              ReactGA.event({
+                action: 'Edit message',
+                category: 'Action',
+              });
               setEditingMessage(message);
               message.rules && setChatRules(message.rules);
             }}
-            onRegenerateResponse={() =>
-              message.id && regenerateResponse(message.id)
-            }
+            onRegenerateResponse={() => {
+              ReactGA.event({
+                action: 'Regenerate response',
+                category: 'Action',
+              });
+              message.id && regenerateResponse(message.id);
+            }}
           />
         ))}
       </>

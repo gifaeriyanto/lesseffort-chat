@@ -14,6 +14,7 @@ import {
   Icon,
   IconButton,
   IconButtonProps,
+  LightMode,
   Menu,
   MenuButton,
   MenuItem,
@@ -22,7 +23,6 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Portal,
@@ -35,6 +35,7 @@ import {
 import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
+import ReactGA from 'react-ga4';
 import {
   TbArrowLeft,
   TbArrowRight,
@@ -131,20 +132,36 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   );
 
   const handleSelectPrevMessage = () => {
+    ReactGA.event({
+      action: 'Select previous generated message',
+      category: 'Action',
+    });
     setSelectedGeneratedMessage((prev) => prev - 1);
     selectGeneratedMessage(message, selectedGeneratedMessage - 1);
   };
   const handleSelectNextMessage = () => {
+    ReactGA.event({
+      action: 'Select next generated message',
+      category: 'Action',
+    });
     setSelectedGeneratedMessage((prev) => prev + 1);
     selectGeneratedMessage(message, selectedGeneratedMessage + 1);
   };
   const handleSelectMessage = (index: number) => {
+    ReactGA.event({
+      action: 'Select spesific generated message',
+      category: 'Action',
+    });
     selectGeneratedMessage(message, index);
     setSelectedGeneratedMessage(index);
     onCloseAllMessages();
   };
 
   const handleCopy = () => {
+    ReactGA.event({
+      action: 'Copy message',
+      category: 'Action',
+    });
     navigator.clipboard.writeText(message.content);
   };
 
@@ -480,6 +497,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               borderBottomRadius="xl"
               mb={4}
               justify="space-between"
+              _light={{ bgColor: 'gray.50' }}
             >
               <HStack>
                 <IconButton
@@ -525,15 +543,24 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ModalBody pb={8}>
             <VStack>
               {message.allContents?.map((item, index) => (
-                <Box key={index} bgColor="gray.500" p={4} borderRadius="xl">
+                <Box
+                  key={index}
+                  bgColor="gray.500"
+                  p={4}
+                  borderRadius="xl"
+                  _light={{ bgColor: 'gray.100' }}
+                >
                   <Box>{item}</Box>
                   <Flex justify="flex-end">
-                    <Button
-                      size="sm"
-                      onClick={() => handleSelectMessage(index)}
-                    >
-                      Use this
-                    </Button>
+                    <LightMode>
+                      <Button
+                        size="sm"
+                        onClick={() => handleSelectMessage(index)}
+                        colorScheme="blue"
+                      >
+                        Use this
+                      </Button>
+                    </LightMode>
                   </Flex>
                 </Box>
               ))}
