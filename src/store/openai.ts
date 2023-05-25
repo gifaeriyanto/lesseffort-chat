@@ -328,6 +328,7 @@ export const useChat = create<{
     const { getChatHistory, reset } = get();
     getChatHistory();
     reset();
+    localStorage.removeItem('lastOpenChatId');
   },
   getMessages: async (chatId) => {
     localStorage.setItem('lastOpenChatId', String(chatId));
