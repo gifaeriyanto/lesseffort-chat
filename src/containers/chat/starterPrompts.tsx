@@ -19,13 +19,14 @@ import {
   Select,
   Skeleton,
   Text,
+  Tooltip,
   useBoolean,
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { ChatMessageAction } from 'components/chat/message';
 import { Search } from 'components/search';
-import { TbFilter, TbThumbUp } from 'react-icons/tb';
+import { TbFilter, TbInfoCircle, TbThumbUp } from 'react-icons/tb';
 import {
   defaultOrder,
   getPage,
@@ -106,12 +107,17 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         gap={4}
       >
         <Box>
-          <Box fontSize="xl" fontWeight="bold">
+          <Flex fontSize="xl" fontWeight="bold" align="center" gap={1}>
             <Text color="blue.500" as="span">
               Starter
-            </Text>{' '}
-            Prompts
-          </Box>
+            </Text>
+            <Text>Prompts</Text>
+            <Tooltip label="The source of these prompts is from AIPRM.">
+              <Box>
+                <Icon as={TbInfoCircle} fontSize="sm" />
+              </Box>
+            </Tooltip>
+          </Flex>
           <Box fontSize="sm" color="gray.400">
             {!!count ? (
               <>
