@@ -46,6 +46,10 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
 
   const wrapperPadding = { base: '1rem', md: '0 2rem 2rem 2rem' };
 
+  if (localStorage.getItem('lastOpenChatId')) {
+    return null;
+  }
+
   return (
     <Tabs
       variant="unstyled"

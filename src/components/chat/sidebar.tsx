@@ -104,6 +104,7 @@ export const ChatSidebar: React.FC = () => {
     resetChatSettings();
     onCloseSidebar();
     richEditorRef?.current?.focus();
+    localStorage.removeItem('lastOpenChatId');
   };
 
   const renderUserSettings = () => {
