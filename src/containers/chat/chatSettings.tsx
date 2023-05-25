@@ -18,6 +18,7 @@ import {
 import { captureException } from '@sentry/react';
 import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { standaloneToast } from 'index';
+import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
@@ -105,6 +106,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     botInstruction: _botInstruction,
     model: _model,
   }) => {
+    ReactGA.event({
+      action: `Save chat settings ${isGlobalSetting ? 'globally' : 'locally'}`,
+      category: 'Action',
+    });
+
     try {
       await setBotInstruction(_botInstruction);
       setModel(_model);
