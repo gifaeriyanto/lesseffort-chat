@@ -5,10 +5,8 @@ import {
   AlertIcon,
   Box,
   Button,
-  Code,
   Flex,
   FormControl,
-  FormHelperText,
   Icon,
   IconButton,
   Modal,
@@ -39,7 +37,7 @@ interface FormInputs {
   template: string;
 }
 
-const SelectedMessage: React.FC<SelectedMessageProps> = ({
+export const SelectedMessage: React.FC<SelectedMessageProps> = ({
   title,
   icon,
   info,
@@ -156,5 +154,3 @@ const SelectedMessage: React.FC<SelectedMessageProps> = ({
     </>
   );
 };
-
-export default SelectedMessage;

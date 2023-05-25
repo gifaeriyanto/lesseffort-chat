@@ -1,9 +1,11 @@
 import { useLayoutEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
-import ChatContainer from 'containers/chat';
+import { ChatContainer } from 'containers/chat';
+import { SettingsContainer } from 'containers/settings';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DBConfig, upgradeDB } from 'store/db/config';
 import { theme } from 'theme';
 import { env } from 'utils/env';
@@ -22,6 +24,17 @@ ReactGA.initialize(env.GA_KEY);
 
 initDB(DBConfig);
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <ChatContainer />,
+  },
+  {
+    path: '/settings',
+    element: <SettingsContainer />,
+  },
+]);
+
 function App() {
   useLayoutEffect(() => {
     upgradeDB();
@@ -29,7 +42,7 @@ function App() {
 
   return (
     <ChakraProvider theme={theme}>
-      <ChatContainer />
+      <RouterProvider router={router} />
     </ChakraProvider>
   );
 }

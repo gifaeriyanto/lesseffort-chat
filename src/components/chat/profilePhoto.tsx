@@ -10,12 +10,21 @@ import {
 import { TbUser } from 'react-icons/tb';
 import { useProfilePhoto } from 'store/openai';
 
-export const ProfilePhoto: React.FC<BoxProps> = (props) => {
+export interface ProfilePhotoProps extends BoxProps {
+  allowChangePhoto?: boolean;
+}
+
+export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
+  allowChangePhoto,
+  ...props
+}) => {
   const { photo, setPhoto } = useProfilePhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTriggerUpload = () => {
-    fileInputRef.current?.click();
+    if (allowChangePhoto) {
+      fileInputRef.current?.click();
+    }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +56,7 @@ export const ProfilePhoto: React.FC<BoxProps> = (props) => {
           src={photo}
           w="2.188rem"
           h="2.188rem"
-          role="button"
+          role={allowChangePhoto ? 'button' : 'none'}
           onClick={handleTriggerUpload}
           {...(props as AvatarProps)}
         />
@@ -61,7 +70,7 @@ export const ProfilePhoto: React.FC<BoxProps> = (props) => {
             align="center"
             justify="center"
             borderRadius="full"
-            role="button"
+            role={allowChangePhoto ? 'button' : 'none'}
             onClick={handleTriggerUpload}
             _light={{ bgColor: 'gray.300' }}
             {...props}

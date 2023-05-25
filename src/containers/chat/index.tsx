@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import { useChat } from 'store/openai';
 import { usePWA } from 'store/pwa';
 
-const ChatContainer: React.FC = () => {
+export const ChatContainer: React.FC = () => {
   const {
     isOpen: isOpenAPIKEYModal,
     onOpen: onOpenAPIKEYModal,
@@ -81,5 +81,3 @@ const ChatContainer: React.FC = () => {
     </>
   );
 };
-
-export default ChatContainer;

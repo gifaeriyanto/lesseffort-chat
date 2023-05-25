@@ -17,7 +17,7 @@ import { captureException } from '@sentry/react';
 import { Chat, Message } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { ChatRules, defaultRules, Rules } from 'components/chat/rules';
-import SelectedMessage from 'components/chat/selectedMessage';
+import { SelectedMessage } from 'components/chat/selectedMessage';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';

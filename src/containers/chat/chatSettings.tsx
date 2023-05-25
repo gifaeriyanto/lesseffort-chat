@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -19,7 +19,13 @@ import { captureException } from '@sentry/react';
 import { defaultBotInstruction, OpenAIModel } from 'api/chat';
 import { standaloneToast } from 'index';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
+
+export interface DBChatSettings {
+  chat_model: string;
+  chat_bot_instruction: string;
+}
 
 interface FormInputs {
   title: string;
@@ -27,7 +33,13 @@ interface FormInputs {
   model: OpenAIModel;
 }
 
-const ChatSettings: React.FC = () => {
+export interface ChatSettingsProps {
+  isGlobalSetting?: boolean;
+}
+
+export const ChatSettings: React.FC<ChatSettingsProps> = ({
+  isGlobalSetting,
+}) => {
   const {
     model,
     botInstruction,
@@ -55,6 +67,27 @@ const ChatSettings: React.FC = () => {
     setValue,
     watch,
   } = useForm<FormInputs>();
+  const db = useIndexedDB('settings');
+  const [indexeddbReady, setIndexeddbReady] = useState(false);
+
+  useLayoutEffect(() => {
+    if (indexeddbReady) {
+      return;
+    }
+    db.getByID<DBChatSettings>(1)
+      .then((res) => {
+        if (res?.chat_model) {
+          setModel(res.chat_model as OpenAIModel);
+          setValue('model', res.chat_model as OpenAIModel);
+        }
+
+        if (res?.chat_bot_instruction) {
+          setBotInstruction(res.chat_bot_instruction);
+          setValue('botInstruction', botInstruction);
+        }
+      })
+      .finally(() => setIndexeddbReady(true));
+  }, [db, indexeddbReady]);
 
   useLayoutEffect(() => {
     selectedChat?.title && setValue('title', selectedChat?.title);
@@ -75,20 +108,30 @@ const ChatSettings: React.FC = () => {
     try {
       await setBotInstruction(_botInstruction);
       setModel(_model);
-      selectedChat?.id && renameChat(selectedChat.id, title);
-      standaloneToast({
-        title: 'Configuration saved successfully!',
-        description:
-          'Your chat settings have been updated. You can now start chatting using your new configuration.',
-        status: 'success',
-      });
     } catch (error) {
       captureException(error);
     }
+
+    if (isGlobalSetting) {
+      db.update({
+        id: 1,
+        chat_bot_instruction: _botInstruction,
+        chat_model: _model,
+      });
+    } else {
+      selectedChat?.id && renameChat(selectedChat.id, title);
+    }
+
+    standaloneToast({
+      title: 'Configuration saved successfully!',
+      description:
+        'Your chat settings have been updated. You can now start chatting using your new configuration.',
+      status: 'success',
+    });
   };
 
   const undoButton = (name: keyof FormInputs, defaultValue: string) => {
-    if (defaultValue === watch()[name]) {
+    if (defaultValue === watch()[name] || isGlobalSetting) {
       return null;
     }
 
@@ -120,26 +163,28 @@ const ChatSettings: React.FC = () => {
       </Box>
 
       <Box color="gray.400" fontSize="sm" mb={4}>
-        This setting will only affect this conversation
+        This setting will affect future chat.
       </Box>
 
       <form onSubmit={handleSubmit(handleSaveSettings)}>
         <VStack spacing={8}>
-          <FormControl isInvalid={!!errors['title']}>
-            <FormLabel>Title</FormLabel>
-            <Input
-              defaultValue={selectedChat?.title || 'New Chat'}
-              {...register('title', {
-                required: {
-                  message: 'Title is required',
-                  value: true,
-                },
-              })}
-            />
-            {errors['title'] && (
-              <FormErrorMessage>{errors['title']?.message}</FormErrorMessage>
-            )}
-          </FormControl>
+          {!isGlobalSetting && (
+            <FormControl isInvalid={!!errors['title']}>
+              <FormLabel>Title</FormLabel>
+              <Input
+                defaultValue={selectedChat?.title || 'New Chat'}
+                {...register('title', {
+                  required: {
+                    message: 'Title is required',
+                    value: true,
+                  },
+                })}
+              />
+              {errors['title'] && (
+                <FormErrorMessage>{errors['title']?.message}</FormErrorMessage>
+              )}
+            </FormControl>
+          )}
           <FormControl isInvalid={!!errors['botInstruction']}>
             <FormLabel>
               Initial System Instruction
@@ -201,5 +246,3 @@ const ChatSettings: React.FC = () => {
     </>
   );
 };
-
-export default ChatSettings;

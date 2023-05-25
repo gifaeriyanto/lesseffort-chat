@@ -14,8 +14,8 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import ChatSettings from 'containers/chat/chatSettings';
-import StarterPrompts from 'containers/chat/starterPrompts';
+import { ChatSettings } from 'containers/chat/chatSettings';
+import { StarterPrompts } from 'containers/chat/starterPrompts';
 import { TbSettings, TbTemplate } from 'react-icons/tb';
 import { Prompt } from 'store/supabase';
 import { CustomColor } from 'theme/foundations/colors';

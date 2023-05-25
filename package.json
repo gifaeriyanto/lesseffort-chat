@@ -31,6 +31,7 @@
     "react-katex": "^3.0.1",
     "react-lazyload": "^3.2.0",
     "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
     "rehype-external-links": "^2.1.0",
     "rehype-highlight": "^6.0.0",

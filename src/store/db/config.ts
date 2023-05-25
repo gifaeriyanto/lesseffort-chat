@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/react';
 import ReactGA from 'react-ga4';
 
-export const DBVersion = 10;
+export const DBVersion = 11;
 
 export const DBConfig = {
   name: 'lesseffortchat',
@@ -48,6 +48,18 @@ export const DBConfig = {
         { name: 'rules', keypath: 'rules', options: { unique: false } },
         { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },
         { name: 'updatedAt', keypath: 'updatedAt', options: { unique: false } },
+      ],
+    },
+    {
+      store: 'settings',
+      storeConfig: { keyPath: 'id', autoIncrement: true },
+      storeSchema: [
+        { name: 'chat_model', keypath: 'chatId', options: { unique: false } },
+        {
+          name: 'chat_bot_instruction',
+          keypath: 'content',
+          options: { unique: false },
+        },
       ],
     },
   ],

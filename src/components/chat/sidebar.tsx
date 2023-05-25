@@ -14,8 +14,13 @@ import {
   DrawerOverlay,
   Flex,
   HStack,
+  Icon,
   IconButton,
   LightMode,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Text,
   useColorMode,
   useDisclosure,
@@ -24,9 +29,18 @@ import {
 import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
+import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { Search } from 'components/search';
 import ReactGA from 'react-ga4';
-import { TbMoonFilled, TbPlus, TbSearch, TbSun } from 'react-icons/tb';
+import {
+  TbLogout,
+  TbMoonFilled,
+  TbPlus,
+  TbSearch,
+  TbSettings,
+  TbSun,
+} from 'react-icons/tb';
+import { Link } from 'react-router-dom';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { CustomColor } from 'theme/foundations/colors';
@@ -42,6 +56,15 @@ export const ChatSidebar: React.FC = () => {
     today: 0,
   });
   const { toggleColorMode, colorMode } = useColorMode();
+
+  const handleToggleColorMode = () => {
+    toggleColorMode();
+    ReactGA.event({
+      action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
+      category: 'UX',
+      label: isLessThanMd ? 'mobile' : 'desktop',
+    });
+  };
 
   const fetchUsages = () => {
     getUsages()
@@ -81,6 +104,34 @@ export const ChatSidebar: React.FC = () => {
     resetChatSettings();
     onCloseSidebar();
     richEditorRef?.current?.focus();
+  };
+
+  const renderUserSettings = () => {
+    return (
+      <Menu autoSelect={false}>
+        <MenuButton>
+          <ProfilePhoto />
+        </MenuButton>
+        <MenuList>
+          <MenuItem as={Link} to="/settings">
+            <Icon as={TbSettings} />
+            <Text ml={4}>Setting</Text>
+          </MenuItem>
+          {!isLessThanMd && (
+            <MenuItem onClick={toggleColorMode}>
+              {colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+              <Text ml={4}>
+                Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
+              </Text>
+            </MenuItem>
+          )}
+          <MenuItem hidden>
+            <Icon as={TbLogout} />
+            <Text ml={4}>Log out</Text>
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    );
   };
 
   if (isLessThanMd) {
@@ -131,34 +182,28 @@ export const ChatSidebar: React.FC = () => {
               }}
             >
               <Flex justify="space-between" w="full">
-                <Box>
-                  <Text fontWeight="bold">Usages</Text>
-                  <Text
-                    fontSize="sm"
-                    color="gray.300"
-                    _light={{ color: 'gray.400' }}
-                  >
-                    This month:{' '}
-                    <Box as="b" color="blue.500">
-                      ${usages.total.toFixed(2)}
-                    </Box>
-                  </Text>
-                </Box>
+                <HStack spacing={4}>
+                  {renderUserSettings()}
+                  <Box>
+                    <Text fontWeight="bold">Usages</Text>
+                    <Text
+                      fontSize="sm"
+                      color="gray.300"
+                      _light={{ color: 'gray.400' }}
+                    >
+                      This month:{' '}
+                      <Box as="b" color="blue.500">
+                        ${usages.total.toFixed(2)}
+                      </Box>
+                    </Text>
+                  </Box>
+                </HStack>
 
                 <IconButton
                   variant="ghost"
                   icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
                   aria-label="Toggle color mode"
-                  onClick={() => {
-                    toggleColorMode();
-                    ReactGA.event({
-                      action: `Switch to ${
-                        colorMode === 'light' ? 'dark' : 'light'
-                      } mode`,
-                      category: 'UX',
-                      label: 'mobile',
-                    });
-                  }}
+                  onClick={handleToggleColorMode}
                   color="gray.400"
                 />
               </Flex>
@@ -266,37 +311,24 @@ export const ChatSidebar: React.FC = () => {
           }}
         >
           <Flex gap={4}>
-            <Flex justify="space-between" w="full">
-              <Box>
-                <Text fontWeight="bold">Usages</Text>
-                <Text
-                  fontSize="sm"
-                  color="gray.300"
-                  _light={{ color: 'gray.400' }}
-                >
-                  This month:{' '}
-                  <Box as="b" color="blue.500">
-                    ${usages.total.toFixed(2)}
-                  </Box>
-                </Text>
-              </Box>
+            <Flex justify="space-between" align="center" w="full">
+              <HStack spacing={4}>
+                {renderUserSettings()}
+                <Box>
+                  <Text fontWeight="bold">Usages</Text>
+                  <Text
+                    fontSize="sm"
+                    color="gray.300"
+                    _light={{ color: 'gray.400' }}
+                  >
+                    This month:{' '}
+                    <Box as="b" color="blue.500">
+                      ${usages.total.toFixed(2)}
+                    </Box>
+                  </Text>
+                </Box>
+              </HStack>
               <HStack>
-                <IconButton
-                  variant="ghost"
-                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-                  aria-label="Toggle color mode"
-                  onClick={() => {
-                    toggleColorMode();
-                    ReactGA.event({
-                      action: `Switch to ${
-                        colorMode === 'light' ? 'dark' : 'light'
-                      } mode`,
-                      category: 'UX',
-                      label: 'desktop',
-                    });
-                  }}
-                  color="gray.400"
-                />
                 <AccordionButton w="auto" p={1} transform="rotate(180deg)">
                   <AccordionIcon color="gray.400" fontSize="2xl" />
                 </AccordionButton>

@@ -335,7 +335,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       >
         <Box>
           {isMe ? (
-            <ProfilePhoto mt="0.5rem" />
+            <ProfilePhoto mt="0.5rem" allowChangePhoto />
           ) : (
             <Flex
               p={4}

@@ -58,7 +58,9 @@ export interface StarterPromptsProps {
   onSelectPrompt: (prompt: Prompt) => void;
 }
 
-const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
+export const StarterPrompts: React.FC<StarterPromptsProps> = ({
+  onSelectPrompt,
+}) => {
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
   const [community, setCommunity] = useState('');
@@ -313,5 +315,3 @@ const StarterPrompts: React.FC<StarterPromptsProps> = ({ onSelectPrompt }) => {
     </>
   );
 };
-
-export default StarterPrompts;
