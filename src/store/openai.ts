@@ -286,7 +286,7 @@ export const useChat = create<{
         case 429:
           standaloneToast({
             title: 'Oops! Something went wrong. 😕',
-            description: `It seems like you're sending requests too quickly. Please slow down and pace your requests\nError status: ${status}`,
+            description: `${error.message}\nError status: ${status}`,
             status: 'error',
           });
           break;
