@@ -116,7 +116,7 @@ export const ChatSidebar: React.FC = () => {
         <MenuList>
           <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
-            <Text ml={4}>Setting</Text>
+            <Text ml={4}>Settings</Text>
           </MenuItem>
           {!isLessThanMd && (
             <MenuItem onClick={toggleColorMode}>
@@ -330,7 +330,12 @@ export const ChatSidebar: React.FC = () => {
                 </Box>
               </HStack>
               <HStack>
-                <AccordionButton w="auto" p={1} transform="rotate(180deg)">
+                <AccordionButton
+                  w="auto"
+                  p={1}
+                  transform="rotate(180deg)"
+                  borderRadius="xl"
+                >
                   <AccordionIcon color="gray.400" fontSize="2xl" />
                 </AccordionButton>
               </HStack>
