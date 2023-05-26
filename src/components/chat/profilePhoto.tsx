@@ -57,6 +57,10 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
           h="2.188rem"
           role={allowChangePhoto ? 'button' : 'none'}
           onClick={handleTriggerUpload}
+          border={allowChangePhoto ? undefined : '2px solid'}
+          _light={{
+            color: allowChangePhoto ? undefined : 'blue.500',
+          }}
           {...(props as AvatarProps)}
         />
       ) : (
@@ -71,7 +75,9 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
             borderRadius="full"
             role={allowChangePhoto ? 'button' : 'none'}
             onClick={handleTriggerUpload}
-            _light={{ bgColor: 'gray.300' }}
+            border="2px solid"
+            borderColor={allowChangePhoto ? 'transparent' : 'blue.500'}
+            _light={{ bgColor: allowChangePhoto ? 'gray.300' : 'gray.200' }}
             {...props}
           >
             <Icon as={TbUser} fontSize="2xl" color="gray.400" />
