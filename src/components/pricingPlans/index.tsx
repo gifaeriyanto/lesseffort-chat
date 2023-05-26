@@ -9,7 +9,7 @@ export enum Plan {
 }
 
 export interface PricingPlansProps {
-  onSelect: (id: Plan) => void;
+  onSelect?: (id: Plan) => void;
 }
 
 export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
@@ -40,7 +40,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
           <ActionButton
             variant="outline"
             borderWidth="2px"
-            onClick={() => onSelect(Plan.free)}
+            onClick={() => onSelect?.(Plan.free)}
             _hover={{
               bgColor: 'transparent',
               color: 'blue.400',
@@ -66,7 +66,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
           ],
         }}
         button={
-          <ActionButton onClick={() => onSelect(Plan.premium)}>
+          <ActionButton onClick={() => onSelect?.(Plan.premium)}>
             Buy now
           </ActionButton>
         }

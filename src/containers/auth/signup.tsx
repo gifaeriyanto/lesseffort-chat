@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Badge,
   Box,
   Button,
-  Container,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -19,9 +17,7 @@ import {
   useBoolean,
   VStack,
 } from '@chakra-ui/react';
-import { SimpleNavbar } from 'components/navbar/simple';
-import { Plan, PricingPlans } from 'components/pricingPlans';
-import { ComparePlans } from 'components/pricingPlans/comparePlans';
+import { Plan } from 'components/pricingPlans';
 import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
@@ -37,7 +33,6 @@ export const SignUpContainer: React.FC = () => {
     handleSubmit,
   } = useForm<SignUpParams>();
   const [show, setShow] = React.useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
   const [isLoading, { on, off }] = useBoolean();
 
   const toggleShow = () => setShow(!show);
@@ -58,30 +53,6 @@ export const SignUpContainer: React.FC = () => {
       .finally(off);
   };
 
-  if (!selectedPlan) {
-    return (
-      <Flex minH="100vh" justify="center">
-        <Box pb="8rem">
-          <SimpleNavbar backLink="/login" />
-          <Heading mt="3rem" textAlign="center">
-            Pricing{' '}
-            <Text as="span" color="blue.500">
-              Plans
-            </Text>
-          </Heading>
-          <PricingPlans onSelect={setSelectedPlan} />
-          <Heading my="3rem" textAlign="center">
-            Compare{' '}
-            <Text as="span" color="blue.500">
-              Plans
-            </Text>
-          </Heading>
-          <ComparePlans />
-        </Box>
-      </Flex>
-    );
-  }
-
   return (
     <Flex minH="100vh" justify="center" align="center">
       <Box
@@ -97,13 +68,7 @@ export const SignUpContainer: React.FC = () => {
         </Heading>
 
         <Text mb={8} color="gray.400" textAlign="center">
-          <Text as="span" fontWeight="bold" color="blue.500">
-            {selectedPlan}
-          </Text>{' '}
-          plan selected.{' '}
-          <Button variant="link" onClick={() => setSelectedPlan(undefined)}>
-            Change plan
-          </Button>
+          <Text color="gray.400">Create a free account</Text>
         </Text>
 
         <form onSubmit={handleSubmit(handleSubmitSignup)}>

@@ -2,6 +2,8 @@ import { useLayoutEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { noAuth, withAuth } from 'components/protectedRoute';
+import { ConfirmedContainer } from 'containers/auth/confirmed';
+import { EmailConfirmationContainer } from 'containers/auth/emailConfirmation';
 import { LoginContainer } from 'containers/auth/login';
 import { SignUpContainer } from 'containers/auth/signup';
 import { ChatContainer } from 'containers/chat';
@@ -47,6 +49,16 @@ const router = createBrowserRouter([
     path: '/signup',
     loader: noAuth,
     element: <SignUpContainer />,
+  },
+  {
+    path: '/confirmed',
+    loader: noAuth,
+    element: <ConfirmedContainer />,
+  },
+  {
+    path: '/email-confirmation',
+    loader: noAuth,
+    element: <EmailConfirmationContainer />,
   },
 ]);
 
