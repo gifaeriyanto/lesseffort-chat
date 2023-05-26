@@ -31,8 +31,7 @@ export enum OpenAIModel {
   GPT_4 = 'gpt-4',
 }
 
-export const defaultBotInstruction =
-  'Act like a human and respond to users with casual language and friendly.';
+export const defaultBotInstruction = 'You are a helpful AI assistant.';
 
 const mandatoryInstruction = `\nPlease always use markdown format.
 If you write a code, please tell us the language code.`;
