@@ -1,7 +1,9 @@
 import { useLayoutEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
+import { noAuth, withAuth } from 'components/protectedRoute';
 import { LoginContainer } from 'containers/auth/login';
+import { SignUpContainer } from 'containers/auth/signup';
 import { ChatContainer } from 'containers/chat';
 import { SettingsContainer } from 'containers/settings';
 import ReactGA from 'react-ga4';
@@ -28,15 +30,23 @@ initDB(DBConfig);
 const router = createBrowserRouter([
   {
     path: '/',
+    loader: withAuth,
     element: <ChatContainer />,
   },
   {
     path: '/settings',
+    loader: withAuth,
     element: <SettingsContainer />,
   },
   {
     path: '/login',
+    loader: noAuth,
     element: <LoginContainer />,
+  },
+  {
+    path: '/signup',
+    loader: noAuth,
+    element: <SignUpContainer />,
   },
 ]);
 

@@ -17,6 +17,7 @@ import {
   Icon,
   IconButton,
   LightMode,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -40,9 +41,9 @@ import {
   TbSettings,
   TbSun,
 } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
+import { signOut } from 'store/supabase/auth';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatSidebar: React.FC = () => {
@@ -114,7 +115,7 @@ export const ChatSidebar: React.FC = () => {
           <ProfilePhoto />
         </MenuButton>
         <MenuList>
-          <MenuItem as={Link} to="/settings">
+          <MenuItem as={Link} href="/settings">
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
           </MenuItem>
@@ -126,7 +127,7 @@ export const ChatSidebar: React.FC = () => {
               </Text>
             </MenuItem>
           )}
-          <MenuItem hidden>
+          <MenuItem onClick={signOut}>
             <Icon as={TbLogout} />
             <Text ml={4}>Log out</Text>
           </MenuItem>

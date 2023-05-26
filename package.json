@@ -60,7 +60,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3999 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

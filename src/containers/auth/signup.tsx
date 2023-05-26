@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Badge,
   Box,
   Button,
+  Container,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -16,30 +18,30 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { SimpleNavbar } from 'components/navbar/simple';
+import { Plan, PricingPlans } from 'components/pricingPlans';
+import { ComparePlans } from 'components/pricingPlans/comparePlans';
 import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { TbLock, TbMail } from 'react-icons/tb';
+import { TbLock, TbMail, TbUser } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import {
-  signInWithEmail,
-  signInWithGoogle,
-  SignWithEmailParams,
-} from 'store/supabase/auth';
+import { signInWithGoogle, signUp, SignUpParams } from 'store/supabase/auth';
 import { CustomColor } from 'theme/foundations/colors';
 
-export const LoginContainer: React.FC = () => {
+export const SignUpContainer: React.FC = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<SignWithEmailParams>();
+  } = useForm<SignUpParams>();
   const [show, setShow] = React.useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
 
   const toggleShow = () => setShow(!show);
 
-  const handleSubmitLogin = (params: SignWithEmailParams) => {
-    signInWithEmail(params).then((res) => {
+  const handleSubmitLogin = (params: SignUpParams) => {
+    signUp(params).then((res) => {
       if (res.error?.message) {
         standaloneToast({
           title: 'Error login',
@@ -50,6 +52,30 @@ export const LoginContainer: React.FC = () => {
       }
     });
   };
+
+  if (!selectedPlan) {
+    return (
+      <Flex minH="100vh" justify="center">
+        <Box pb="8rem">
+          <SimpleNavbar backLink="/login" />
+          <Heading mt="3rem" textAlign="center">
+            Pricing{' '}
+            <Text as="span" color="blue.500">
+              Plans
+            </Text>
+          </Heading>
+          <PricingPlans onSelect={setSelectedPlan} />
+          <Heading my="3rem" textAlign="center">
+            Compare{' '}
+            <Text as="span" color="blue.500">
+              Plans
+            </Text>
+          </Heading>
+          <ComparePlans />
+        </Box>
+      </Flex>
+    );
+  }
 
   return (
     <Flex minH="100vh" justify="center" align="center">
@@ -62,15 +88,44 @@ export const LoginContainer: React.FC = () => {
         _light={{ bgColor: 'gray.50' }}
       >
         <Heading mb={2} textAlign="center">
-          Sign In
+          Sign Up
         </Heading>
 
         <Text mb={8} color="gray.400" textAlign="center">
-          Enter your credentials to access your account
+          <Text as="span" fontWeight="bold" color="blue.500">
+            {selectedPlan}
+          </Text>{' '}
+          plan selected.{' '}
+          <Button variant="link" onClick={() => setSelectedPlan(undefined)}>
+            Change plan
+          </Button>
         </Text>
 
         <form onSubmit={handleSubmit(handleSubmitLogin)}>
           <VStack spacing={4}>
+            <FormControl isInvalid={!!errors['name']}>
+              <InputGroup size="lg">
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={TbUser} color="blue.500" />
+                </InputLeftElement>
+                <Input
+                  fontSize="md"
+                  borderRadius="xl"
+                  type="text"
+                  placeholder="Enter your name"
+                  {...register('name', {
+                    required: {
+                      message: 'Name is required',
+                      value: true,
+                    },
+                  })}
+                />
+              </InputGroup>
+              {errors['name'] && (
+                <FormErrorMessage>{errors['name']?.message}</FormErrorMessage>
+              )}
+            </FormControl>
+
             <FormControl isInvalid={!!errors['email']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
@@ -130,17 +185,6 @@ export const LoginContainer: React.FC = () => {
             </FormControl>
           </VStack>
 
-          <Button
-            as={Link}
-            to="/forgot-password"
-            mt={8}
-            display="inline-block"
-            fontSize="sm"
-            variant="link"
-          >
-            Having trouble in sign in?
-          </Button>
-
           <LightMode>
             <Button
               colorScheme="blue"
@@ -151,7 +195,7 @@ export const LoginContainer: React.FC = () => {
               size="lg"
               fontSize="md"
             >
-              Sign in
+              Sign up
             </Button>
           </LightMode>
         </form>
@@ -182,14 +226,14 @@ export const LoginContainer: React.FC = () => {
             size="lg"
             fontSize="md"
           >
-            Sign in with Google
+            Sign up with Google
           </Button>
         </HStack>
 
         <Text mt={8} color="gray.400" textAlign="center">
-          Don't have an account?{' '}
-          <Button variant="link" as={Link} to="/signup">
-            Sign up
+          Already a member?{' '}
+          <Button variant="link" as={Link} to="/login">
+            Sign in
           </Button>
         </Text>
       </Box>

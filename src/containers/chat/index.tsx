@@ -15,8 +15,9 @@ import {
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
-import { useChat } from 'store/openai';
+import { useChat, useProfilePhoto } from 'store/openai';
 import { usePWA } from 'store/pwa';
+import { supabase } from 'store/supabase';
 
 export const ChatContainer: React.FC = () => {
   const {
@@ -27,6 +28,7 @@ export const ChatContainer: React.FC = () => {
   const { register, handleSubmit } = useForm();
   const { getPWAStatus } = usePWA();
   const { setSelectedChatId } = useChat();
+  const { setPhoto } = useProfilePhoto();
 
   useLayoutEffect(() => {
     getPWAStatus();
@@ -38,6 +40,11 @@ export const ChatContainer: React.FC = () => {
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
     }
+
+    supabase.auth.getSession().then((res) => {
+      const avatar = res.data.session?.user?.user_metadata?.avatar_url;
+      setPhoto(avatar || null);
+    });
   }, []);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
