@@ -1,9 +1,17 @@
 import React, { useMemo } from 'react';
-import { Box, Flex, HStack, Icon, Text, useMediaQuery } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  Tooltip,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
-import { TbLock } from 'react-icons/tb';
+import { TbAlertCircle } from 'react-icons/tb';
 // import LazyLoad from 'react-lazyload';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
@@ -57,7 +65,13 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       >
         <Box flexGrow={0} overflow="hidden">
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
-            {isLimited && <Icon as={TbLock} color="gray.400" mr={2} />}
+            {isLimited && (
+              <Tooltip label="Context length exceeded">
+                <Box as="span">
+                  <Icon as={TbAlertCircle} color="gray.400" mr={2} />
+                </Box>
+              </Tooltip>
+            )}
             {title}
           </Text>
           <Text fontSize="sm" color="gray.400" isTruncated>

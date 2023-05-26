@@ -276,6 +276,13 @@ export const useChat = create<{
               captureException(error);
             }
           }
+
+          standaloneToast({
+            title: 'Context length exceeded',
+            description:
+              "This model's maximum context length is 4097 tokens. However, your messages resulted in 6601 tokens. Please reduce the length of the messages.",
+            status: 'error',
+          });
           break;
 
         case 401:
