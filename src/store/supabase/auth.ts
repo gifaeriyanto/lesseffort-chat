@@ -79,12 +79,12 @@ export const resendEmailConfirmation = async (email: string) => {
 
 export const forgotPassword = async (email: string) => {
   const res = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: '/reset-password',
+    redirectTo: `${window.location.origin}/update-password`,
   });
   if (!res.error) {
     standaloneToast({
       title: 'Forgot Password',
-      description: `We've sent you a message with instructions on how to reset your password. Please check your email and follow the steps provided. If you don't see the email in your inbox, make sure to check your spam folder. If you still can't find it, please contact our support team for assistance.`,
+      description: `We've already sent you a reset link to your email. Please check your inbox.`,
       position: 'top',
       status: 'success',
     });
@@ -96,4 +96,24 @@ export const forgotPassword = async (email: string) => {
       status: 'error',
     });
   }
+
+  return res;
+};
+
+export const updatePassword = async (newPassword: string) => {
+  const res = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+  if (!res.error) {
+    window.location.href = '/';
+  } else {
+    standaloneToast({
+      title: 'Error to reset your password',
+      description: res.error.message,
+      position: 'top',
+      status: 'error',
+    });
+  }
+
+  return res;
 };

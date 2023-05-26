@@ -137,7 +137,7 @@ export const LoginContainer: React.FC = () => {
 
           <Button
             as={Link}
-            to="/forgot-password"
+            to="/forgot"
             mt={8}
             display="inline-block"
             fontSize="sm"
