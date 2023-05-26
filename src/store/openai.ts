@@ -39,6 +39,9 @@ export const useUsage = create<{
   getUsages: async () => {
     try {
       const res = await getUsages();
+      if (!res) {
+        return;
+      }
       const { total_usage } = res.data;
       set({ usage: total_usage });
       return total_usage;
@@ -241,9 +244,9 @@ export const useChat = create<{
             await dbChatHistory.update({
               ...res,
               title:
-                res.title === 'New Chat'
+                res?.title === 'New Chat'
                   ? userMessage.content.slice(0, 50)
-                  : res.title,
+                  : res?.title,
               last_message: content.slice(0, 50),
               updatedAt: getUnixTime(new Date()),
             });
@@ -392,8 +395,8 @@ export const useChat = create<{
       if (chatId) {
         const res = await dbChatHistory.getByID(chatId);
         set({
-          botInstruction: res.bot_instruction || defaultBotInstruction,
-          model: res.model,
+          botInstruction: res?.bot_instruction || defaultBotInstruction,
+          model: res?.model || OpenAIModel.GPT_3_5,
         });
         await getMessages(chatId);
       }
