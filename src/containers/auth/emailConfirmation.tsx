@@ -10,8 +10,7 @@ import {
   useBoolean,
 } from '@chakra-ui/react';
 import { TbSend } from 'react-icons/tb';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { supabase } from 'store/supabase';
+import { useSearchParams } from 'react-router-dom';
 import { resendEmailConfirmation } from 'store/supabase/auth';
 import { CustomColor } from 'theme/foundations/colors';
 
@@ -111,12 +110,12 @@ export const EmailConfirmationContainer: React.FC = () => {
         >
           If you not got any mail,{' '}
           <Button
-            isDisabled={!!remainingTime}
+            isDisabled={remainingTime > 0}
             onClick={handleResend}
             mt={2}
             isLoading={isLoading}
           >
-            {remainingTime <= 0 && (
+            {remainingTime > 0 && (
               <Tag mr={2} borderRadius="xl">
                 {remainingTime}
               </Tag>
