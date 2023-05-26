@@ -80,12 +80,12 @@ export const SignUpContainer: React.FC = () => {
   return (
     <Flex minH="100vh" justify="center" align="center">
       <Box
-        bgColor="gray.600"
+        bgColor={{ md: 'gray.600' }}
         w="full"
         maxW="30rem"
         p="3rem"
         borderRadius="xl"
-        _light={{ bgColor: 'gray.50' }}
+        _light={{ bgColor: { md: 'gray.50' } }}
       >
         <Heading mb={2} textAlign="center">
           Sign Up

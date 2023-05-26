@@ -17,7 +17,6 @@ import {
   Icon,
   IconButton,
   LightMode,
-  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -41,6 +40,7 @@ import {
   TbSettings,
   TbSun,
 } from 'react-icons/tb';
+import { Link } from 'react-router-dom';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
@@ -115,7 +115,7 @@ export const ChatSidebar: React.FC = () => {
           <ProfilePhoto />
         </MenuButton>
         <MenuList>
-          <MenuItem as={Link} href="/settings">
+          <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
           </MenuItem>

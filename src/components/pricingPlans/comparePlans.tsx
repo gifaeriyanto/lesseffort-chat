@@ -115,6 +115,8 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
 export const ComparePlans: React.FC = () => {
   return (
     <TableContainer
+      maxW="calc(100vw - 2rem)"
+      overflow="auto"
       sx={{
         'td, th': {
           borderColor: CustomColor.border,
