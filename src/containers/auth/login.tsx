@@ -14,6 +14,7 @@ import {
   InputRightElement,
   LightMode,
   Text,
+  useBoolean,
   VStack,
 } from '@chakra-ui/react';
 import { standaloneToast } from 'index';
@@ -35,20 +36,24 @@ export const LoginContainer: React.FC = () => {
     handleSubmit,
   } = useForm<SignWithEmailParams>();
   const [show, setShow] = React.useState(false);
+  const [isLoading, { on, off }] = useBoolean();
 
   const toggleShow = () => setShow(!show);
 
   const handleSubmitLogin = (params: SignWithEmailParams) => {
-    signInWithEmail(params).then((res) => {
-      if (res.error?.message) {
-        standaloneToast({
-          title: 'Error login',
-          description: res.error.message,
-          position: 'top',
-          status: 'error',
-        });
-      }
-    });
+    on();
+    signInWithEmail(params)
+      .then((res) => {
+        if (res.error?.message) {
+          standaloneToast({
+            title: 'Error login',
+            description: res.error.message,
+            position: 'top',
+            status: 'error',
+          });
+        }
+      })
+      .finally(off);
   };
 
   return (
@@ -150,6 +155,7 @@ export const LoginContainer: React.FC = () => {
               borderRadius="xl"
               size="lg"
               fontSize="md"
+              isLoading={isLoading}
             >
               Sign in
             </Button>

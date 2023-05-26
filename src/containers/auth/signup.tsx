@@ -16,6 +16,7 @@ import {
   InputRightElement,
   LightMode,
   Text,
+  useBoolean,
   VStack,
 } from '@chakra-ui/react';
 import { SimpleNavbar } from 'components/navbar/simple';
@@ -37,20 +38,24 @@ export const SignUpContainer: React.FC = () => {
   } = useForm<SignUpParams>();
   const [show, setShow] = React.useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
+  const [isLoading, { on, off }] = useBoolean();
 
   const toggleShow = () => setShow(!show);
 
-  const handleSubmitLogin = (params: SignUpParams) => {
-    signUp(params).then((res) => {
-      if (res.error?.message) {
-        standaloneToast({
-          title: 'Error login',
-          description: res.error.message,
-          position: 'top',
-          status: 'error',
-        });
-      }
-    });
+  const handleSubmitSignup = (params: SignUpParams) => {
+    on();
+    signUp(params)
+      .then((res) => {
+        if (res.error?.message) {
+          standaloneToast({
+            title: 'Error login',
+            description: res.error.message,
+            position: 'top',
+            status: 'error',
+          });
+        }
+      })
+      .finally(off);
   };
 
   if (!selectedPlan) {
@@ -101,7 +106,7 @@ export const SignUpContainer: React.FC = () => {
           </Button>
         </Text>
 
-        <form onSubmit={handleSubmit(handleSubmitLogin)}>
+        <form onSubmit={handleSubmit(handleSubmitSignup)}>
           <VStack spacing={4}>
             <FormControl isInvalid={!!errors['name']}>
               <InputGroup size="lg">
@@ -194,6 +199,7 @@ export const SignUpContainer: React.FC = () => {
               borderRadius="xl"
               size="lg"
               fontSize="md"
+              isLoading={isLoading}
             >
               Sign up
             </Button>

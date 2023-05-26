@@ -20,7 +20,7 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
     },
   });
 
-  if (res.data.session?.access_token) {
+  if (res.data.user?.id) {
     window.location.reload();
   }
 
