@@ -106,7 +106,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     />,
   ],
   [
-    'Export data',
+    'Export & import data',
     <Icon key="export_free" as={TbX} color="gray.400" fontSize="xl" />,
     <Icon key="export_premium" as={TbCheck} color="blue.500" fontSize="xl" />,
   ],

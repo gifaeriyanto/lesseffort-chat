@@ -30,9 +30,9 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
           time: '',
           features: [
             'Max 5 chat history',
-            ['Starter prompts', '6 uses per-day'],
             'Search chat history',
             ['Chat rules', '170+ language, tone, writing style and format'],
+            ['Starter prompts', '6 uses per-day'],
             'Light mode',
           ],
         }}
@@ -62,7 +62,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
             'Save prompts',
             'Save/share conversations and message',
             'Light & Dark mode',
-            'Custom color scheme',
+            'Export & import data',
           ],
         }}
         button={
