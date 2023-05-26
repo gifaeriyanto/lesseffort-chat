@@ -52,7 +52,6 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
     <>
       {typeof photo === 'string' ? (
         <Avatar
-          name="Demo"
           src={photo}
           w="2.188rem"
           h="2.188rem"
