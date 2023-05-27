@@ -42,7 +42,7 @@ export const SettingsContainer: React.FC = () => {
                 color: 'gray.400',
                 _selected: {
                   fontWeight: 'bold',
-                  color: 'gray.200',
+                  color: colorMode === 'light' ? 'gray.500' : 'gray.200',
                   borderColor: accentColor('500'),
                 },
               },
