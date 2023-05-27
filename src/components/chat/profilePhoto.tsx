@@ -24,9 +24,9 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   const [name, setName] = useState('');
 
   useLayoutEffect(() => {
-    getUser().then((res) =>
-      setName(res.data.user?.user_metadata?.full_name || ''),
-    );
+    getUser().then((res) => {
+      setName(res.data.user?.user_metadata?.full_name || '');
+    });
   }, []);
 
   const handleTriggerUpload = () => {

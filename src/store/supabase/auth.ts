@@ -17,9 +17,9 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
     password,
     options: {
       data: {
-        name,
+        full_name: name,
       },
-      emailRedirectTo: `${window.location.origin}/confirmed`,
+      emailRedirectTo: window.location.origin,
     },
   });
 
