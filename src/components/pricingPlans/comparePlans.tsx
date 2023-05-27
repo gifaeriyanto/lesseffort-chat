@@ -4,7 +4,6 @@ import {
   Icon,
   LightMode,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -13,6 +12,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
+import { Plan } from 'components/pricingPlans';
 import { TbCheck, TbX } from 'react-icons/tb';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
@@ -20,12 +20,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
   ['Chat history', '5', 'Unlimited'],
   [
     'Search history',
-    <Icon
-      key="search_history_free"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
+    <Icon key="search_history_free" as={TbX} color="gray.400" fontSize="xl" />,
     <Icon
       key="search_history_premium"
       as={TbCheck}
@@ -123,7 +118,11 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
   ],
 ];
 
-export const ComparePlans: React.FC = () => {
+export interface ComparePlansProps {
+  onSelect?: (plan: Plan) => void;
+}
+
+export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
   return (
     <TableContainer
       maxW="calc(100vw - 2rem)"
@@ -163,6 +162,34 @@ export const ComparePlans: React.FC = () => {
             </Tr>
           ))}
         </Tbody>
+        <Tfoot>
+          <Tr>
+            <Th>To convert</Th>
+            <Th>
+              <LightMode>
+                <Button
+                  colorScheme={accentColor()}
+                  variant="outline"
+                  borderRadius="xl"
+                  onClick={() => onSelect?.(Plan.free)}
+                >
+                  Continue free
+                </Button>
+              </LightMode>
+            </Th>
+            <Th>
+              <LightMode>
+                <Button
+                  colorScheme={accentColor()}
+                  borderRadius="xl"
+                  onClick={() => onSelect?.(Plan.premium)}
+                >
+                  Buy now
+                </Button>
+              </LightMode>
+            </Th>
+          </Tr>
+        </Tfoot>
       </Table>
     </TableContainer>
   );

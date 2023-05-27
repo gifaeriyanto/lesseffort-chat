@@ -3,12 +3,23 @@ import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { SimpleNavbar } from 'components/navbar/simple';
 import { Plan, PricingPlans } from 'components/pricingPlans';
 import { ComparePlans } from 'components/pricingPlans/comparePlans';
+import { useNavigate } from 'react-router-dom';
 import { accentColor } from 'theme/foundations/colors';
 
 const PlansContainer: React.FC = () => {
+  const navigate = useNavigate();
+
   const handleSelectPlan = (plan: Plan) => {
-    if (plan === Plan.premium) {
-      // subs logic
+    switch (plan) {
+      case Plan.free:
+        navigate('/');
+        return;
+
+      case Plan.premium:
+        // subs logic
+        return;
+      default:
+        return;
     }
   };
 
@@ -29,7 +40,7 @@ const PlansContainer: React.FC = () => {
             Plans
           </Text>
         </Heading>
-        <ComparePlans />
+        <ComparePlans onSelect={handleSelectPlan} />
       </Box>
     </Flex>
   );

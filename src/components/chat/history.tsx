@@ -10,10 +10,12 @@ import {
 } from '@chakra-ui/react';
 import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
+import { Plan } from 'components/pricingPlans';
+import { standaloneToast } from 'index';
 import { sort } from 'ramda';
-import { TbAlertCircle } from 'react-icons/tb';
+import { TbAlertCircle, TbLock } from 'react-icons/tb';
 // import LazyLoad from 'react-lazyload';
-import { useChat } from 'store/openai';
+import { useChat, useUserData } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
@@ -23,6 +25,7 @@ export interface ChatHistoryItemProps {
   title: string;
   description: string;
   isLimited?: boolean;
+  isLocked?: boolean;
   onDelete: (id: number) => void;
   onSelect: (id: number) => void;
 }
@@ -33,9 +36,28 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   title,
   description,
   isLimited,
+  isLocked,
   onSelect,
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+
+  const handleSelect = () => {
+    if (isLocked) {
+      if (!standaloneToast.isActive('chat_history_limit')) {
+        standaloneToast({
+          id: 'chat_history_limit',
+          title: 'Upgrade your plan to view more chat history!',
+          description: `You're currently on the free plan, which only allows you to view up to 5 chat histories. To view more, please upgrade to our premium plan.`,
+          status: 'warning',
+        });
+      }
+      return;
+    }
+
+    if (id) {
+      onSelect(id);
+    }
+  };
 
   return (
     <Box
@@ -48,7 +70,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       p={4}
       pl={isActive ? 'calc(1rem - 1px)' : 4}
       role="button"
-      onClick={() => id && onSelect(id)}
+      onClick={handleSelect}
       pos="relative"
       _light={{
         bgColor: isActive ? 'gray.200' : 'transparent',
@@ -65,6 +87,11 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       >
         <Box flexGrow={0} overflow="hidden">
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
+            {isLocked && (
+              <Box as="span">
+                <Icon as={TbLock} color="gray.400" mr={2} />
+              </Box>
+            )}
             {isLimited && (
               <Tooltip label="Context length exceeded">
                 <Box as="span">
@@ -101,6 +128,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   const { chatHistory, deleteChat, selectedChatId, setSelectedChatId } =
     useChat();
   const { onClose: onCloseSidebar } = useSidebar();
+  const { user } = useUserData();
 
   const filteredChatHistory = useMemo(() => {
     return sort(
@@ -156,6 +184,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           }}
           isActive={selectedChatId === item.id}
           isLimited={item.limited}
+          isLocked={user?.plan === Plan.free && index > 4}
         />
         // </LazyLoad>
       ))}

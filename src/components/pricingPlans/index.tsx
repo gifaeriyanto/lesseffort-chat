@@ -30,13 +30,16 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
           time: '',
           features: [
             'Max 5 chat history',
-            'Search chat history',
             ['Chat rules', '170+ language, tone, writing style and format'],
             ['Starter prompts', '6 uses per-day'],
             'Light mode',
           ],
         }}
-        button={<Box h="4rem" />}
+        button={
+          <ActionButton onClick={() => onSelect?.(Plan.free)} variant="outline">
+            Continue free
+          </ActionButton>
+        }
       />
       <PricingCard
         isRecommended

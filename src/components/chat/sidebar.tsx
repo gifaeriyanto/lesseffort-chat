@@ -30,7 +30,9 @@ import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
+import { Plan } from 'components/pricingPlans';
 import { Search } from 'components/search';
+import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import {
   TbDiscountCheck,
@@ -59,6 +61,23 @@ export const ChatSidebar: React.FC = () => {
     today: 0,
   });
   const { toggleColorMode, colorMode } = useColorMode();
+
+  const handleToggleShowSearch = () => {
+    if (user?.plan === Plan.free) {
+      if (!standaloneToast.isActive('search_history_limit')) {
+        standaloneToast({
+          id: 'search_history_limit',
+          title: 'Upgrade your plan to access search chat history!',
+          description:
+            'Sorry, this feature is only available to users on our premium plan. Upgrade now to access all the benefits.',
+          status: 'warning',
+        });
+      }
+      return;
+    }
+
+    onToggle();
+  };
 
   const handleToggleColorMode = () => {
     toggleColorMode();
@@ -270,7 +289,7 @@ export const ChatSidebar: React.FC = () => {
             <Search
               borderRadius="lg"
               autoFocus
-              onBlur={onToggle}
+              onBlur={handleToggleShowSearch}
               onSearch={setSearch}
               _light={{
                 bgColor: 'gray.200',
@@ -289,7 +308,7 @@ export const ChatSidebar: React.FC = () => {
             w="full"
             justify="space-between"
             align="center"
-            onClick={onToggle}
+            onClick={handleToggleShowSearch}
             cursor="text"
             _light={{
               borderColor: CustomColor.lightBorder,
