@@ -1,5 +1,4 @@
 import { standaloneToast } from 'index';
-import { redirect } from 'react-router-dom';
 import { supabase } from 'store/supabase';
 
 export interface SignWithEmailParams {
@@ -119,6 +118,26 @@ export const updatePassword = async (newPassword: string) => {
   return res;
 };
 
-export const getUser = () => {
-  return supabase.auth.getUser();
+export interface UserData {
+  id: string;
+  name: string;
+  plan: 'Free' | 'Premium';
+  // status_plan: 'Active' | 'Nonactive';
+  // email: string;
+  // provider: string;
+  // confirmed_at: string;
+  // email_confirmed_at: string;
+  // created_at: string;
+  // updated_at: string;
+  // last_sign_in_at: string;
+  // expired_plan: string | null;
+}
+
+export const getUser = async () => {
+  const res = await supabase.from('profiles').select('id, name, plan');
+  if (!res.data?.[0]) {
+    return;
+  }
+
+  return res.data[0] as UserData;
 };

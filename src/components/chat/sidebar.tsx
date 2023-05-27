@@ -33,6 +33,7 @@ import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { Search } from 'components/search';
 import ReactGA from 'react-ga4';
 import {
+  TbDiscountCheck,
   TbLogout,
   TbMoonFilled,
   TbPlus,
@@ -41,12 +42,13 @@ import {
   TbSun,
 } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { useChat } from 'store/openai';
+import { useChat, useUserData } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ChatSidebar: React.FC = () => {
+  const { user } = useUserData();
   const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
@@ -121,10 +123,20 @@ export const ChatSidebar: React.FC = () => {
           </MenuItem>
           {!isLessThanMd && (
             <MenuItem onClick={toggleColorMode}>
-              {colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+              {colorMode === 'light' ? (
+                <Icon as={TbMoonFilled} />
+              ) : (
+                <Icon as={TbSun} />
+              )}
               <Text ml={4}>
                 Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
               </Text>
+            </MenuItem>
+          )}
+          {user?.plan === 'Free' && (
+            <MenuItem as={Link} to="/settings" color="blue.500">
+              <Icon as={TbDiscountCheck} />
+              <Text ml={4}>Upgrade to premium</Text>
             </MenuItem>
           )}
           <MenuItem onClick={signOut}>

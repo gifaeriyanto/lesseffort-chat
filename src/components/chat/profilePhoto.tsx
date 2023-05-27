@@ -1,15 +1,15 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
   Avatar,
   AvatarProps,
+  Box,
   BoxProps,
   Flex,
   Icon,
   Tooltip,
 } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
-import { useProfilePhoto } from 'store/openai';
-import { getUser } from 'store/supabase/auth';
+import { useProfilePhoto, useUserData } from 'store/openai';
 
 export interface ProfilePhotoProps extends BoxProps {
   allowChangePhoto?: boolean;
@@ -19,15 +19,9 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   allowChangePhoto,
   ...props
 }) => {
+  const { user } = useUserData();
   const { photo, setPhoto } = useProfilePhoto();
-  const [name, setName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useLayoutEffect(() => {
-    getUser().then((res) => {
-      setName(res.data.user?.user_metadata?.full_name || '');
-    });
-  }, []);
 
   const handleTriggerUpload = () => {
     if (allowChangePhoto) {
@@ -60,7 +54,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
     <>
       {photo ? (
         <Avatar
-          name={name}
+          name={user?.name}
           src={photo}
           w="2.188rem"
           h="2.188rem"

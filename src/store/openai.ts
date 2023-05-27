@@ -16,6 +16,7 @@ import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { getMessagesDB } from 'store/db/queries';
 import { supabase } from 'store/supabase';
+import { UserData } from 'store/supabase/auth';
 import { create } from 'zustand';
 
 export const modifyTemplate = (
@@ -71,6 +72,16 @@ export const useProfilePhoto = create<{
     }
 
     return photo;
+  },
+}));
+
+export const useUserData = create<{
+  user: UserData | undefined;
+  setUser: (user: UserData | undefined) => void;
+}>((set) => ({
+  user: undefined,
+  setUser: (user) => {
+    set({ user });
   },
 }));
 
