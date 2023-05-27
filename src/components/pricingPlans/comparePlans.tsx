@@ -65,6 +65,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     />,
   ],
   ['Color mode', 'Light mode only', 'Light and Dark mode'],
+  ['Color scheme', 'Blue only', '9 color options'],
   [
     'Save conversations',
     <Icon
@@ -152,34 +153,6 @@ export const ComparePlans: React.FC = () => {
             </Tr>
           ))}
         </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th></Th>
-            <Th>
-              <LightMode>
-                <Button
-                  colorScheme="blue"
-                  variant="outline"
-                  borderWidth="2px"
-                  borderRadius="xl"
-                  _hover={{
-                    bgColor: 'transparent',
-                    color: 'blue.400',
-                  }}
-                >
-                  Start
-                </Button>
-              </LightMode>
-            </Th>
-            <Th>
-              <LightMode>
-                <Button colorScheme="blue" borderRadius="xl">
-                  Buy now
-                </Button>
-              </LightMode>
-            </Th>
-          </Tr>
-        </Tfoot>
       </Table>
     </TableContainer>
   );

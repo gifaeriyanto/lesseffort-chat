@@ -36,19 +36,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
             'Light mode',
           ],
         }}
-        button={
-          <ActionButton
-            variant="outline"
-            borderWidth="2px"
-            onClick={() => onSelect?.(Plan.free)}
-            _hover={{
-              bgColor: 'transparent',
-              color: 'blue.400',
-            }}
-          >
-            Start
-          </ActionButton>
-        }
+        button={<Box h="4rem" />}
       />
       <PricingCard
         isRecommended

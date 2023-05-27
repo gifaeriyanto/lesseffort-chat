@@ -134,7 +134,7 @@ export const ChatSidebar: React.FC = () => {
             </MenuItem>
           )}
           {user?.plan === 'Free' && (
-            <MenuItem as={Link} to="/settings" color="blue.500">
+            <MenuItem as={Link} to="/plans" color="blue.500">
               <Icon as={TbDiscountCheck} />
               <Text ml={4}>Upgrade to premium</Text>
             </MenuItem>

@@ -1,3 +1,4 @@
+import { Plan } from 'components/pricingPlans';
 import { standaloneToast } from 'index';
 import { supabase } from 'store/supabase';
 
@@ -121,7 +122,7 @@ export const updatePassword = async (newPassword: string) => {
 export interface UserData {
   id: string;
   name: string;
-  plan: 'Free' | 'Premium';
+  plan: Plan;
   // status_plan: 'Active' | 'Nonactive';
   // email: string;
   // provider: string;

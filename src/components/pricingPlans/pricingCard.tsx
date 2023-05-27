@@ -29,7 +29,6 @@ interface PricingCardProps extends CardProps {
 export const PricingCard = (props: PricingCardProps) => {
   const { data, button, ...rest } = props;
   const { features, price, name, time } = data;
-  const accentColor = 'blue.500';
 
   return (
     <Card
@@ -37,13 +36,13 @@ export const PricingCard = (props: PricingCardProps) => {
       bgColor="gray.600"
       border="1px solid"
       borderColor={CustomColor.border}
-      _light={{ bgColor: 'gray.100', borderColor: 'transparent' }}
+      _light={{ bgColor: 'gray.100', border: 'none' }}
       {...rest}
     >
       <Heading size="md" fontWeight="extrabold">
         {name}
       </Heading>
-      <Flex align="flex-end" fontWeight="extrabold" color={accentColor} my="8">
+      <Flex align="flex-end" fontWeight="extrabold" color="blue.500" my="8">
         <Heading size="3xl" fontWeight="inherit" lineHeight="0.9em">
           {price}
         </Heading>
@@ -60,7 +59,7 @@ export const PricingCard = (props: PricingCardProps) => {
               mt="3px"
               fontSize="xl"
               as={TbCircleCheckFilled}
-              color={accentColor}
+              color="blue.500"
             />
             {typeof feature === 'string' ? (
               <Text>{feature}</Text>
