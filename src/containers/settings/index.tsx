@@ -12,7 +12,7 @@ import { SimpleNavbar } from 'components/navbar/simple';
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { APIKeySettings } from 'containers/settings/apiKey';
 import { GeneralSettings } from 'containers/settings/general';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const SettingsContainer: React.FC = () => {
   return (
@@ -22,7 +22,7 @@ export const SettingsContainer: React.FC = () => {
         Settings
       </Heading>
 
-      <Tabs>
+      <Tabs colorScheme={accentColor()}>
         <TabList _light={{ borderColor: CustomColor.lightBorder }}>
           <Tab>General</Tab>
           <Tab>Chat</Tab>

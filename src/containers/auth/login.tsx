@@ -27,7 +27,7 @@ import {
   signInWithGoogle,
   SignWithEmailParams,
 } from 'store/supabase/auth';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const LoginContainer: React.FC = () => {
   const {
@@ -79,7 +79,7 @@ export const LoginContainer: React.FC = () => {
             <FormControl isInvalid={!!errors['email']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbMail} color="blue.500" />
+                  <Icon as={TbMail} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -102,7 +102,7 @@ export const LoginContainer: React.FC = () => {
             <FormControl isInvalid={!!errors['password']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbLock} color="blue.500" />
+                  <Icon as={TbLock} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -148,7 +148,7 @@ export const LoginContainer: React.FC = () => {
 
           <LightMode>
             <Button
-              colorScheme="blue"
+              colorScheme={accentColor()}
               type="submit"
               w="full"
               mt={8}

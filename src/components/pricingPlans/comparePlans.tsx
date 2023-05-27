@@ -14,7 +14,7 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { TbCheck, TbX } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const features: [string, string | JSX.Element, string | JSX.Element][] = [
   ['Chat history', '5', 'Unlimited'],
@@ -23,23 +23,28 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     <Icon
       key="search_history_free"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
     <Icon
       key="search_history_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
   [
     'Chat rules',
-    <Icon key="chat_rules_free" as={TbCheck} color="blue.500" fontSize="xl" />,
+    <Icon
+      key="chat_rules_free"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
     <Icon
       key="chat_rules_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
@@ -50,7 +55,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     <Icon
       key="save_prompts_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
@@ -60,7 +65,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     <Icon
       key="create_prompts_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
@@ -77,7 +82,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     <Icon
       key="save_conversations_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
@@ -87,7 +92,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     <Icon
       key="save_messages_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
@@ -102,14 +107,19 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     <Icon
       key="share_conversations_premium"
       as={TbCheck}
-      color="blue.500"
+      color={accentColor('500')}
       fontSize="xl"
     />,
   ],
   [
     'Export & import data',
     <Icon key="export_free" as={TbX} color="gray.400" fontSize="xl" />,
-    <Icon key="export_premium" as={TbCheck} color="blue.500" fontSize="xl" />,
+    <Icon
+      key="export_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
   ],
 ];
 

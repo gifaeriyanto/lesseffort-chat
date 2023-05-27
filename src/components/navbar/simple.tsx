@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import ReactGA from 'react-ga4';
 import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface SimpleNavbarProps {
   backLink?: string;
@@ -42,7 +42,7 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
       <Button
         leftIcon={<TbArrowLeft />}
         variant="link"
-        colorScheme="blue"
+        colorScheme={accentColor()}
         as={Link}
         href={backLink || '/'}
       >

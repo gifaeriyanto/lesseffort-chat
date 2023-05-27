@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { HStack, IconButton, Select, SelectProps } from '@chakra-ui/react';
 import { TbX } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface Rules {
   outputLanguage: string;
@@ -102,10 +102,10 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
       value: rules[name],
       onChange: handleChange(name),
       isDisabled: hidden?.includes(name),
-      borderColor: rules[name] ? 'blue.500' : CustomColor.border,
-      focusBorderColor: 'blue.300',
+      borderColor: rules[name] ? accentColor('500') : CustomColor.border,
+      focusBorderColor: accentColor('300'),
       _light: {
-        borderColor: rules[name] ? 'blue.500' : CustomColor.lightBorder,
+        borderColor: rules[name] ? accentColor('500') : CustomColor.lightBorder,
         bgColor: rules[name] ? 'white' : 'inherit',
       },
     };

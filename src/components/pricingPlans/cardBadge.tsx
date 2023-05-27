@@ -1,10 +1,11 @@
 import { Flex, FlexProps, Text, useColorModeValue } from '@chakra-ui/react';
+import { accentColor } from 'theme/foundations/colors';
 
 export const CardBadge = (props: FlexProps) => {
   const { children, ...flexProps } = props;
   return (
     <Flex
-      bg={useColorModeValue('blue.500', 'blue.200')}
+      bg={useColorModeValue(accentColor('500'), accentColor('200'))}
       position="absolute"
       right="-4.8rem"
       top="2rem"

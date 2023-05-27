@@ -24,7 +24,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { TbLock, TbMail, TbUser } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import { signInWithGoogle, signUp, SignUpParams } from 'store/supabase/auth';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const SignUpContainer: React.FC = () => {
   const {
@@ -76,7 +76,7 @@ export const SignUpContainer: React.FC = () => {
             <FormControl isInvalid={!!errors['name']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbUser} color="blue.500" />
+                  <Icon as={TbUser} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -99,7 +99,7 @@ export const SignUpContainer: React.FC = () => {
             <FormControl isInvalid={!!errors['email']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbMail} color="blue.500" />
+                  <Icon as={TbMail} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -122,7 +122,7 @@ export const SignUpContainer: React.FC = () => {
             <FormControl isInvalid={!!errors['password']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbLock} color="blue.500" />
+                  <Icon as={TbLock} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -157,7 +157,7 @@ export const SignUpContainer: React.FC = () => {
 
           <LightMode>
             <Button
-              colorScheme="blue"
+              colorScheme={accentColor()}
               type="submit"
               w="full"
               mt={8}

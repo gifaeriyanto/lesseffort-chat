@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import { TbLock } from 'react-icons/tb';
 import { redirect } from 'react-router-dom';
 import { SignWithEmailParams, updatePassword } from 'store/supabase/auth';
+import { accentColor } from 'theme/foundations/colors';
 
 type UpdatePasswordParams = Pick<SignWithEmailParams, 'password'>;
 
@@ -55,7 +56,7 @@ export const UpdatePasswordContainer: React.FC = () => {
           <FormControl isInvalid={!!errors['password']}>
             <InputGroup size="lg">
               <InputLeftElement pointerEvents="none">
-                <Icon as={TbLock} color="blue.500" />
+                <Icon as={TbLock} color={accentColor('500')} />
               </InputLeftElement>
               <Input
                 fontSize="md"
@@ -87,7 +88,7 @@ export const UpdatePasswordContainer: React.FC = () => {
 
           <LightMode>
             <Button
-              colorScheme="blue"
+              colorScheme={accentColor()}
               type="submit"
               w="full"
               mt={8}

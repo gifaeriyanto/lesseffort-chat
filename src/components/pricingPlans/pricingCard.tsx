@@ -10,7 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { TbCircleCheckFilled } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 import { Card, CardProps } from './card';
 
@@ -42,7 +42,12 @@ export const PricingCard = (props: PricingCardProps) => {
       <Heading size="md" fontWeight="extrabold">
         {name}
       </Heading>
-      <Flex align="flex-end" fontWeight="extrabold" color="blue.500" my="8">
+      <Flex
+        align="flex-end"
+        fontWeight="extrabold"
+        color={accentColor('500')}
+        my="8"
+      >
         <Heading size="3xl" fontWeight="inherit" lineHeight="0.9em">
           {price}
         </Heading>
@@ -59,7 +64,7 @@ export const PricingCard = (props: PricingCardProps) => {
               mt="3px"
               fontSize="xl"
               as={TbCircleCheckFilled}
-              color="blue.500"
+              color={accentColor('500')}
             />
             {typeof feature === 'string' ? (
               <Text>{feature}</Text>

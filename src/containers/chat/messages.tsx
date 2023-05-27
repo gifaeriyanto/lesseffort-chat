@@ -39,7 +39,7 @@ import { useIndexedDB } from 'react-indexed-db';
 import { useChat, useProfilePhoto, useUserData } from 'store/openai';
 import { Prompt } from 'store/supabase';
 import { getUser } from 'store/supabase/auth';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
 
 export const ChatMessagesContainer: React.FC = () => {
@@ -278,7 +278,7 @@ export const ChatMessagesContainer: React.FC = () => {
           <IconButton
             icon={<MdSend />}
             borderRadius="full"
-            colorScheme="blue"
+            colorScheme={accentColor()}
             fontSize="lg"
             aria-label="Send message"
             onClick={() => {
@@ -405,7 +405,7 @@ export const ChatMessagesContainer: React.FC = () => {
                     aria-label="Edit info"
                     variant="link"
                     fontSize="xl"
-                    color="blue.500"
+                    color={accentColor('500')}
                     mt="-2px"
                   />
                 </Tooltip>
@@ -513,7 +513,7 @@ export const ChatMessagesContainer: React.FC = () => {
           border="1px solid"
           borderColor={{
             base: 'transparent',
-            md: isTyping ? 'blue.500' : CustomColor.border,
+            md: isTyping ? accentColor('500') : CustomColor.border,
           }}
           align="center"
           justify="center"
@@ -522,7 +522,7 @@ export const ChatMessagesContainer: React.FC = () => {
             bgColor: isTyping ? 'gray.100' : CustomColor.lightCard,
             borderColor: {
               base: 'transparent',
-              md: isTyping ? 'blue.500' : CustomColor.lightBorder,
+              md: isTyping ? accentColor('500') : CustomColor.lightBorder,
             },
           }}
         >

@@ -34,7 +34,7 @@ import {
   getPromptsCount,
   Prompt,
 } from 'store/supabase';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
   createIncrementArray,
   formatLocaleNumber,
@@ -108,7 +108,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       >
         <Box>
           <Flex fontSize="xl" fontWeight="bold" align="center" gap={1}>
-            <Text color="blue.500" as="span">
+            <Text color={accentColor('500')} as="span">
               Starter
             </Text>
             <Text>Prompts</Text>

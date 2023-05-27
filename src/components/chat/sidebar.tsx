@@ -45,7 +45,7 @@ import { Link } from 'react-router-dom';
 import { useChat, useUserData } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const ChatSidebar: React.FC = () => {
   const { user } = useUserData();
@@ -134,7 +134,7 @@ export const ChatSidebar: React.FC = () => {
             </MenuItem>
           )}
           {user?.plan === 'Free' && (
-            <MenuItem as={Link} to="/plans" color="blue.500">
+            <MenuItem as={Link} to="/plans" color={accentColor('500')}>
               <Icon as={TbDiscountCheck} />
               <Text ml={4}>Upgrade to premium</Text>
             </MenuItem>
@@ -157,7 +157,7 @@ export const ChatSidebar: React.FC = () => {
             <Flex align="center" justify="space-between">
               <Flex gap={4}>
                 <Box as="img" src="/favicon-32x32.png" />
-                <Text color="blue.500" as="span" fontWeight="bold">
+                <Text color={accentColor('500')} as="span" fontWeight="bold">
                   Less Effort
                 </Text>
               </Flex>
@@ -165,7 +165,7 @@ export const ChatSidebar: React.FC = () => {
                 <IconButton
                   icon={<TbPlus />}
                   aria-label="New chat"
-                  colorScheme="blue"
+                  colorScheme={accentColor()}
                   fontSize="xl"
                   onClick={handleNewChat}
                   size="sm"
@@ -206,7 +206,7 @@ export const ChatSidebar: React.FC = () => {
                       _light={{ color: 'gray.400' }}
                     >
                       This month:{' '}
-                      <Box as="b" color="blue.500">
+                      <Box as="b" color={accentColor('500')}>
                         ${usages.total.toFixed(2)}
                       </Box>
                     </Text>
@@ -233,7 +233,7 @@ export const ChatSidebar: React.FC = () => {
       <LightMode>
         <Box>
           <Button
-            colorScheme="blue"
+            colorScheme={accentColor()}
             w="full"
             borderRadius="2xl"
             onClick={handleNewChat}
@@ -336,7 +336,7 @@ export const ChatSidebar: React.FC = () => {
                     _light={{ color: 'gray.400' }}
                   >
                     This month:{' '}
-                    <Box as="b" color="blue.500">
+                    <Box as="b" color={accentColor('500')}>
                       ${usages.total.toFixed(2)}
                     </Box>
                   </Text>
@@ -366,7 +366,7 @@ export const ChatSidebar: React.FC = () => {
               }}
             >
               Today usage is{' '}
-              <Box as="b" color="blue.500">
+              <Box as="b" color={accentColor('500')}>
                 ${usages.today.toFixed(4)}
               </Box>
             </Box>

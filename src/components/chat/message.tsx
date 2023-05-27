@@ -50,6 +50,7 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { useChat } from 'store/openai';
+import { accentColor } from 'theme/foundations/colors';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
 import { comingSoon } from 'utils/common';
@@ -386,10 +387,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               borderColor: 'gray.400',
             },
             a: {
-              color: 'blue.300',
+              color: accentColor('300'),
               textDecor: 'underline',
               _light: {
-                color: 'blue.600',
+                color: accentColor('600'),
               },
             },
             ['.hljs']: {
@@ -431,14 +432,18 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             },
             blockquote: {
               borderLeft: '2px solid',
-              borderColor: isMe ? 'blue.200' : 'gray.400',
+              borderColor: isMe ? accentColor('200') : 'gray.400',
               pl: 4,
             },
             '.md-wrapper': {
               w: oldGeneratedMessages.length ? 'full' : 'auto',
               maxW: 'full',
-              color: isMe ? 'white' : 'inherit',
-              bgColor: isMe ? 'blue.500' : 'gray.500',
+              color: isMe
+                ? ['cyan', 'yellow'].includes(accentColor())
+                  ? 'gray.700'
+                  : 'white'
+                : 'inherit',
+              bgColor: isMe ? accentColor('500') : 'gray.500',
               display: 'inline-block',
               py: 2,
               px: 4,
@@ -449,7 +454,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                 mb: 0,
               },
               _light: {
-                bgColor: isMe ? 'blue.500' : 'gray.100',
+                bgColor: isMe ? accentColor('500') : 'gray.100',
               },
               _after: rulesCount
                 ? {
@@ -457,7 +462,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                       rulesCount > 1 ? 'rules' : 'rule'
                     } applied"`,
                     display: 'block',
-                    color: 'blue.300',
+                    color: accentColor('300'),
                     fontSize: 'sm',
                   }
                 : undefined,
@@ -556,7 +561,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                       <Button
                         size="sm"
                         onClick={() => handleSelectMessage(index)}
-                        colorScheme="blue"
+                        colorScheme={accentColor()}
                       >
                         Use this
                       </Button>

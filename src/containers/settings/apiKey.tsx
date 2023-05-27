@@ -14,6 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { accentColor } from 'theme/foundations/colors';
 
 interface FormInputs {
   openaiKey: string;
@@ -33,7 +34,7 @@ export const APIKeySettings: React.FC = () => {
   return (
     <>
       <Box fontSize="xl" fontWeight="bold">
-        <Text color="blue.500" as="span">
+        <Text color={accentColor('500')} as="span">
           API Key
         </Text>{' '}
         Settings
@@ -65,7 +66,7 @@ export const APIKeySettings: React.FC = () => {
             <FormHelperText>
               Get your OpenAI API key{' '}
               <Link
-                color="blue.500"
+                color={accentColor('500')}
                 href="https://platform.openai.com/account/api-keys"
                 target="_blank"
               >
@@ -76,7 +77,7 @@ export const APIKeySettings: React.FC = () => {
 
           <HStack>
             <LightMode>
-              <Button colorScheme="blue" type="submit">
+              <Button colorScheme={accentColor()} type="submit">
                 Save
               </Button>
             </LightMode>

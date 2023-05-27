@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
 import { useProfilePhoto, useUserData } from 'store/openai';
+import { accentColor } from 'theme/foundations/colors';
 
 export interface ProfilePhotoProps extends BoxProps {
   allowChangePhoto?: boolean;
@@ -63,7 +64,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
           border={allowChangePhoto ? undefined : '3px solid'}
           color={allowChangePhoto ? undefined : 'gray.200'}
           _light={{
-            color: allowChangePhoto ? undefined : 'blue.500',
+            color: allowChangePhoto ? undefined : accentColor('500'),
           }}
           {...(props as AvatarProps)}
         />
@@ -80,7 +81,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
             role={allowChangePhoto ? 'button' : 'none'}
             onClick={handleTriggerUpload}
             border={allowChangePhoto ? undefined : '2px solid'}
-            borderColor={allowChangePhoto ? 'transparent' : 'blue.500'}
+            borderColor={allowChangePhoto ? 'transparent' : accentColor('500')}
             _light={{ bgColor: allowChangePhoto ? 'gray.300' : 'gray.200' }}
             {...props}
           >

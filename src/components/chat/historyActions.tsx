@@ -26,6 +26,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
+import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';
 
 export interface HistoryActionsProps
@@ -140,7 +141,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
             </ModalBody>
 
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} type="submit">
+              <Button colorScheme={accentColor()} mr={3} type="submit">
                 Save
               </Button>
               <Button onClick={onCloseRenameModal}>Cancel</Button>

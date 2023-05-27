@@ -22,6 +22,7 @@ import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
+import { accentColor } from 'theme/foundations/colors';
 
 export interface DBChatSettings {
   chat_model: string;
@@ -150,7 +151,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
         <Button
           variant="link"
           size="sm"
-          color="blue.500"
+          color={accentColor('500')}
           onClick={() => setValue(name, defaultValue)}
         >
           Undo
@@ -162,7 +163,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   return (
     <>
       <Box fontSize="xl" fontWeight="bold">
-        <Text color="blue.500" as="span">
+        <Text color={accentColor('500')} as="span">
           Chat
         </Text>{' '}
         Settings
@@ -216,7 +217,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
               <Link
                 href="https://platform.openai.com/docs/guides/chat/instructing-chat-models"
                 target="_blank"
-                color="blue.500"
+                color={accentColor('500')}
               >
                 Learn more
               </Link>{' '}
@@ -241,7 +242,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
 
           <HStack>
             <LightMode>
-              <Button colorScheme="blue" type="submit">
+              <Button colorScheme={accentColor()} type="submit">
                 Save
               </Button>
             </LightMode>

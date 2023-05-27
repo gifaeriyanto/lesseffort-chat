@@ -7,7 +7,7 @@ import {
   UseRadioProps,
 } from '@chakra-ui/react';
 import { group } from 'console';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
   const { getInputProps, getRadioProps } = useRadio(props);
@@ -25,15 +25,7 @@ const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
   );
 };
 
-export interface AccentColorRadioProps {
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-}
-
-export const AccentColorRadio: React.FC<AccentColorRadioProps> = ({
-  defaultValue,
-  onChange,
-}) => {
+export const AccentColorRadio: React.FC = () => {
   const accentColorOptions = [
     'blue',
     'red',
@@ -48,8 +40,11 @@ export const AccentColorRadio: React.FC<AccentColorRadioProps> = ({
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'accentColor',
-    defaultValue,
-    onChange,
+    defaultValue: accentColor(),
+    onChange: (value) => {
+      localStorage.setItem('accentColor', value);
+      window.location.reload();
+    },
   });
 
   const group = getRootProps();

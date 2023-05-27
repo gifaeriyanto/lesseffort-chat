@@ -12,7 +12,7 @@ import {
 import { TbSend } from 'react-icons/tb';
 import { useSearchParams } from 'react-router-dom';
 import { resendEmailConfirmation } from 'store/supabase/auth';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const COUNT_DOWN_SECONDS = 30;
 
@@ -71,7 +71,7 @@ export const EmailConfirmationContainer: React.FC = () => {
       >
         <Flex justify="center" mb={8}>
           <Flex
-            bgColor="blue.500"
+            bgColor={accentColor('500')}
             w="5rem"
             h="5rem"
             borderRadius="full"
@@ -83,7 +83,7 @@ export const EmailConfirmationContainer: React.FC = () => {
         </Flex>
 
         <Heading mb={4} textAlign="center">
-          <Text as="span" color="blue.500">
+          <Text as="span" color={accentColor('500')}>
             Thank{' '}
           </Text>
           you!
@@ -92,7 +92,7 @@ export const EmailConfirmationContainer: React.FC = () => {
         <Text textAlign="center">
           A confirmation letter has been sent to{' '}
           {email ? (
-            <Text color="blue.500" as="span">
+            <Text color={accentColor('500')} as="span">
               {email}
             </Text>
           ) : (

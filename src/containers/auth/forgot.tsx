@@ -16,6 +16,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { TbMail } from 'react-icons/tb';
 import { forgotPassword, SignWithEmailParams } from 'store/supabase/auth';
+import { accentColor } from 'theme/foundations/colors';
 
 type ForgotParams = Pick<SignWithEmailParams, 'email'>;
 
@@ -50,7 +51,7 @@ export const ForgotContainer: React.FC = () => {
           <FormControl isInvalid={!!errors['email']}>
             <InputGroup size="lg">
               <InputLeftElement pointerEvents="none">
-                <Icon as={TbMail} color="blue.500" />
+                <Icon as={TbMail} color={accentColor('500')} />
               </InputLeftElement>
               <Input
                 fontSize="md"
@@ -72,7 +73,7 @@ export const ForgotContainer: React.FC = () => {
 
           <LightMode>
             <Button
-              colorScheme="blue"
+              colorScheme={accentColor()}
               type="submit"
               w="full"
               mt={8}

@@ -15,7 +15,7 @@ import { TbAlertCircle } from 'react-icons/tb';
 // import LazyLoad from 'react-lazyload';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface ChatHistoryItemProps {
   id?: number;
@@ -40,7 +40,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   return (
     <Box
       borderLeft={isActive ? '1px solid' : undefined}
-      borderColor="blue.500"
+      borderColor={accentColor('500')}
       borderBottom={`1px solid ${CustomColor.border}`}
       bgColor={isActive ? 'gray.700' : 'transparent'}
       w="full"
