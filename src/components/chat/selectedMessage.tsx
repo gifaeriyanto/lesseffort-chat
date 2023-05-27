@@ -9,6 +9,7 @@ import {
   FormControl,
   Icon,
   IconButton,
+  LightMode,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -144,9 +145,11 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
               <Button mr={3} variant="ghost" onClick={onCloseModal}>
                 Cancel
               </Button>
-              <Button colorScheme={accentColor()} type="submit">
-                Save
-              </Button>
+              <LightMode>
+                <Button colorScheme={accentColor()} type="submit">
+                  Save
+                </Button>
+              </LightMode>
             </ModalFooter>
           </form>
         </ModalContent>
