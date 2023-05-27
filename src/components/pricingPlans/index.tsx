@@ -33,6 +33,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
             ['Chat rules', '170+ language, tone, writing style and format'],
             ['Starter prompts', '6 uses per-day'],
             'Light mode',
+            'Change font size',
           ],
         }}
         button={
@@ -49,11 +50,12 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
           time: 'month',
           features: [
             'Unlimited chat history',
-            'Unlimited starter prompts',
+            'Unlimited starter prompts usage',
             'Save prompts',
-            'Save/share conversations and message',
+            'Save messages',
+            'Share conversations',
             'Light & Dark mode',
-            'Export & import data',
+            'And more...',
           ],
         }}
         button={

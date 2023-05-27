@@ -67,21 +67,6 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
   ['Color mode', 'Light mode only', 'Light and Dark mode'],
   ['Accent color', 'Blue only', '9 color options'],
   [
-    'Save conversations',
-    <Icon
-      key="save_conversations_free"
-      as={TbX}
-      color="gray.400"
-      fontSize="xl"
-    />,
-    <Icon
-      key="save_conversations_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
     'Save messages',
     <Icon key="save_messages_free" as={TbX} color="gray.400" fontSize="xl" />,
     <Icon
@@ -92,7 +77,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     />,
   ],
   [
-    'Share conversations and message',
+    'Share conversations',
     <Icon
       key="share_conversations_free"
       as={TbX}

@@ -144,7 +144,7 @@ export const ChatSidebar: React.FC = () => {
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
           </MenuItem>
-          {!isLessThanMd && (
+          {!isLessThanMd && !isFreeUser() && (
             <MenuItem onClick={handleToggleColorMode}>
               {colorMode === 'light' ? (
                 <Icon as={TbMoonFilled} />
@@ -245,13 +245,15 @@ export const ChatSidebar: React.FC = () => {
                   </Box>
                 </HStack>
 
-                <IconButton
-                  variant="ghost"
-                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-                  aria-label="Toggle color mode"
-                  onClick={handleToggleColorMode}
-                  color="gray.400"
-                />
+                {!isFreeUser() && (
+                  <IconButton
+                    variant="ghost"
+                    icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+                    aria-label="Toggle color mode"
+                    onClick={handleToggleColorMode}
+                    color="gray.400"
+                  />
+                )}
               </Flex>
             </Flex>
           </DrawerBody>

@@ -89,7 +89,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
               </Box>
             )}
             {isLimited && (
-              <Tooltip label="Context length exceeded">
+              <Tooltip label="Context length exceeded" hidden={isLocked}>
                 <Box as="span">
                   <Icon as={TbAlertCircle} color="gray.400" mr={2} />
                 </Box>
