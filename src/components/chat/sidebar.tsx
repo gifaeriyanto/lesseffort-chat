@@ -195,8 +195,17 @@ export const ChatSidebar: React.FC = () => {
           </DrawerHeader>
 
           <DrawerBody p={0}>
-            <Box p={2} h="3.571rem" flexShrink={0}>
-              <Search onSearch={setSearch} borderRadius="lg" />
+            <Box
+              p={2}
+              h="3.571rem"
+              flexShrink={0}
+              onClick={handleToggleShowSearch}
+            >
+              <Search
+                onSearch={user?.plan === Plan.free ? undefined : setSearch}
+                borderRadius="lg"
+                isDisabled={user?.plan === Plan.free}
+              />
             </Box>
             <Box
               overflowY="auto"
