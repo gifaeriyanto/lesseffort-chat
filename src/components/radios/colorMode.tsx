@@ -8,6 +8,7 @@ import {
   UseRadioProps,
   VStack,
 } from '@chakra-ui/react';
+import { useUserData } from 'store/openai';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
@@ -27,12 +28,13 @@ const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
 };
 
 export const ColorModeRadio: React.FC = () => {
+  const { isFreeUser } = useUserData();
   const { toggleColorMode } = useColorMode();
   const colorModeOptions = ['dark', 'light'];
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'colorMode',
-    defaultValue: localStorage.getItem('chakra-ui-color-mode') || 'dark',
+    defaultValue: localStorage.getItem('chakra-ui-color-mode') || 'light',
     onChange: toggleColorMode,
   });
 
@@ -41,7 +43,7 @@ export const ColorModeRadio: React.FC = () => {
   return (
     <HStack spacing={4} align="flex-start" {...group}>
       {colorModeOptions.map((value) => {
-        const radio = getRadioProps({ value });
+        const radio = getRadioProps({ value, isDisabled: isFreeUser() });
         return (
           <RadioCard key={value} {...radio}>
             <Box

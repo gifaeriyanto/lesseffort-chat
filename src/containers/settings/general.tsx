@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Box,
   FormControl,
+  FormHelperText,
   FormLabel,
   Select,
   Text,
@@ -10,6 +11,7 @@ import {
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { ColorModeRadio } from 'components/radios/colorMode';
 import { FontSizeRadio } from 'components/radios/fontSize';
+import { useUserData } from 'store/openai';
 import { accentColor } from 'theme/foundations/colors';
 
 interface FormInputs {
@@ -18,6 +20,8 @@ interface FormInputs {
 }
 
 export const GeneralSettings: React.FC = () => {
+  const { isFreeUser } = useUserData();
+
   return (
     <>
       <Box fontSize="xl" fontWeight="bold" mb={4}>
@@ -30,12 +34,26 @@ export const GeneralSettings: React.FC = () => {
       <VStack spacing={8}>
         <FormControl>
           <FormLabel>Appearance</FormLabel>
-          <ColorModeRadio />
+          {isFreeUser() && (
+            <Box fontSize="sm" mb={4} mt={-2} color="gray.400">
+              For premium user only
+            </Box>
+          )}
+          <Box opacity={isFreeUser() ? 0.5 : 1}>
+            <ColorModeRadio />
+          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>Accent color</FormLabel>
-          <AccentColorRadio />
+          {isFreeUser() && (
+            <Box fontSize="sm" mb={4} mt={-2} color="gray.400">
+              For premium user only
+            </Box>
+          )}
+          <Box opacity={isFreeUser() ? 0.5 : 1}>
+            <AccentColorRadio />
+          </Box>
         </FormControl>
 
         <FormControl>

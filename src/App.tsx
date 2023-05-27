@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, useColorMode } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
+import { captureException } from '@sentry/react';
 import { freeUser, noAuth, withAuth } from 'components/protectedRoute';
 import { EmailConfirmationContainer } from 'containers/auth/emailConfirmation';
 import { ForgotContainer } from 'containers/auth/forgot';
@@ -14,6 +15,8 @@ import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DBConfig, upgradeDB } from 'store/db/config';
+import { useUserData } from 'store/openai';
+import { getUser } from 'store/supabase/auth';
 import { theme } from 'theme';
 import { env } from 'utils/env';
 
@@ -75,9 +78,22 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const { setUser, user, isFreeUser } = useUserData();
+  const { colorMode, toggleColorMode } = useColorMode();
+
   useLayoutEffect(() => {
     upgradeDB();
+    getUser().then(setUser).catch(captureException);
   }, []);
+
+  useLayoutEffect(() => {
+    if (isFreeUser()) {
+      if (colorMode === 'dark') {
+        toggleColorMode();
+      }
+      localStorage.setItem('accentColor', 'blue');
+    }
+  }, [colorMode, user]);
 
   return (
     <ChakraProvider theme={theme}>

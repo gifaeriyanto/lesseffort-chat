@@ -55,6 +55,9 @@ export const FontSizeRadio: React.FC = () => {
               borderColor={radio.isChecked ? accentColor('500') : 'gray.500'}
               align="center"
               justify="center"
+              _light={{
+                borderColor: radio.isChecked ? accentColor('500') : 'gray.300',
+              }}
             >
               Aa
             </Flex>

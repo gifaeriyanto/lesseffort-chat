@@ -6,6 +6,7 @@ import {
   useRadioGroup,
   UseRadioProps,
 } from '@chakra-ui/react';
+import { useUserData } from 'store/openai';
 import { accentColor } from 'theme/foundations/colors';
 
 const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
@@ -25,6 +26,8 @@ const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
 };
 
 export const AccentColorRadio: React.FC = () => {
+  const { isFreeUser } = useUserData();
+
   const accentColorOptions = [
     'blue',
     'red',
@@ -53,16 +56,18 @@ export const AccentColorRadio: React.FC = () => {
       {accentColorOptions.map((value) => {
         const radio = getRadioProps({ value });
         return (
-          <RadioCard key={value} {...radio}>
+          <RadioCard key={value} {...radio} isDisabled={isFreeUser()}>
             <Box w="2rem" h="2rem" bgColor={`${value}.500`} borderRadius="xl" />
             <Box
               hidden={!radio.isChecked}
               color="gray.400"
               fontSize="sm"
               mt={2}
+              pos="absolute"
             >
               {value}
             </Box>
+            <Box h="1.375rem" />
           </RadioCard>
         );
       })}

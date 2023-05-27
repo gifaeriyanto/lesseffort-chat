@@ -13,14 +13,12 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
-import { captureException } from '@sentry/react';
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
 import { useChat, useProfilePhoto, useUserData } from 'store/openai';
 import { usePWA } from 'store/pwa';
 import { supabase } from 'store/supabase';
-import { getUser } from 'store/supabase/auth';
 
 export const ChatContainer: React.FC = () => {
   const {
@@ -32,8 +30,6 @@ export const ChatContainer: React.FC = () => {
   const { getPWAStatus } = usePWA();
   const { setSelectedChatId } = useChat();
   const { setPhoto } = useProfilePhoto();
-  const { user, setUser, isFreeUser } = useUserData();
-  const { colorMode, toggleColorMode } = useColorMode();
 
   useLayoutEffect(() => {
     getPWAStatus();
@@ -50,15 +46,7 @@ export const ChatContainer: React.FC = () => {
       const avatar = res.data.session?.user?.user_metadata?.avatar_url;
       setPhoto(avatar || '');
     });
-
-    getUser().then(setUser).catch(captureException);
   }, []);
-
-  useLayoutEffect(() => {
-    if (isFreeUser() && colorMode === 'dark') {
-      toggleColorMode();
-    }
-  }, [colorMode, user]);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
     localStorage.setItem('OPENAI_KEY', openaiKey);
