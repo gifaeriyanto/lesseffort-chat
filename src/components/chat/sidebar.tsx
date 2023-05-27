@@ -48,9 +48,10 @@ import { useChat, useUserData } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { toastForFreeUser } from 'utils/toasts';
 
 export const ChatSidebar: React.FC = () => {
-  const { user } = useUserData();
+  const { isFreeUser } = useUserData();
   const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
@@ -63,16 +64,11 @@ export const ChatSidebar: React.FC = () => {
   const { toggleColorMode, colorMode } = useColorMode();
 
   const handleToggleShowSearch = () => {
-    if (user?.plan === Plan.free) {
-      if (!standaloneToast.isActive('search_history_limit')) {
-        standaloneToast({
-          id: 'search_history_limit',
-          title: 'Upgrade your plan to access search chat history!',
-          description:
-            'Sorry, this feature is only available to users on our premium plan. Upgrade now to access all the benefits.',
-          status: 'warning',
-        });
-      }
+    if (isFreeUser()) {
+      toastForFreeUser(
+        'search_history_limit',
+        'Upgrade your plan to access search chat history!',
+      );
       return;
     }
 
@@ -80,6 +76,14 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const handleToggleColorMode = () => {
+    if (isFreeUser()) {
+      toastForFreeUser(
+        'dark_mode_limit',
+        'Upgrade your plan to use dark mode!',
+      );
+      return;
+    }
+
     toggleColorMode();
     ReactGA.event({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
@@ -152,7 +156,7 @@ export const ChatSidebar: React.FC = () => {
               </Text>
             </MenuItem>
           )}
-          {user?.plan === 'Free' && (
+          {isFreeUser() && (
             <MenuItem as={Link} to="/plans" color={accentColor('500')}>
               <Icon as={TbDiscountCheck} />
               <Text ml={4}>Upgrade to premium</Text>
@@ -202,9 +206,9 @@ export const ChatSidebar: React.FC = () => {
               onClick={handleToggleShowSearch}
             >
               <Search
-                onSearch={user?.plan === Plan.free ? undefined : setSearch}
+                onSearch={isFreeUser() ? undefined : setSearch}
                 borderRadius="lg"
-                isDisabled={user?.plan === Plan.free}
+                isDisabled={isFreeUser()}
               />
             </Box>
             <Box

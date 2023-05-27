@@ -10,14 +10,13 @@ import {
 } from '@chakra-ui/react';
 import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
-import { Plan } from 'components/pricingPlans';
-import { standaloneToast } from 'index';
 import { sort } from 'ramda';
 import { TbAlertCircle, TbLock } from 'react-icons/tb';
 // import LazyLoad from 'react-lazyload';
 import { useChat, useUserData } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { toastForFreeUser } from 'utils/toasts';
 
 export interface ChatHistoryItemProps {
   id?: number;
@@ -43,14 +42,11 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
 
   const handleSelect = () => {
     if (isLocked) {
-      if (!standaloneToast.isActive('chat_history_limit')) {
-        standaloneToast({
-          id: 'chat_history_limit',
-          title: 'Upgrade your plan to view more chat history!',
-          description: `You're currently on the free plan, which only allows you to view up to 5 chat histories. To view more, please upgrade to our premium plan.`,
-          status: 'warning',
-        });
-      }
+      toastForFreeUser(
+        'chat_history_limit',
+        'Upgrade your plan to view more chat history!',
+        `You're currently on the free plan, which only allows you to view up to 5 chat histories. To view more, please upgrade to our premium plan.`,
+      );
       return;
     }
 
@@ -128,7 +124,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   const { chatHistory, deleteChat, selectedChatId, setSelectedChatId } =
     useChat();
   const { onClose: onCloseSidebar } = useSidebar();
-  const { user } = useUserData();
+  const { isFreeUser } = useUserData();
 
   const filteredChatHistory = useMemo(() => {
     return sort(
@@ -184,7 +180,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           }}
           isActive={selectedChatId === item.id}
           isLimited={item.limited}
-          isLocked={user?.plan === Plan.free && index > 4}
+          isLocked={isFreeUser() && index > 4}
         />
         // </LazyLoad>
       ))}

@@ -9,6 +9,7 @@ import {
 } from 'api/chat';
 import { getUsages } from 'api/openai';
 import { Rules } from 'components/chat/rules';
+import { Plan } from 'components/pricingPlans';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
 import { standaloneToast } from 'index';
@@ -77,9 +78,11 @@ export const useProfilePhoto = create<{
 
 export const useUserData = create<{
   user: UserData | undefined;
+  isFreeUser: () => boolean;
   setUser: (user: UserData | undefined) => void;
-}>((set) => ({
+}>((set, get) => ({
   user: undefined,
+  isFreeUser: () => get().user?.plan === Plan.free,
   setUser: (user) => {
     set({ user });
   },
