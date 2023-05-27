@@ -4,7 +4,7 @@ import { popoverTheme } from 'theme/components/popover';
 import { selectTheme } from 'theme/components/select';
 import { skeletonTheme } from 'theme/components/skeleton';
 import { textareaTheme } from 'theme/components/textarea';
-import { colors, CustomColor } from 'theme/foundations/colors';
+import { accentColor, colors, CustomColor } from 'theme/foundations/colors';
 
 const config: ThemeOverride = {
   colors,
@@ -36,7 +36,7 @@ const config: ThemeOverride = {
   styles: {
     global: ({ colorMode }) => ({
       'html, body': {
-        fontSize: '16px',
+        fontSize: localStorage.getItem('fontSize') || '16px',
         fontWeight: 500,
         lineHeight: 'tall',
         bgColor: colorMode === 'dark' ? CustomColor.background : 'gray.200',
@@ -57,6 +57,10 @@ const config: ThemeOverride = {
       '*::-webkit-scrollbar-thumb': {
         bgColor: 'gray.400',
         borderRadius: 'full',
+      },
+      _selection: {
+        bgColor: accentColor('500'),
+        color: 'white',
       },
       'button:focus-visible, button[data-focus-visible], a:focus-visible, a[data-focus-visible]':
         {

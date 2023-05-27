@@ -50,7 +50,7 @@ export const AccentColorRadio: React.FC = () => {
   const group = getRootProps();
 
   return (
-    <HStack align="flex-start" {...group}>
+    <HStack align="flex-start" mb={4} {...group}>
       {accentColorOptions.map((value) => {
         const radio = getRadioProps({ value });
         return (
