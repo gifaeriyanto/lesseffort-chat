@@ -20,8 +20,8 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   ...props
 }) => {
   const { photo, setPhoto } = useProfilePhoto();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useLayoutEffect(() => {
     getUser().then((res) => {
@@ -58,7 +58,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
 
   return (
     <>
-      {typeof photo === 'string' ? (
+      {photo ? (
         <Avatar
           name={name}
           src={photo}
