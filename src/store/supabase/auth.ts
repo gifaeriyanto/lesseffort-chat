@@ -53,6 +53,7 @@ export const signInWithGoogle = () => {
 };
 
 export const signOut = async () => {
+  localStorage.removeItem('lastOpenChatId');
   await supabase.auth.signOut();
   window.location.reload();
 };
@@ -116,4 +117,8 @@ export const updatePassword = async (newPassword: string) => {
   }
 
   return res;
+};
+
+export const getUser = () => {
+  return supabase.auth.getUser();
 };

@@ -11,6 +11,7 @@ export interface Chat {
   limited?: boolean;
   createdAt?: number;
   updatedAt?: number;
+  userId?: string;
 }
 
 export interface Message {

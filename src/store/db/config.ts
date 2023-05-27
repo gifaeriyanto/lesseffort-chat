@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/react';
 import ReactGA from 'react-ga4';
 
-export const DBVersion = 11;
+export const DBVersion = 12;
 
 export const DBConfig = {
   name: 'lesseffortchat',
@@ -26,6 +26,7 @@ export const DBConfig = {
         { name: 'limited', keypath: 'limited', options: { unique: false } },
         { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },
         { name: 'updatedAt', keypath: 'updatedAt', options: { unique: false } },
+        { name: 'userId', keypath: 'userId', options: { unique: false } },
       ],
     },
     {

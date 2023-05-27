@@ -15,6 +15,7 @@ import { standaloneToast } from 'index';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { getMessagesDB } from 'store/db/queries';
+import { supabase } from 'store/supabase';
 import { create } from 'zustand';
 
 export const modifyTemplate = (
@@ -352,9 +353,15 @@ export const useChat = create<{
   },
   getChatHistory: async () => {
     const db = useIndexedDB('chatHistory');
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
     try {
       const chatHistory = await db.getAll<Chat>();
-      set({ chatHistory: reverse(chatHistory) });
+      set({
+        chatHistory: reverse(
+          chatHistory.filter((item) => item.userId === userId),
+        ),
+      });
     } catch (error) {
       captureException(error);
     }
@@ -364,11 +371,14 @@ export const useChat = create<{
     reset();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
     dbChatHistory.add<Chat>({
       ...data,
       createdAt: getUnixTime(new Date()),
       bot_instruction: get().botInstruction,
       model: get().model,
+      userId,
     });
 
     try {

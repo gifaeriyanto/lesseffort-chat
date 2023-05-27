@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   Avatar,
   AvatarProps,
@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
 import { useProfilePhoto } from 'store/openai';
+import { getUser } from 'store/supabase/auth';
 
 export interface ProfilePhotoProps extends BoxProps {
   allowChangePhoto?: boolean;
@@ -20,6 +21,13 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
 }) => {
   const { photo, setPhoto } = useProfilePhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState('');
+
+  useLayoutEffect(() => {
+    getUser().then((res) =>
+      setName(res.data.user?.user_metadata?.full_name || ''),
+    );
+  }, []);
 
   const handleTriggerUpload = () => {
     if (allowChangePhoto) {
@@ -52,12 +60,14 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
     <>
       {typeof photo === 'string' ? (
         <Avatar
+          name={name}
           src={photo}
           w="2.188rem"
           h="2.188rem"
           role={allowChangePhoto ? 'button' : 'none'}
           onClick={handleTriggerUpload}
-          border={allowChangePhoto ? undefined : '2px solid'}
+          border={allowChangePhoto ? undefined : '3px solid'}
+          color={allowChangePhoto ? undefined : 'gray.200'}
           _light={{
             color: allowChangePhoto ? undefined : 'blue.500',
           }}
@@ -75,7 +85,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
             borderRadius="full"
             role={allowChangePhoto ? 'button' : 'none'}
             onClick={handleTriggerUpload}
-            border="2px solid"
+            border={allowChangePhoto ? undefined : '2px solid'}
             borderColor={allowChangePhoto ? 'transparent' : 'blue.500'}
             _light={{ bgColor: allowChangePhoto ? 'gray.300' : 'gray.200' }}
             {...props}
