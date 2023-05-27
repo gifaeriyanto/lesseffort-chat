@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   IconButton,
+  LightMode,
   Link,
   useColorMode,
   useMediaQuery,
@@ -39,15 +40,17 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
         borderColor: CustomColor.lightBorder,
       }}
     >
-      <Button
-        leftIcon={<TbArrowLeft />}
-        variant="link"
-        colorScheme={accentColor()}
-        as={Link}
-        href={backLink || '/'}
-      >
-        Back
-      </Button>
+      <LightMode>
+        <Button
+          leftIcon={<TbArrowLeft />}
+          variant="link"
+          colorScheme={accentColor()}
+          as={Link}
+          href={backLink || '/'}
+        >
+          Back
+        </Button>
+      </LightMode>
 
       <IconButton
         variant="ghost"

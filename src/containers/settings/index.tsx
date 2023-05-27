@@ -2,11 +2,13 @@ import React from 'react';
 import {
   Container,
   Heading,
+  LightMode,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  useColorMode,
 } from '@chakra-ui/react';
 import { SimpleNavbar } from 'components/navbar/simple';
 import { ChatSettings } from 'containers/chat/chatSettings';
@@ -15,6 +17,8 @@ import { GeneralSettings } from 'containers/settings/general';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const SettingsContainer: React.FC = () => {
+  const { colorMode } = useColorMode();
+
   return (
     <Container maxW="container.lg">
       <SimpleNavbar />
@@ -23,11 +27,32 @@ export const SettingsContainer: React.FC = () => {
       </Heading>
 
       <Tabs colorScheme={accentColor()}>
-        <TabList _light={{ borderColor: CustomColor.lightBorder }}>
-          <Tab>General</Tab>
-          <Tab>Chat</Tab>
-          <Tab>API Key</Tab>
-        </TabList>
+        <LightMode>
+          <TabList
+            borderColor={
+              colorMode === 'light' ? CustomColor.lightBorder : 'inherit'
+            }
+            _active={{
+              button: {
+                bgColor: 'transparent',
+              },
+            }}
+            sx={{
+              button: {
+                color: 'gray.400',
+                _selected: {
+                  fontWeight: 'bold',
+                  color: 'gray.200',
+                  borderColor: accentColor('500'),
+                },
+              },
+            }}
+          >
+            <Tab>General</Tab>
+            <Tab>Chat</Tab>
+            <Tab>API Key</Tab>
+          </TabList>
+        </LightMode>
 
         <TabPanels>
           <TabPanel px={0}>

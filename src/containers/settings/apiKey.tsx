@@ -13,6 +13,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { accentColor } from 'theme/foundations/colors';
 
@@ -29,6 +30,12 @@ export const APIKeySettings: React.FC = () => {
 
   const handleSaveSettings = ({ openaiKey }: FormInputs) => {
     localStorage.setItem('OPENAI_KEY', openaiKey);
+
+    standaloneToast({
+      title: 'Configuration saved successfully!',
+      description: 'Your OpenAI key have been updated.',
+      status: 'success',
+    });
   };
 
   return (

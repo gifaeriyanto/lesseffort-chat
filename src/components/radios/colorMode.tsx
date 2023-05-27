@@ -60,7 +60,7 @@ export const ColorModeRadio: React.FC = () => {
                   borderRadius="md"
                 />
                 <Box
-                  bgColor={value === 'dark' ? 'gray.400' : 'gray.300'}
+                  bgColor={value === 'dark' ? 'whiteAlpha.300' : 'gray.300'}
                   w="100%"
                   h="1rem"
                   borderRadius="md"
