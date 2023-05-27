@@ -19,7 +19,7 @@ export const CodeBlock = memo(
     };
 
     if (inline) {
-      return <code {...props} />;
+      return <code {...props}>{children}</code>;
     }
 
     return (
