@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
@@ -31,7 +32,8 @@ export const ChatContainer: React.FC = () => {
   const { getPWAStatus } = usePWA();
   const { setSelectedChatId } = useChat();
   const { setPhoto } = useProfilePhoto();
-  const { setUser } = useUserData();
+  const { user, setUser, isFreeUser } = useUserData();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useLayoutEffect(() => {
     getPWAStatus();
@@ -51,6 +53,12 @@ export const ChatContainer: React.FC = () => {
 
     getUser().then(setUser).catch(captureException);
   }, []);
+
+  useLayoutEffect(() => {
+    if (isFreeUser() && colorMode === 'dark') {
+      toggleColorMode();
+    }
+  }, [colorMode, user]);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
     localStorage.setItem('OPENAI_KEY', openaiKey);

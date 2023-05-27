@@ -10,7 +10,9 @@ import {
 } from '@chakra-ui/react';
 import ReactGA from 'react-ga4';
 import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
+import { useUserData } from 'store/openai';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { toastForFreeUser } from 'utils/toasts';
 
 export interface SimpleNavbarProps {
   backLink?: string;
@@ -18,9 +20,18 @@ export interface SimpleNavbarProps {
 
 export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+  const { isFreeUser } = useUserData();
   const { toggleColorMode, colorMode } = useColorMode();
 
   const handleToggleColorMode = () => {
+    if (isFreeUser()) {
+      toastForFreeUser(
+        'dark_mode_limit',
+        'Upgrade your plan to use dark mode!',
+      );
+      return;
+    }
+
     toggleColorMode();
     ReactGA.event({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,

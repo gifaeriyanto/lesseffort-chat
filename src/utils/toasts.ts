@@ -5,7 +5,7 @@ export const toastForFreeUser = (
   title: string,
   description?: string,
 ) => {
-  if (!standaloneToast.isActive('search_history_limit')) {
+  if (!standaloneToast.isActive(id)) {
     standaloneToast({
       id,
       title,

@@ -145,7 +145,7 @@ export const ChatSidebar: React.FC = () => {
             <Text ml={4}>Settings</Text>
           </MenuItem>
           {!isLessThanMd && (
-            <MenuItem onClick={toggleColorMode}>
+            <MenuItem onClick={handleToggleColorMode}>
               {colorMode === 'light' ? (
                 <Icon as={TbMoonFilled} />
               ) : (
