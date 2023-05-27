@@ -58,6 +58,9 @@ const config: ThemeOverride = {
         bgColor: 'gray.400',
         borderRadius: 'full',
       },
+      'button:focus-visible, button[data-focus-visible]': {
+        boxShadow: 'none !important',
+      },
     }),
   },
 };
