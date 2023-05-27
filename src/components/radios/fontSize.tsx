@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from 'react';
 import {
   Box,
+  Flex,
   HStack,
   useRadio,
   useRadioGroup,
@@ -24,24 +25,15 @@ const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
   );
 };
 
-export const AccentColorRadio: React.FC = () => {
-  const accentColorOptions = [
-    'blue',
-    'red',
-    'orange',
-    'yellow',
-    'green',
-    'teal',
-    'cyan',
-    'purple',
-    'pink',
-  ];
+export const FontSizeRadio: React.FC = () => {
+  const fontSizeOptions = ['14px', '16px', '18px'];
+  const fontSizeLabelOptions = ['Small', 'Normal', 'Large'];
 
   const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'accentColor',
-    defaultValue: accentColor(),
+    name: 'fontSize',
+    defaultValue: localStorage.getItem('fontSize') || '16px',
     onChange: (value) => {
-      localStorage.setItem('accentColor', value);
+      localStorage.setItem('fontSize', value);
       window.location.reload();
     },
   });
@@ -50,18 +42,29 @@ export const AccentColorRadio: React.FC = () => {
 
   return (
     <HStack align="flex-start" {...group}>
-      {accentColorOptions.map((value) => {
+      {fontSizeOptions.map((value, index) => {
         const radio = getRadioProps({ value });
         return (
           <RadioCard key={value} {...radio}>
-            <Box w="2rem" h="2rem" bgColor={`${value}.500`} borderRadius="xl" />
+            <Flex
+              w="3rem"
+              h="3rem"
+              fontSize={value}
+              borderRadius="xl"
+              border="2px solid"
+              borderColor={radio.isChecked ? accentColor('500') : 'gray.500'}
+              align="center"
+              justify="center"
+            >
+              Aa
+            </Flex>
             <Box
               hidden={!radio.isChecked}
               color="gray.400"
               fontSize="sm"
               mt={2}
             >
-              {value}
+              {fontSizeLabelOptions[index]}
             </Box>
           </RadioCard>
         );

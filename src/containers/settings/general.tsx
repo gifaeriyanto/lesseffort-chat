@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { ColorModeRadio } from 'components/radios/colorMode';
+import { FontSizeRadio } from 'components/radios/fontSize';
 import { accentColor } from 'theme/foundations/colors';
 
 interface FormInputs {
@@ -39,17 +40,7 @@ export const GeneralSettings: React.FC = () => {
 
         <FormControl>
           <FormLabel>Font size</FormLabel>
-          <Select
-            onChange={(e) => {
-              localStorage.setItem('fontSize', e.currentTarget.value);
-              window.location.reload();
-            }}
-            defaultValue={localStorage.getItem('fontSize') || '16px'}
-          >
-            <option value="14px">Small</option>
-            <option value="16px">Normal</option>
-            <option value="18px">Large</option>
-          </Select>
+          <FontSizeRadio />
         </FormControl>
       </VStack>
     </>
