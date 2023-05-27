@@ -65,7 +65,7 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
     />,
   ],
   ['Color mode', 'Light mode only', 'Light and Dark mode'],
-  ['Color scheme', 'Blue only', '9 color options'],
+  ['Accent color', 'Blue only', '9 color options'],
   [
     'Save conversations',
     <Icon

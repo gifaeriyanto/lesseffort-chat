@@ -24,8 +24,6 @@ export const APIKeySettings: React.FC = () => {
     register,
     formState: { errors },
     handleSubmit,
-    setValue,
-    watch,
   } = useForm<FormInputs>();
 
   const handleSaveSettings = ({ openaiKey }: FormInputs) => {
