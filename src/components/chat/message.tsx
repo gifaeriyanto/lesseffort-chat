@@ -453,6 +453,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               '& > *:last-child': {
                 mb: 0,
               },
+              '& > pre:last-child': {
+                mb: 2,
+              },
               _light: {
                 bgColor: isMe ? accentColor('500') : 'gray.100',
               },
