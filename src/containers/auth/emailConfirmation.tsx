@@ -45,7 +45,7 @@ export const EmailConfirmationContainer: React.FC = () => {
 
   useLayoutEffect(() => {
     if (!email) {
-      // navigate('/login');
+      navigate('/login');
     }
   }, [email]);
 
