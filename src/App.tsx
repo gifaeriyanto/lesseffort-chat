@@ -62,7 +62,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/update-password',
-    // loader: withAuth,
+    loader: withAuth,
     element: <UpdatePasswordContainer />,
   },
   {

@@ -19,6 +19,7 @@ import {
   LightMode,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Text,
@@ -145,6 +146,7 @@ export const ChatSidebar: React.FC = () => {
             <Icon as={TbBookmark} />
             <Text ml={4}>Save messages</Text>
           </MenuItem>
+          <MenuDivider />
           <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
