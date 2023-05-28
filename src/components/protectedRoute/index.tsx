@@ -1,3 +1,4 @@
+import { Plan } from 'components/pricingPlans';
 import { redirect } from 'react-router-dom';
 import { supabase } from 'store/supabase';
 import { getUser } from 'store/supabase/auth';
@@ -20,7 +21,7 @@ export const noAuth = async () => {
 
 export const freeUser = async () => {
   const res = await getUser();
-  if (res?.plan !== 'Free') {
+  if (res?.plan === Plan.premium) {
     return redirect('/');
   }
   return null;
