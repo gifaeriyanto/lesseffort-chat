@@ -4,12 +4,13 @@ import {
   Flex,
   IconButton,
   LightMode,
-  Link,
+  Link as CLink,
   useColorMode,
   useMediaQuery,
 } from '@chakra-ui/react';
 import ReactGA from 'react-ga4';
 import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
+import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from 'store/openai';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
@@ -22,6 +23,7 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isFreeUser } = useUserData();
   const { toggleColorMode, colorMode } = useColorMode();
+  const { pathname } = useLocation();
 
   const handleToggleColorMode = () => {
     if (isFreeUser()) {
@@ -52,15 +54,27 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
       }}
     >
       <LightMode>
-        <Button
-          leftIcon={<TbArrowLeft />}
-          variant="link"
-          colorScheme={accentColor()}
-          as={Link}
-          href={backLink || '/'}
-        >
-          Back
-        </Button>
+        {pathname === '/settings' ? (
+          <Button
+            leftIcon={<TbArrowLeft />}
+            variant="link"
+            colorScheme={accentColor()}
+            as={CLink}
+            href={backLink || '/'}
+          >
+            Back
+          </Button>
+        ) : (
+          <Button
+            leftIcon={<TbArrowLeft />}
+            variant="link"
+            colorScheme={accentColor()}
+            as={Link}
+            to={backLink || '/'}
+          >
+            Back
+          </Button>
+        )}
       </LightMode>
 
       <IconButton

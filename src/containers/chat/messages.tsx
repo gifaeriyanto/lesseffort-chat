@@ -1,4 +1,10 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Box,
   Button,
@@ -79,6 +85,10 @@ export const ChatMessagesContainer: React.FC = () => {
     onToggle: toggleShowRuleOptions,
     onClose: hideRuleOptions,
   } = useDisclosure();
+  const isSavedMessages = useMemo(
+    () => selectedChatId === -1,
+    [selectedChatId],
+  );
 
   useLayoutEffect(() => {
     getPhoto();
@@ -188,7 +198,11 @@ export const ChatMessagesContainer: React.FC = () => {
     };
   }, [isLessThanMd]);
 
-  const handleSubmitChat = async (message: string) => {
+  const handleSendMessage = async (message: string) => {
+    if (isSavedMessages) {
+      return;
+    }
+
     handleJumpToBottom();
 
     if (editingMessage) {
@@ -242,7 +256,7 @@ export const ChatMessagesContainer: React.FC = () => {
     return (
       <RichEditor
         defaultValue={editingMessage?.content}
-        onSubmit={isTyping ? undefined : handleSubmitChat}
+        onSubmit={isTyping ? undefined : handleSendMessage}
         key={editingMessage?.id}
         placeholder={
           template?.PromptHint
@@ -284,7 +298,7 @@ export const ChatMessagesContainer: React.FC = () => {
                   .getCurrentContent()
                   .getPlainText();
                 if (message) {
-                  handleSubmitChat(message);
+                  handleSendMessage(message);
                 }
               }
             }}
@@ -442,7 +456,7 @@ export const ChatMessagesContainer: React.FC = () => {
           pointerEvents="none"
           className="rules"
           pos="absolute"
-          hidden={isTyping || isLessThanMd}
+          hidden={isTyping || isLessThanMd || selectedChatId === -1}
         >
           <Button
             leftIcon={<MdOutlineChecklist />}

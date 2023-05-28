@@ -43,7 +43,7 @@ export const getPage = (page: number, size: number) => {
   };
 };
 
-export const getPrompts = async ({
+export const getPrompts = ({
   page = 1,
   pageSize = 10,
   keyword = '',
@@ -52,7 +52,7 @@ export const getPrompts = async ({
 }: PromptFilters) => {
   const { from, to } = getPage(page, pageSize);
 
-  return await supabase
+  return supabase
     .from('chat_prompt_v3')
     .select()
     .ilike('Title', `%${keyword}%`)
@@ -61,15 +61,13 @@ export const getPrompts = async ({
     .range(from, to);
 };
 
-export const getPromptsCount = async ({
+export const getPromptsCount = ({
   keyword = '',
-  order = defaultOrder,
   community = '',
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
-  return await supabase
+  return supabase
     .from('chat_prompt_v3')
     .select('*', { count: 'exact', head: true })
     .ilike('Title', `%${keyword}%`)
-    .ilike('Community', `%${community}%`)
-    .order(order, { ascending: false });
+    .ilike('Community', `%${community}%`);
 };

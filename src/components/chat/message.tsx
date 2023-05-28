@@ -50,10 +50,12 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { useChat, useUserData } from 'store/openai';
+import { deleteSavedMessage, saveMessage } from 'store/supabase/chat';
 import { accentColor } from 'theme/foundations/colors';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
 import { comingSoon } from 'utils/common';
+import { toastForFreeUser } from 'utils/toasts';
 
 // import 'katex/dist/katex.min.css';
 
@@ -101,16 +103,21 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   onEdit,
   onRegenerateResponse,
 }) => {
+  const { isFreeUser } = useUserData();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isFreeUser } = useUserData();
   const {
     isOpen: isOpenAllMessages,
     onOpen: onOpenAllMessages,
     onClose: onCloseAllMessages,
   } = useDisclosure();
   const [to, setTo] = useState<NodeJS.Timeout>();
-  const { isLastMessageFailed, selectGeneratedMessage } = useChat((state) => {
+  const {
+    isLastMessageFailed,
+    selectGeneratedMessage,
+    selectedChatId,
+    getSavedMessages,
+  } = useChat((state) => {
     const lastMessage = state.messages[0];
     return {
       isLastMessageFailed:
@@ -118,6 +125,8 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         lastMessage.role === 'user' &&
         !state.isTyping,
       selectGeneratedMessage: state.selectGeneratedMessage,
+      selectedChatId: state.selectedChatId,
+      getSavedMessages: state.getSavedMessages,
     };
   });
   const { isMe, rulesCount, oldGeneratedMessages } = useMemo(() => {
@@ -131,6 +140,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   }, [message]);
   const [selectedGeneratedMessage, setSelectedGeneratedMessage] = useState(
     oldGeneratedMessages.findIndex((item) => item === message.content),
+  );
+  const isSavedMessages = useMemo(
+    () => selectedChatId === -1,
+    [selectedChatId],
   );
 
   const handleSelectPrevMessage = () => {
@@ -189,6 +202,19 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     };
   }, [to, isOpen]);
 
+  const handleSaveMessage = () => {
+    saveMessage(message);
+  };
+
+  const handleDeleteSavedMessage = async () => {
+    if (isSavedMessages) {
+      message.id && (await deleteSavedMessage(message.id));
+      await getSavedMessages();
+    } else {
+      comingSoon();
+    }
+  };
+
   const renderActions = useCallback(() => {
     if (noActions) {
       return null;
@@ -196,8 +222,62 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
 
     const handleClose = (action?: Function) => () => {
       action?.();
-      onClose();
+      if (isLessThanMd) {
+        onClose();
+      }
     };
+
+    const actions = [
+      {
+        hidden: !isLastMessageFailed || isSavedMessages,
+        action: handleClose(onResend),
+        text: 'Resend',
+        color: 'red.400',
+      },
+      {
+        hidden: !message.id || !isMe,
+        action: handleClose(onEdit),
+        text: 'Edit',
+      },
+      {
+        hidden: !message.id || isMe || isSavedMessages,
+        action: handleClose(onRegenerateResponse),
+        text: 'Regenerate response',
+      },
+      {
+        hidden: false,
+        action: handleClose(handleCopy),
+        text: 'Copy text',
+      },
+      {
+        hidden: isSavedMessages,
+        action: () =>
+          isFreeUser()
+            ? toastForFreeUser(
+                'save_message_limit',
+                'Upgrade your plan to save this message!',
+              )
+            : handleClose(handleSaveMessage),
+        text: 'Save message',
+        inMenu: true,
+        icon: <TbBookmark />,
+      },
+      {
+        hidden: !message.id,
+        action: handleClose(handleDeleteSavedMessage),
+        text: 'Delete message',
+        color: 'red.400',
+        inMenu: true,
+        icon: <TbTrash />,
+      },
+    ];
+
+    const primaryActions = actions.filter(
+      (item) => !item.inMenu && !item.hidden,
+    );
+    const secondaryActions = actions.filter(
+      (item) => item.inMenu && !item.hidden,
+    );
 
     if (isLessThanMd) {
       return (
@@ -206,30 +286,18 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ModalContent userSelect="none">
             <ModalBody py={4}>
               <VStack spacing={4}>
-                {isLastMessageFailed && (
-                  <Box onClick={onResend} role="button" color="red.400">
-                    Resend
-                  </Box>
+                {actions.map((item) =>
+                  item.hidden ? null : (
+                    <Box
+                      key={item.text}
+                      onClick={item.action}
+                      role="button"
+                      color={item.color}
+                    >
+                      {item.text}
+                    </Box>
+                  ),
                 )}
-                {!!message.id && (
-                  <>
-                    {isMe ? (
-                      <Box role="button" onClick={handleClose(onEdit)}>
-                        Edit
-                      </Box>
-                    ) : (
-                      <Box
-                        role="button"
-                        onClick={handleClose(onRegenerateResponse)}
-                      >
-                        Regenerate Response
-                      </Box>
-                    )}
-                  </>
-                )}
-                <Box role="button" onClick={handleClose(handleCopy)}>
-                  Copy text
-                </Box>
               </VStack>
             </ModalBody>
           </ModalContent>
@@ -246,72 +314,42 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         ml="1rem"
         _light={{ bgColor: 'gray.200' }}
       >
-        {isLastMessageFailed && (
-          <Button
-            onClick={onResend}
-            variant="ghost"
-            borderRadius="lg"
-            size="xs"
-            color="red.400"
-          >
-            Resend
-          </Button>
+        {primaryActions.map((item) =>
+          item.hidden ? null : (
+            <Button
+              key={item.text}
+              onClick={item.action}
+              variant="ghost"
+              borderRadius="lg"
+              size="xs"
+              color={item.color || 'gray.400'}
+            >
+              {item.text}
+            </Button>
+          ),
         )}
-        {!!message.id && (
-          <>
-            {isMe ? (
-              <Button
-                onClick={onEdit}
-                variant="ghost"
-                borderRadius="lg"
-                size="xs"
-                color="gray.400"
-              >
-                Edit
-              </Button>
-            ) : (
-              <Button
-                onClick={onRegenerateResponse}
-                variant="ghost"
-                borderRadius="lg"
-                size="xs"
-                color="gray.400"
-              >
-                Regenerate response
-              </Button>
-            )}
-          </>
-        )}
-        <Button
-          onClick={handleCopy}
-          variant="ghost"
-          borderRadius="lg"
-          size="xs"
-          color="gray.400"
-        >
-          Copy text
-        </Button>
-        {!isMe && (
+        {!!secondaryActions.length && (
           <Menu autoSelect={false}>
             <MenuButton
               as={ChatMessageAction}
               icon={<TbDots />}
-              title="More actions"
               borderRadius="lg"
               size="xs"
               color="gray.400"
             />
             <Portal>
               <MenuList>
-                <MenuItem onClick={comingSoon}>
-                  <TbBookmark />
-                  <Text ml={2}>Save message</Text>
-                </MenuItem>
-                {false && (
-                  <MenuItem onClick={comingSoon}>
-                    <TbTrash />
-                    <Text ml={2}>Delete message</Text>
-                  </MenuItem>
+                {secondaryActions.map((item) =>
+                  item.hidden ? null : (
+                    <MenuItem
+                      key={item.text}
+                      onClick={item.action}
+                      color={item.color}
+                    >
+                      {item.icon}
+                      <Text ml={2}>{item.text}</Text>
+                    </MenuItem>
+                  ),
                 )}
               </MenuList>
             </Portal>

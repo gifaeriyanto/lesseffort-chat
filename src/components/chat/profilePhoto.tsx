@@ -62,10 +62,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
           role={allowChangePhoto ? 'button' : 'none'}
           onClick={handleTriggerUpload}
           border={allowChangePhoto ? undefined : '3px solid'}
-          color={allowChangePhoto ? undefined : 'gray.200'}
-          _light={{
-            color: allowChangePhoto ? undefined : accentColor('500'),
-          }}
+          color={allowChangePhoto ? undefined : accentColor('500')}
           {...(props as AvatarProps)}
         />
       ) : (

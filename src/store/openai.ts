@@ -17,7 +17,8 @@ import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { getMessagesDB } from 'store/db/queries';
 import { supabase } from 'store/supabase';
-import { UserData } from 'store/supabase/auth';
+import { getUser, UserData } from 'store/supabase/auth';
+import { getSavedMessages } from 'store/supabase/chat';
 import { create } from 'zustand';
 
 export const modifyTemplate = (
@@ -85,7 +86,7 @@ export const useUserData = create<{
   setUser: (user: UserData | undefined) => void;
 }>((set, get) => ({
   user: undefined,
-  isFreeUser: () => get().user?.plan !== Plan.premium,
+  isFreeUser: () => get().user?.plan === Plan.free,
   setUser: (user) => {
     set({ user });
   },
@@ -99,6 +100,7 @@ export const useChat = create<{
   isTyping: boolean;
   messages: Message[];
   model: OpenAIModel;
+  // note: -1 is saved messages
   selectedChatId: number | undefined;
   xhr?: XMLHttpRequest;
   richEditorRef: RefObject<Editor> | null;
@@ -110,6 +112,7 @@ export const useChat = create<{
   updateMessageTemplate: (template: string) => void;
   selectGeneratedMessage: (message: Message, selectedIndex: number) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
+  getSavedMessages: () => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
   newChat: (
     data: Omit<Chat, 'bot_instruction' | 'model'>,
@@ -368,6 +371,26 @@ export const useChat = create<{
       captureException(error);
     }
   },
+  getSavedMessages: async () => {
+    const res = await getSavedMessages();
+    const messages = res
+      .map(
+        (item) =>
+          ({
+            id: item.id,
+            content: item.content,
+            role: 'assistant',
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+            chatId: -1,
+          } as Message),
+      )
+      .reverse();
+    set({
+      messages,
+    });
+    return messages;
+  },
   getChatHistory: async () => {
     const db = useIndexedDB('chatHistory');
     const { data: userData } = await supabase.auth.getUser();
@@ -413,19 +436,38 @@ export const useChat = create<{
   selectedChatId: undefined,
   setSelectedChatId: async (chatId) => {
     const { getMessages, setEditingMessage, stopStream } = get();
+    const userData = await getUser();
+
+    if (userData?.plan === Plan.free && chatId === -1) {
+      localStorage.removeItem('lastOpenChatId');
+      set({ selectedChatId: undefined });
+      return;
+    }
+
     const dbChatHistory = useIndexedDB('chatHistory');
 
     try {
       await stopStream();
       setEditingMessage(undefined);
       set({ selectedChatId: chatId });
-      if (chatId) {
+      if (!chatId) {
+        return;
+      }
+      if (chatId > 0) {
         const res = await dbChatHistory.getByID(chatId);
+        if (!res) {
+          localStorage.removeItem('lastOpenChatId');
+          set({ selectedChatId: undefined });
+          return;
+        }
         set({
           botInstruction: res?.bot_instruction || defaultBotInstruction,
           model: res?.model || OpenAIModel.GPT_3_5,
         });
         await getMessages(chatId);
+      } else {
+        localStorage.setItem('lastOpenChatId', '-1');
+        await get().getSavedMessages();
       }
     } catch (error) {
       captureException(error);

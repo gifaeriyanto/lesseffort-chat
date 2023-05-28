@@ -88,7 +88,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
     onLoading();
     Promise.all([
       getPrompts({ page, pageSize, keyword, order, community }),
-      getPromptsCount({ keyword, order, community }),
+      getPromptsCount({ keyword, community }),
     ])
       .then((res) => {
         setPrompts((res[0].data as Prompt[]) || []);

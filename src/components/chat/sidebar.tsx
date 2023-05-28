@@ -57,7 +57,13 @@ export const ChatSidebar: React.FC = () => {
   const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { richEditorRef, getChatHistory, reset, resetChatSettings } = useChat();
+  const {
+    richEditorRef,
+    getChatHistory,
+    reset,
+    resetChatSettings,
+    setSelectedChatId,
+  } = useChat();
   const [search, setSearch] = useState('');
   const [usages, setUsages] = useState({
     total: 0,
@@ -135,6 +141,17 @@ export const ChatSidebar: React.FC = () => {
     localStorage.removeItem('lastOpenChatId');
   };
 
+  const openSavedMessages = () => {
+    if (isFreeUser()) {
+      toastForFreeUser(
+        'saved_messages_limit',
+        'Upgrade your plan to access saved messages!',
+      );
+      return;
+    }
+    setSelectedChatId(-1);
+  };
+
   const renderUserSettings = () => {
     return (
       <Menu autoSelect={false}>
@@ -142,9 +159,9 @@ export const ChatSidebar: React.FC = () => {
           <ProfilePhoto />
         </MenuButton>
         <MenuList>
-          <MenuItem as={Link} to="/settings">
+          <MenuItem onClick={openSavedMessages}>
             <Icon as={TbBookmark} />
-            <Text ml={4}>Save messages</Text>
+            <Text ml={4}>Saved messages</Text>
           </MenuItem>
           <MenuDivider />
           <MenuItem as={Link} to="/settings">

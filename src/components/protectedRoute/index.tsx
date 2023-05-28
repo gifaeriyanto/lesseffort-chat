@@ -21,7 +21,7 @@ export const noAuth = async () => {
 
 export const freeUser = async () => {
   const res = await getUser();
-  if (res?.plan === Plan.premium) {
+  if (res?.plan !== Plan.free) {
     return redirect('/');
   }
   return null;

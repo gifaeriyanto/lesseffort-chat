@@ -36,8 +36,9 @@ export const ChatContainer: React.FC = () => {
   useLayoutEffect(() => {
     getPWAStatus();
 
-    if (localStorage.getItem('lastOpenChatId')) {
-      setSelectedChatId(Number(localStorage.getItem('lastOpenChatId')));
+    const lastOpenChatId = Number(localStorage.getItem('lastOpenChatId'));
+    if (lastOpenChatId) {
+      setSelectedChatId(lastOpenChatId);
     }
 
     if (!localStorage.getItem('OPENAI_KEY')) {
