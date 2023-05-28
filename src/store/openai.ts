@@ -61,6 +61,9 @@ export const useProfilePhoto = create<{
 }>((set, get) => ({
   photo: null,
   setPhoto: (image: string) => {
+    if (image === 'null' || image === null) {
+      return;
+    }
     localStorage.setItem('photoProfile', image);
     set({ photo: image });
   },
