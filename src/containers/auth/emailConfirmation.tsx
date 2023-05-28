@@ -10,18 +10,18 @@ import {
   useBoolean,
 } from '@chakra-ui/react';
 import { TbSend } from 'react-icons/tb';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { resendEmailConfirmation } from 'store/supabase/auth';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const COUNT_DOWN_SECONDS = 30;
 
 export const EmailConfirmationContainer: React.FC = () => {
-  const [showButton, setShowButton] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
   const [remainingTime, setRemainingTime] = useState(COUNT_DOWN_SECONDS);
   const [params] = useSearchParams();
   const [isLoading, { on, off }] = useBoolean();
+  const navigate = useNavigate();
 
   const email = useMemo(() => {
     return params.get('email')?.replace(/ /g, '+') || '';
@@ -44,9 +44,14 @@ export const EmailConfirmationContainer: React.FC = () => {
   }, []);
 
   useLayoutEffect(() => {
+    if (!email) {
+      // navigate('/login');
+    }
+  }, [email]);
+
+  useLayoutEffect(() => {
     if (remainingTime <= 0) {
       clearInterval(intervalId);
-      setShowButton(true);
     }
   }, [remainingTime]);
 
@@ -78,7 +83,7 @@ export const EmailConfirmationContainer: React.FC = () => {
             align="center"
             justify="center"
           >
-            <Icon as={TbSend} fontSize="4xl" />
+            <Icon as={TbSend} fontSize="4xl" _light={{ color: 'white' }} />
           </Flex>
         </Flex>
 
