@@ -41,7 +41,7 @@ import {
   TbArrowRight,
   TbBookmark,
   TbBrandOpenai,
-  TbDotsVertical,
+  TbDots,
   TbTrash,
 } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
@@ -49,7 +49,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import { useChat } from 'store/openai';
+import { useChat, useUserData } from 'store/openai';
 import { accentColor } from 'theme/foundations/colors';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
@@ -103,6 +103,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isFreeUser } = useUserData();
   const {
     isOpen: isOpenAllMessages,
     onOpen: onOpenAllMessages,
@@ -290,13 +291,15 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         >
           Copy text
         </Button>
-        {/* Coming soon feature */}
-        {false && (
-          <Menu>
+        {!isMe && (
+          <Menu autoSelect={false}>
             <MenuButton
               as={ChatMessageAction}
-              icon={<TbDotsVertical />}
+              icon={<TbDots />}
               title="More actions"
+              borderRadius="lg"
+              size="xs"
+              color="gray.400"
             />
             <Portal>
               <MenuList>
@@ -304,10 +307,12 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                   <TbBookmark />
                   <Text ml={2}>Save message</Text>
                 </MenuItem>
-                <MenuItem onClick={comingSoon}>
-                  <TbTrash />
-                  <Text ml={2}>Delete message</Text>
-                </MenuItem>
+                {false && (
+                  <MenuItem onClick={comingSoon}>
+                    <TbTrash />
+                    <Text ml={2}>Delete message</Text>
+                  </MenuItem>
+                )}
               </MenuList>
             </Portal>
           </Menu>
