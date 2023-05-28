@@ -42,8 +42,10 @@ export const ChatContainer: React.FC = () => {
     }
 
     supabase.auth.getSession().then((res) => {
-      const avatar = res.data.session?.user?.user_metadata?.avatar_url;
-      setPhoto(avatar || photo);
+      const avatar =
+        res.data.session?.user?.user_metadata?.avatar_url ||
+        localStorage.getItem('photoProfile');
+      setPhoto(avatar);
     });
   }, []);
 
