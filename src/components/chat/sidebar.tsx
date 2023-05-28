@@ -35,6 +35,7 @@ import { Search } from 'components/search';
 import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import {
+  TbBookmark,
   TbDiscountCheck,
   TbLogout,
   TbMoonFilled,
@@ -140,6 +141,10 @@ export const ChatSidebar: React.FC = () => {
           <ProfilePhoto />
         </MenuButton>
         <MenuList>
+          <MenuItem as={Link} to="/settings">
+            <Icon as={TbBookmark} />
+            <Text ml={4}>Save messages</Text>
+          </MenuItem>
           <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
