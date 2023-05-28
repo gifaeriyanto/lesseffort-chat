@@ -91,7 +91,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       getPromptsCount({ keyword, order, community }),
     ])
       .then((res) => {
-        setPrompts(res[0].data as Prompt[]);
+        setPrompts((res[0].data as Prompt[]) || []);
         setCount(res[1].count || 0);
       })
       .catch(captureException)
