@@ -11,14 +11,13 @@ const PlansContainer: React.FC = () => {
 
   const handleSelectPlan = (plan: Plan) => {
     switch (plan) {
-      case Plan.free:
-        navigate('/');
-        return;
-
       case Plan.premium:
         // subs logic
         return;
+
+      case Plan.free:
       default:
+        navigate('/');
         return;
     }
   };

@@ -85,7 +85,7 @@ export const useUserData = create<{
   setUser: (user: UserData | undefined) => void;
 }>((set, get) => ({
   user: undefined,
-  isFreeUser: () => get().user?.plan === Plan.free,
+  isFreeUser: () => get().user?.plan !== Plan.premium,
   setUser: (user) => {
     set({ user });
   },
