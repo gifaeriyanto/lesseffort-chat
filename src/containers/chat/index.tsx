@@ -10,12 +10,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
-import { useChat, useProfilePhoto } from 'store/openai';
+import { useChat, useProfilePhoto, useUserData } from 'store/openai';
 import { usePWA } from 'store/pwa';
 import { supabase } from 'store/supabase';
 
@@ -28,7 +29,9 @@ export const ChatContainer: React.FC = () => {
   const { register, handleSubmit } = useForm();
   const { getPWAStatus } = usePWA();
   const { setSelectedChatId } = useChat();
-  const { photo, setPhoto } = useProfilePhoto();
+  const { setPhoto } = useProfilePhoto();
+  const { user, isFreeUser } = useUserData();
+  const { toggleColorMode } = useColorMode();
 
   useLayoutEffect(() => {
     getPWAStatus();
@@ -48,6 +51,15 @@ export const ChatContainer: React.FC = () => {
       setPhoto(avatar);
     });
   }, []);
+
+  useLayoutEffect(() => {
+    if (isFreeUser()) {
+      if (localStorage.getItem('chakra-ui-color-mode') === 'dark') {
+        toggleColorMode();
+      }
+      localStorage.setItem('accentColor', 'blue');
+    }
+  }, [toggleColorMode, user]);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
     localStorage.setItem('OPENAI_KEY', openaiKey);

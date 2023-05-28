@@ -78,22 +78,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const { setUser, user, isFreeUser } = useUserData();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { setUser } = useUserData();
 
   useLayoutEffect(() => {
     upgradeDB();
     getUser().then(setUser).catch(captureException);
   }, []);
-
-  useLayoutEffect(() => {
-    if (isFreeUser()) {
-      if (colorMode === 'dark') {
-        toggleColorMode();
-      }
-      localStorage.setItem('accentColor', 'blue');
-    }
-  }, [colorMode, user]);
 
   return (
     <ChakraProvider theme={theme}>
