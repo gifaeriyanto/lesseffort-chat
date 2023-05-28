@@ -18,6 +18,7 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
     options: {
       data: {
         full_name: name,
+        avatar_url: '',
       },
       emailRedirectTo: window.location.origin,
     },
@@ -53,7 +54,9 @@ export const signInWithGoogle = () => {
 };
 
 export const signOut = async () => {
+  localStorage.removeItem('profilePhoto');
   localStorage.removeItem('lastOpenChatId');
+  localStorage.removeItem('accentColor');
   await supabase.auth.signOut();
   window.location.reload();
 };

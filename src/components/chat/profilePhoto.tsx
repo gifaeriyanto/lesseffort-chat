@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import {
   Avatar,
   AvatarProps,
-  Box,
   BoxProps,
   Flex,
   Icon,
@@ -10,6 +9,8 @@ import {
 } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
 import { useProfilePhoto, useUserData } from 'store/openai';
+import { supabase } from 'store/supabase';
+import { getFileUrl, uploadFile } from 'store/supabase/bucket';
 import { accentColor } from 'theme/foundations/colors';
 
 export interface ProfilePhotoProps extends BoxProps {
@@ -30,7 +31,9 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
     }
   };
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
 
     if (!file) {
@@ -38,16 +41,23 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
     }
 
     if (file.type === 'image/jpeg' || file.type === 'image/png') {
-      const reader = new FileReader();
+      const extension = file.name.split('.').pop();
+      if (!extension || !user?.id) {
+        return;
+      }
 
-      reader.onload = function (event) {
-        if (typeof event.target?.result !== 'string') {
-          return;
-        }
-        setPhoto(event.target?.result);
-      };
+      const filename = `${user.id}.${extension}`;
+      await uploadFile(filename, file);
+      const avatar_url = await getFileUrl(filename);
+      await supabase.auth.updateUser({
+        data: { avatar_url },
+      });
+      setPhoto(avatar_url);
 
-      reader.readAsDataURL(file);
+      // clear input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

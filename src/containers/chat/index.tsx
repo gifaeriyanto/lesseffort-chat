@@ -44,14 +44,21 @@ export const ChatContainer: React.FC = () => {
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
     }
+  }, []);
 
-    supabase.auth.getSession().then((res) => {
-      const avatar =
-        res.data.session?.user?.user_metadata?.avatar_url ||
-        localStorage.getItem('photoProfile');
+  useLayoutEffect(() => {
+    if (!user?.id) {
+      return;
+    }
+    supabase.auth.getSession().then(async (res) => {
+      const avatar = res.data.session?.user?.user_metadata?.avatar_url || null;
+      // todo: currently this is not working because missing the file extension
+      // if (res.data.session?.user.app_metadata.provider === 'google') {
+      //   avatar = await getFileUrl(user.id);
+      // }
       setPhoto(avatar);
     });
-  }, []);
+  }, [user]);
 
   useLayoutEffect(() => {
     if (isFreeUser) {
