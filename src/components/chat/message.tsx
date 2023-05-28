@@ -244,7 +244,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         color: 'red.400',
       },
       {
-        hidden: !message.id || !isMe,
+        hidden: !message.id || !isMe || isSavedMessages,
         action: handleClose(onEdit),
         text: 'Edit',
       },

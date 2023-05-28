@@ -44,6 +44,7 @@ import {
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat, useProfilePhoto } from 'store/openai';
 import { Prompt } from 'store/supabase';
+import { saveMessage } from 'store/supabase/chat';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
 
@@ -59,6 +60,7 @@ export const ChatMessagesContainer: React.FC = () => {
     resendLastMessage,
     richEditorRef,
     selectedChatId,
+    getSavedMessages,
     setEditingMessage,
     stopStream,
     streamChatCompletion,
@@ -200,6 +202,11 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const handleSendMessage = async (message: string) => {
     if (isSavedMessages) {
+      await saveMessage({
+        content: message,
+        role: 'user',
+      });
+      await getSavedMessages();
       return;
     }
 

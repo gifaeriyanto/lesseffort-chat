@@ -388,7 +388,7 @@ export const useChat = create<{
           ({
             id: item.id,
             content: item.content,
-            role: 'assistant',
+            role: item.role,
             createdAt: item.created_at,
             updatedAt: item.updated_at,
             chatId: -1,
