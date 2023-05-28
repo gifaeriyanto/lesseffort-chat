@@ -54,13 +54,13 @@ export const ChatContainer: React.FC = () => {
   }, []);
 
   useLayoutEffect(() => {
-    if (isFreeUser()) {
+    if (isFreeUser) {
       if (localStorage.getItem('chakra-ui-color-mode') === 'dark') {
         toggleColorMode();
       }
       localStorage.setItem('accentColor', 'blue');
     }
-  }, [toggleColorMode, user]);
+  }, [toggleColorMode, isFreeUser]);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
     localStorage.setItem('OPENAI_KEY', openaiKey);

@@ -69,14 +69,15 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     setValue,
     watch,
   } = useForm<FormInputs>();
-  const db = useIndexedDB('settings');
+  const dbSettings = useIndexedDB('settings');
   const [indexeddbReady, setIndexeddbReady] = useState(false);
 
   useLayoutEffect(() => {
     if (indexeddbReady) {
       return;
     }
-    db.getByID<DBChatSettings>(1)
+    dbSettings
+      .getByID<DBChatSettings>(1)
       .then((res) => {
         if (res?.chat_model) {
           setModel(res.chat_model as OpenAIModel);
@@ -89,7 +90,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
         }
       })
       .finally(() => setIndexeddbReady(true));
-  }, [db, indexeddbReady]);
+  }, [dbSettings, indexeddbReady]);
 
   useLayoutEffect(() => {
     selectedChat?.title && setValue('title', selectedChat?.title);
@@ -120,7 +121,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     }
 
     if (isGlobalSetting) {
-      db.update({
+      dbSettings.update({
         id: 1,
         chat_bot_instruction: _botInstruction,
         chat_model: _model,

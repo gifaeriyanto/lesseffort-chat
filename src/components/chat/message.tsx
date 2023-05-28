@@ -23,6 +23,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Portal,
@@ -111,12 +112,18 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     onOpen: onOpenAllMessages,
     onClose: onCloseAllMessages,
   } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
   const [to, setTo] = useState<NodeJS.Timeout>();
   const {
     isLastMessageFailed,
     selectGeneratedMessage,
     selectedChatId,
     getSavedMessages,
+    deleteMessage,
   } = useChat((state) => {
     const lastMessage = state.messages[0];
     return {
@@ -127,6 +134,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       selectGeneratedMessage: state.selectGeneratedMessage,
       selectedChatId: state.selectedChatId,
       getSavedMessages: state.getSavedMessages,
+      deleteMessage: state.deleteMessage,
     };
   });
   const { isMe, rulesCount, oldGeneratedMessages } = useMemo(() => {
@@ -206,12 +214,20 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     saveMessage(message);
   };
 
-  const handleDeleteSavedMessage = async () => {
+  const handleDeleteMessage = async () => {
     if (isSavedMessages) {
       message.id && (await deleteSavedMessage(message.id));
       await getSavedMessages();
     } else {
-      comingSoon();
+      message.id && deleteMessage(message.id);
+    }
+  };
+
+  const handleClose = (action?: Function) => () => {
+    onCloseDeleteModal();
+    action?.();
+    if (isLessThanMd) {
+      onClose();
     }
   };
 
@@ -219,13 +235,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     if (noActions) {
       return null;
     }
-
-    const handleClose = (action?: Function) => () => {
-      action?.();
-      if (isLessThanMd) {
-        onClose();
-      }
-    };
 
     const actions = [
       {
@@ -251,20 +260,20 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       },
       {
         hidden: isSavedMessages,
-        action: () =>
-          isFreeUser()
-            ? toastForFreeUser(
+        action: isFreeUser
+          ? () =>
+              toastForFreeUser(
                 'save_message_limit',
                 'Upgrade your plan to save this message!',
               )
-            : handleClose(handleSaveMessage),
+          : handleClose(handleSaveMessage),
         text: 'Save message',
         inMenu: true,
         icon: <TbBookmark />,
       },
       {
         hidden: !message.id,
-        action: handleClose(handleDeleteSavedMessage),
+        action: onOpenDeleteModal,
         text: 'Delete message',
         color: 'red.400',
         inMenu: true,
@@ -617,6 +626,31 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               ))}
             </VStack>
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete message</ModalHeader>
+          <ModalBody>
+            This action can't be undone. Are you sure you want to delete the
+            selected message?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onCloseDeleteModal} mr={4}>
+              Cancel
+            </Button>
+            <LightMode>
+              <Button
+                colorScheme="red"
+                onClick={handleClose(handleDeleteMessage)}
+              >
+                Delete
+              </Button>
+            </LightMode>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

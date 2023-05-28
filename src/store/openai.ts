@@ -82,13 +82,13 @@ export const useProfilePhoto = create<{
 
 export const useUserData = create<{
   user: UserData | undefined;
-  isFreeUser: () => boolean;
+  isFreeUser: boolean | undefined;
   setUser: (user: UserData | undefined) => void;
-}>((set, get) => ({
+}>((set) => ({
   user: undefined,
-  isFreeUser: () => get().user?.plan === Plan.free,
+  isFreeUser: undefined,
   setUser: (user) => {
-    set({ user });
+    set({ user, isFreeUser: user?.plan === Plan.free });
   },
 }));
 
@@ -106,7 +106,8 @@ export const useChat = create<{
   richEditorRef: RefObject<Editor> | null;
   setBotInstruction: (instruction: string) => Promise<void>;
   setModel: (model: OpenAIModel) => void;
-  deleteChat: (chatId: number) => void;
+  deleteChat: (chatId: number) => Promise<void>;
+  deleteMessage: (messageId: number) => Promise<void>;
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
   updateMessage: (message: string) => void;
   updateMessageTemplate: (template: string) => void;
@@ -119,7 +120,7 @@ export const useChat = create<{
     userMessage: Message,
   ) => Promise<void>;
   regenerateResponse: (messageId: number) => void;
-  renameChat: (chatId: number, newTitle: string) => void;
+  renameChat: (chatId: number, newTitle: string) => Promise<void>;
   resendLastMessage: () => Promise<void>;
   reset: () => void;
   resetChatSettings: () => void;
@@ -353,13 +354,21 @@ export const useChat = create<{
   },
   xhr: undefined,
   chatHistory: [],
-  deleteChat: (chatId) => {
-    const db = useIndexedDB('chatHistory');
-    db.deleteRecord(chatId);
+  deleteChat: async (chatId) => {
+    const dbChatHistory = useIndexedDB('chatHistory');
+    await dbChatHistory.deleteRecord(chatId);
     const { getChatHistory, reset } = get();
-    getChatHistory();
+    await getChatHistory();
     reset();
     localStorage.removeItem('lastOpenChatId');
+  },
+  deleteMessage: async (messageId) => {
+    const dbMessages = useIndexedDB('messages');
+    await dbMessages.deleteRecord(messageId);
+    const { getMessages, selectedChatId } = get();
+    if (selectedChatId) {
+      await getMessages(selectedChatId);
+    }
   },
   getMessages: async (chatId) => {
     localStorage.setItem('lastOpenChatId', String(chatId));
@@ -392,11 +401,11 @@ export const useChat = create<{
     return messages;
   },
   getChatHistory: async () => {
-    const db = useIndexedDB('chatHistory');
+    const dbChatHistory = useIndexedDB('chatHistory');
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData.user?.id;
     try {
-      const chatHistory = await db.getAll<Chat>();
+      const chatHistory = await dbChatHistory.getAll<Chat>();
       set({
         chatHistory: reverse(
           chatHistory.filter((item) => item.userId === userId),

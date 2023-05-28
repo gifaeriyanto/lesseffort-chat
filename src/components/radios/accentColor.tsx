@@ -56,7 +56,7 @@ export const AccentColorRadio: React.FC = () => {
       {accentColorOptions.map((value) => {
         const radio = getRadioProps({ value });
         return (
-          <RadioCard key={value} {...radio} isDisabled={isFreeUser()}>
+          <RadioCard key={value} {...radio} isDisabled={isFreeUser}>
             <Box w="2rem" h="2rem" bgColor={`${value}.500`} borderRadius="xl" />
             <Box
               hidden={!radio.isChecked}

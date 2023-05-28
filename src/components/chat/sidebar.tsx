@@ -72,7 +72,7 @@ export const ChatSidebar: React.FC = () => {
   const { toggleColorMode, colorMode } = useColorMode();
 
   const handleToggleShowSearch = () => {
-    if (isFreeUser()) {
+    if (isFreeUser) {
       toastForFreeUser(
         'search_history_limit',
         'Upgrade your plan to access search chat history!',
@@ -84,7 +84,7 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const handleToggleColorMode = () => {
-    if (isFreeUser()) {
+    if (isFreeUser) {
       toastForFreeUser(
         'dark_mode_limit',
         'Upgrade your plan to use dark mode!',
@@ -142,7 +142,7 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const openSavedMessages = () => {
-    if (isFreeUser()) {
+    if (isFreeUser) {
       toastForFreeUser(
         'saved_messages_limit',
         'Upgrade your plan to access saved messages!',
@@ -168,7 +168,7 @@ export const ChatSidebar: React.FC = () => {
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
           </MenuItem>
-          {!isLessThanMd && !isFreeUser() && (
+          {!isLessThanMd && !isFreeUser && (
             <MenuItem onClick={handleToggleColorMode}>
               {colorMode === 'light' ? (
                 <Icon as={TbMoonFilled} />
@@ -180,7 +180,7 @@ export const ChatSidebar: React.FC = () => {
               </Text>
             </MenuItem>
           )}
-          {isFreeUser() && (
+          {isFreeUser && (
             <MenuItem as={Link} to="/plans" color={accentColor('500')}>
               <Icon as={TbDiscountCheck} />
               <Text ml={4}>Upgrade to premium</Text>
@@ -230,9 +230,9 @@ export const ChatSidebar: React.FC = () => {
               onClick={handleToggleShowSearch}
             >
               <Search
-                onSearch={isFreeUser() ? undefined : setSearch}
+                onSearch={isFreeUser ? undefined : setSearch}
                 borderRadius="lg"
-                isDisabled={isFreeUser()}
+                isDisabled={isFreeUser}
               />
             </Box>
             <Box
@@ -269,7 +269,7 @@ export const ChatSidebar: React.FC = () => {
                   </Box>
                 </HStack>
 
-                {!isFreeUser() && (
+                {!isFreeUser && (
                   <IconButton
                     variant="ghost"
                     icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}

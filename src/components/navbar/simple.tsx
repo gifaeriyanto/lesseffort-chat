@@ -26,7 +26,7 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
   const { pathname } = useLocation();
 
   const handleToggleColorMode = () => {
-    if (isFreeUser()) {
+    if (isFreeUser) {
       toastForFreeUser(
         'dark_mode_limit',
         'Upgrade your plan to use dark mode!',

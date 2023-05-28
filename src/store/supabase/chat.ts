@@ -7,6 +7,7 @@ export interface SavedMessage {
   id: number;
   user_id: string;
   content: string;
+  tags?: string[];
   created_at?: number;
   updated_at?: number;
 }
@@ -28,6 +29,7 @@ export const saveMessage = async (message: Message) => {
     .insert<Omit<SavedMessage, 'id'>>({
       content: message.content,
       user_id: userData.id,
+      tags: [],
     });
 
   if (error) {

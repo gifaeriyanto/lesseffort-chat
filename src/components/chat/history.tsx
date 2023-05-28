@@ -180,7 +180,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           }}
           isActive={selectedChatId === item.id}
           isLimited={item.limited}
-          isLocked={isFreeUser() && index > 4}
+          isLocked={isFreeUser && index > 4}
         />
         // </LazyLoad>
       ))}

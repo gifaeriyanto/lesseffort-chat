@@ -34,24 +34,24 @@ export const GeneralSettings: React.FC = () => {
       <VStack spacing={8}>
         <FormControl>
           <FormLabel>Appearance</FormLabel>
-          {isFreeUser() && (
+          {isFreeUser && (
             <Box fontSize="sm" mb={4} mt={-2} color="gray.400">
               For premium user only
             </Box>
           )}
-          <Box opacity={isFreeUser() ? 0.5 : 1}>
+          <Box opacity={isFreeUser ? 0.5 : 1}>
             <ColorModeRadio />
           </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>Accent color</FormLabel>
-          {isFreeUser() && (
+          {isFreeUser && (
             <Box fontSize="sm" mb={4} mt={-2} color="gray.400">
               For premium user only
             </Box>
           )}
-          <Box opacity={isFreeUser() ? 0.5 : 1}>
+          <Box opacity={isFreeUser ? 0.5 : 1}>
             <AccentColorRadio />
           </Box>
         </FormControl>

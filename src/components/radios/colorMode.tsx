@@ -43,7 +43,7 @@ export const ColorModeRadio: React.FC = () => {
   return (
     <HStack spacing={4} align="flex-start" {...group}>
       {colorModeOptions.map((value) => {
-        const radio = getRadioProps({ value, isDisabled: isFreeUser() });
+        const radio = getRadioProps({ value, isDisabled: isFreeUser });
         return (
           <RadioCard key={value} {...radio}>
             <Box
