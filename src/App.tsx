@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react';
-import { ChakraProvider, useColorMode } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { captureException } from '@sentry/react';
 import { freeUser, noAuth, withAuth } from 'components/protectedRoute';

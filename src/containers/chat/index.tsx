@@ -18,7 +18,6 @@ import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
 import { useChat } from 'store/chat';
 import { usePWA } from 'store/pwa';
-import { supabase } from 'store/supabase';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { shallow } from 'zustand/shallow';
 
@@ -34,7 +33,7 @@ export const ChatContainer: React.FC = () => {
     (state) => state.setSelectedChatId,
     shallow,
   );
-  const { setPhoto } = useProfilePhoto();
+  const { getPhoto } = useProfilePhoto();
   const { user, isFreeUser } = useUserData();
   const { toggleColorMode } = useColorMode();
 
@@ -55,14 +54,7 @@ export const ChatContainer: React.FC = () => {
     if (!user?.id) {
       return;
     }
-    supabase.auth.getSession().then(async (res) => {
-      const avatar = res.data.session?.user?.user_metadata?.avatar_url || null;
-      // todo: currently this is not working because missing the file extension
-      // if (res.data.session?.user.app_metadata.provider === 'google') {
-      //   avatar = await getFileUrl(user.id);
-      // }
-      setPhoto(avatar);
-    });
+    getPhoto(user.id);
   }, [user]);
 
   useLayoutEffect(() => {

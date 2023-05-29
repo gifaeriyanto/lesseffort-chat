@@ -2,6 +2,7 @@ import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { Plan } from 'components/pricingPlans';
 import { UserData } from 'store/supabase/auth';
+import { getFileUrl } from 'store/supabase/bucket';
 import { create } from 'zustand';
 
 export const useUsage = create<{
@@ -26,26 +27,19 @@ export const useUsage = create<{
 
 export const useProfilePhoto = create<{
   photo: string | null;
-  setPhoto: (image: string) => void;
-  getPhoto: () => string | null;
-}>((set, get) => ({
+  setPhoto: (image: string | null) => void;
+  getPhoto: (userId: string) => Promise<void>;
+}>((set) => ({
   photo: null,
-  setPhoto: (image: string) => {
+  setPhoto: (image) => {
     if (image === 'null' || image === null) {
       return;
     }
-    localStorage.setItem('photoProfile', image);
     set({ photo: image });
   },
-  getPhoto: () => {
-    const { photo } = get();
-
-    const localImage = localStorage.getItem('photoProfile');
-    if (localImage && !photo) {
-      set({ photo: localImage });
-    }
-
-    return photo;
+  getPhoto: async (userId) => {
+    const res = await getFileUrl(userId);
+    set({ photo: res });
   },
 }));
 

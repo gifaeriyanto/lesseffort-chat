@@ -89,7 +89,6 @@ export const ChatMessagesContainer: React.FC = () => {
     }),
     shallow,
   );
-  const { getPhoto } = useProfilePhoto();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const dbMessages = useIndexedDB('messages');
   const [
@@ -113,10 +112,6 @@ export const ChatMessagesContainer: React.FC = () => {
     () => selectedChatId === -1,
     [selectedChatId],
   );
-
-  useLayoutEffect(() => {
-    getPhoto();
-  }, []);
 
   useLayoutEffect(() => {
     if (messages.length && !readyToUse) {

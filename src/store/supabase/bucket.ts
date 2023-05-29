@@ -1,10 +1,28 @@
 import { standaloneToast } from 'index';
+import FileResizer from 'react-image-file-resizer';
 import { supabase } from 'store/supabase';
 
+const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    FileResizer.imageFileResizer(
+      file,
+      300,
+      300,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'file',
+    );
+  });
+
 export const uploadFile = async (filename: string, file: File) => {
+  const resizedFile = (await resizeFile(file)) as File;
   const { error } = await supabase.storage
     .from('user_profile_photos')
-    .upload(filename, file, {
+    .upload(filename, resizedFile, {
       upsert: true,
     });
   if (error) {
@@ -17,8 +35,16 @@ export const uploadFile = async (filename: string, file: File) => {
 };
 
 export const getFileUrl = async (filename: string) => {
-  const { data } = supabase.storage
+  const { data } = await supabase.storage
     .from('user_profile_photos')
-    .getPublicUrl(filename);
-  return data.publicUrl;
+    .createSignedUrl(filename, 60000, {
+      transform: {
+        width: 50,
+        height: 50,
+        resize: 'cover',
+        quality: 50,
+      },
+    });
+
+  return data?.signedUrl || null;
 };

@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { SimpleNavbar } from 'components/navbar/simple';
 import { ChatSettings } from 'containers/chat/chatSettings';
+import { AccountSettings } from 'containers/settings/account';
 import { APIKeySettings } from 'containers/settings/apiKey';
 import { GeneralSettings } from 'containers/settings/general';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
@@ -49,6 +50,7 @@ export const SettingsContainer: React.FC = () => {
             }}
           >
             <Tab>General</Tab>
+            <Tab>Account</Tab>
             <Tab>Chat</Tab>
             <Tab>API Key</Tab>
           </TabList>
@@ -57,6 +59,9 @@ export const SettingsContainer: React.FC = () => {
         <TabPanels>
           <TabPanel px={0}>
             <GeneralSettings />
+          </TabPanel>
+          <TabPanel px={0}>
+            <AccountSettings />
           </TabPanel>
           <TabPanel px={0}>
             <ChatSettings isGlobalSetting />

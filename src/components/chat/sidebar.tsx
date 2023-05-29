@@ -167,7 +167,7 @@ export const ChatSidebar: React.FC = () => {
     return (
       <Menu autoSelect={false}>
         <MenuButton>
-          <ProfilePhoto />
+          <ProfilePhoto border="3px solid" color={accentColor('500')} />
         </MenuButton>
         <MenuList>
           <MenuItem onClick={openSavedMessages}>
