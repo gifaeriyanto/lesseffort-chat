@@ -440,10 +440,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               borderColor: 'gray.400',
             },
             a: {
-              color: accentColor('300'),
+              color: isMe ? accentColor('200') : accentColor('300'),
               textDecor: 'underline',
               _light: {
-                color: accentColor('600'),
+                color: isMe ? accentColor('200') : accentColor('600'),
               },
             },
             ['.hljs']: {
