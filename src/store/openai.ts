@@ -357,10 +357,10 @@ export const useChat = create<{
   deleteChat: async (chatId) => {
     const dbChatHistory = useIndexedDB('chatHistory');
     await dbChatHistory.deleteRecord(chatId);
-    localStorage.removeItem('lastOpenChatId');
     const { getChatHistory, reset } = get();
     await getChatHistory();
     await reset();
+    localStorage.removeItem('lastOpenChatId');
   },
   deleteMessage: async (messageId) => {
     const dbMessages = useIndexedDB('messages');
