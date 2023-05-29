@@ -10,7 +10,7 @@ import {
 import { OpenAIModel } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';

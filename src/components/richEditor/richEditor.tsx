@@ -12,7 +12,7 @@ import {
   RichUtils,
   SelectionState,
 } from 'draft-js';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { shallow } from 'zustand/shallow';
 
 export interface RichEditorProps {

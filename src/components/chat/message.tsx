@@ -50,7 +50,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { deleteSavedMessage, saveMessage } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';

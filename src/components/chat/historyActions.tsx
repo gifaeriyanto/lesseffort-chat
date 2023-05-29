@@ -25,7 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown } from 'react-icons/tb';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';
 import { shallow } from 'zustand/shallow';

@@ -42,7 +42,7 @@ import {
   TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { Prompt } from 'store/supabase';
 import { saveMessage } from 'store/supabase/chat';
 import { useProfilePhoto } from 'store/user';

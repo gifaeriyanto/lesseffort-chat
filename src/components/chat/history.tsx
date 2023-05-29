@@ -13,7 +13,7 @@ import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
 import { TbAlertCircle, TbLock } from 'react-icons/tb';
 // import LazyLoad from 'react-lazyload';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';

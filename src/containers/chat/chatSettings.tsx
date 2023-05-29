@@ -21,7 +21,7 @@ import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';
 

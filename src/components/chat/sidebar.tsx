@@ -46,7 +46,7 @@ import {
   TbSun,
 } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
 import { useUserData } from 'store/user';
