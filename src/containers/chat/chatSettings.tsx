@@ -16,7 +16,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { defaultBotInstruction, OpenAIModel } from 'api/chat';
+import { defaultBotInstruction, OpenAIModel } from 'api/constants';
 import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';

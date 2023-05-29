@@ -7,7 +7,7 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { OpenAIModel } from 'api/chat';
+import { OpenAIModel } from 'api/constants';
 import { HistoryActions } from 'components/chat/historyActions';
 import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
 import { useChat } from 'store/chat';

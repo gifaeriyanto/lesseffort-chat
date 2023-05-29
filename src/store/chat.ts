@@ -1,12 +1,7 @@
 import { RefObject } from 'react';
 import { captureException } from '@sentry/react';
-import {
-  Chat,
-  defaultBotInstruction,
-  generateResponse,
-  Message,
-  OpenAIModel,
-} from 'api/chat';
+import { Chat, generateResponse, Message } from 'api/chat';
+import { defaultBotInstruction, OpenAIModel } from 'api/constants';
 import { Rules } from 'components/chat/rules';
 import { Plan } from 'components/pricingPlans';
 import { getUnixTime } from 'date-fns';
