@@ -122,7 +122,7 @@ export const useChat = create<{
   regenerateResponse: (messageId: number) => void;
   renameChat: (chatId: number, newTitle: string) => Promise<void>;
   resendLastMessage: () => Promise<void>;
-  reset: () => void;
+  reset: () => Promise<void>;
   resetChatSettings: () => void;
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
@@ -357,10 +357,10 @@ export const useChat = create<{
   deleteChat: async (chatId) => {
     const dbChatHistory = useIndexedDB('chatHistory');
     await dbChatHistory.deleteRecord(chatId);
+    localStorage.removeItem('lastOpenChatId');
     const { getChatHistory, reset } = get();
     await getChatHistory();
-    reset();
-    localStorage.removeItem('lastOpenChatId');
+    await reset();
   },
   deleteMessage: async (messageId) => {
     const dbMessages = useIndexedDB('messages');
@@ -505,8 +505,8 @@ export const useChat = create<{
       captureException(error);
     }
   },
-  reset: () => {
-    get().stopStream();
+  reset: async () => {
+    await get().stopStream();
     set({
       editingMessage: undefined,
       selectedChatId: undefined,

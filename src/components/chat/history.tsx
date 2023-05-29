@@ -25,7 +25,6 @@ export interface ChatHistoryItemProps {
   description: string;
   isLimited?: boolean;
   isLocked?: boolean;
-  onDelete: (id: number) => void;
   onSelect: (id: number) => void;
 }
 
@@ -121,8 +120,7 @@ export interface ChatHistoryProps {
 }
 
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
-  const { chatHistory, deleteChat, selectedChatId, setSelectedChatId } =
-    useChat();
+  const { chatHistory, selectedChatId, setSelectedChatId } = useChat();
   const { onClose: onCloseSidebar } = useSidebar();
   const { isFreeUser } = useUserData();
 
@@ -173,7 +171,6 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           id={item.id}
           title={item.title}
           description={item.last_message}
-          onDelete={deleteChat}
           onSelect={(id) => {
             setSelectedChatId(id);
             onCloseSidebar();
