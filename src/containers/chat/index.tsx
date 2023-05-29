@@ -16,9 +16,10 @@ import {
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useForm } from 'react-hook-form';
-import { useChat, useProfilePhoto, useUserData } from 'store/openai';
+import { useChat } from 'store/openai';
 import { usePWA } from 'store/pwa';
 import { supabase } from 'store/supabase';
+import { useProfilePhoto, useUserData } from 'store/user';
 import { shallow } from 'zustand/shallow';
 
 export const ChatContainer: React.FC = () => {

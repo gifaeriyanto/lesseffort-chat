@@ -8,7 +8,7 @@ import {
   UseRadioProps,
   VStack,
 } from '@chakra-ui/react';
-import { useUserData } from 'store/openai';
+import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {

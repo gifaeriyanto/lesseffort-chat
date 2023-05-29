@@ -15,8 +15,8 @@ import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DBConfig, upgradeDB } from 'store/db/config';
-import { useUserData } from 'store/openai';
 import { getUser } from 'store/supabase/auth';
+import { useUserData } from 'store/user';
 import { theme } from 'theme';
 import { env } from 'utils/env';
 

@@ -11,7 +11,7 @@ import {
 import ReactGA from 'react-ga4';
 import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
-import { useUserData } from 'store/openai';
+import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
 

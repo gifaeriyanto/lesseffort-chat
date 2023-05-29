@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Flex,
@@ -13,8 +13,9 @@ import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
 import { TbAlertCircle, TbLock } from 'react-icons/tb';
 // import LazyLoad from 'react-lazyload';
-import { useChat, useUserData } from 'store/openai';
+import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
+import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';

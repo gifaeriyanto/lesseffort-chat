@@ -46,9 +46,10 @@ import {
   TbSun,
 } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { useChat, useUserData } from 'store/openai';
+import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
+import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';

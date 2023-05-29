@@ -11,7 +11,7 @@ import {
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { ColorModeRadio } from 'components/radios/colorMode';
 import { FontSizeRadio } from 'components/radios/fontSize';
-import { useUserData } from 'store/openai';
+import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 
 interface FormInputs {

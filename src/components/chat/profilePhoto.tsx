@@ -8,9 +8,9 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
-import { useProfilePhoto, useUserData } from 'store/openai';
 import { supabase } from 'store/supabase';
 import { getFileUrl, uploadFile } from 'store/supabase/bucket';
+import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 
 export interface ProfilePhotoProps extends BoxProps {

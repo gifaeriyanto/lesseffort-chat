@@ -50,12 +50,12 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import { useChat, useUserData } from 'store/openai';
+import { useChat } from 'store/openai';
 import { deleteSavedMessage, saveMessage } from 'store/supabase/chat';
+import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
-import { comingSoon } from 'utils/common';
 import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 

@@ -42,9 +42,10 @@ import {
   TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChat, useProfilePhoto } from 'store/openai';
+import { useChat } from 'store/openai';
 import { Prompt } from 'store/supabase';
 import { saveMessage } from 'store/supabase/chat';
+import { useProfilePhoto } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
 import { shallow } from 'zustand/shallow';
