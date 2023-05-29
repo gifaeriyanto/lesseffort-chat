@@ -19,6 +19,7 @@ import { useForm } from 'react-hook-form';
 import { useChat, useProfilePhoto, useUserData } from 'store/openai';
 import { usePWA } from 'store/pwa';
 import { supabase } from 'store/supabase';
+import { shallow } from 'zustand/shallow';
 
 export const ChatContainer: React.FC = () => {
   const {
@@ -28,7 +29,10 @@ export const ChatContainer: React.FC = () => {
   } = useDisclosure();
   const { register, handleSubmit } = useForm();
   const { getPWAStatus } = usePWA();
-  const { setSelectedChatId } = useChat();
+  const setSelectedChatId = useChat(
+    (state) => state.setSelectedChatId,
+    shallow,
+  );
   const { setPhoto } = useProfilePhoto();
   const { user, isFreeUser } = useUserData();
   const { toggleColorMode } = useColorMode();

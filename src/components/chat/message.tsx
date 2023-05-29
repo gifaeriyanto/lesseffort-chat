@@ -57,6 +57,7 @@ import { accentColor } from 'theme/foundations/colors';
 // import remarkMath from 'remark-math';
 import { comingSoon } from 'utils/common';
 import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 // import 'katex/dist/katex.min.css';
 
@@ -136,7 +137,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       getSavedMessages: state.getSavedMessages,
       deleteMessage: state.deleteMessage,
     };
-  });
+  }, shallow);
   const { isMe, rulesCount, oldGeneratedMessages } = useMemo(() => {
     return {
       isMe: message.role === 'user',

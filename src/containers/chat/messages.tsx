@@ -47,6 +47,7 @@ import { Prompt } from 'store/supabase';
 import { saveMessage } from 'store/supabase/chat';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
+import { shallow } from 'zustand/shallow';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
@@ -66,7 +67,27 @@ export const ChatMessagesContainer: React.FC = () => {
     streamChatCompletion,
     updateMessage,
     updateMessageTemplate,
-  } = useChat();
+  } = useChat(
+    (state) => ({
+      chatHistory: state.chatHistory,
+      editingMessage: state.editingMessage,
+      generatingMessage: state.generatingMessage,
+      isTyping: state.isTyping,
+      messages: state.messages,
+      newChat: state.newChat,
+      regenerateResponse: state.regenerateResponse,
+      resendLastMessage: state.resendLastMessage,
+      richEditorRef: state.richEditorRef,
+      selectedChatId: state.selectedChatId,
+      getSavedMessages: state.getSavedMessages,
+      setEditingMessage: state.setEditingMessage,
+      stopStream: state.stopStream,
+      streamChatCompletion: state.streamChatCompletion,
+      updateMessage: state.updateMessage,
+      updateMessageTemplate: state.updateMessageTemplate,
+    }),
+    shallow,
+  );
   const { getPhoto } = useProfilePhoto();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const dbMessages = useIndexedDB('messages');

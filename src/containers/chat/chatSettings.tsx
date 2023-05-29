@@ -23,6 +23,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/openai';
 import { accentColor } from 'theme/foundations/colors';
+import { shallow } from 'zustand/shallow';
 
 export interface DBChatSettings {
   chat_model: string;
@@ -61,7 +62,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
       setModel: state.setModel,
       renameChat: state.renameChat,
     };
-  });
+  }, shallow);
   const {
     register,
     formState: { errors },

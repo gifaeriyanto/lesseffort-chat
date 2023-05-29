@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useLayoutEffect, useMemo } from 'react';
 import {
   Box,
   Flex,
@@ -17,6 +17,7 @@ import { useChat, useUserData } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export interface ChatHistoryItemProps {
   id?: number;
@@ -120,7 +121,14 @@ export interface ChatHistoryProps {
 }
 
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
-  const { chatHistory, selectedChatId, setSelectedChatId } = useChat();
+  const { chatHistory, selectedChatId, setSelectedChatId } = useChat(
+    (state) => ({
+      chatHistory: state.chatHistory,
+      selectedChatId: state.selectedChatId,
+      setSelectedChatId: state.setSelectedChatId,
+    }),
+    shallow,
+  );
   const { onClose: onCloseSidebar } = useSidebar();
   const { isFreeUser } = useUserData();
 

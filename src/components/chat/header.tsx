@@ -13,6 +13,7 @@ import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { shallow } from 'zustand/shallow';
 
 export const ChatHeader: React.FC = () => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
@@ -28,6 +29,7 @@ export const ChatHeader: React.FC = () => {
         model: state.model,
       };
     },
+    shallow,
   );
   const { onOpen } = useSidebar();
   const isSavedMessages = useMemo(

@@ -51,6 +51,7 @@ import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export const ChatSidebar: React.FC = () => {
   const { isFreeUser } = useUserData();
@@ -63,7 +64,16 @@ export const ChatSidebar: React.FC = () => {
     reset,
     resetChatSettings,
     setSelectedChatId,
-  } = useChat();
+  } = useChat(
+    (state) => ({
+      richEditorRef: state.richEditorRef,
+      getChatHistory: state.getChatHistory,
+      reset: state.reset,
+      resetChatSettings: state.resetChatSettings,
+      setSelectedChatId: state.setSelectedChatId,
+    }),
+    shallow,
+  );
   const [search, setSearch] = useState('');
   const [usages, setUsages] = useState({
     total: 0,

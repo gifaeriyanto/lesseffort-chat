@@ -28,6 +28,7 @@ import { TbChevronDown } from 'react-icons/tb';
 import { useChat } from 'store/openai';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';
+import { shallow } from 'zustand/shallow';
 
 export interface HistoryActionsProps
   extends Partial<Omit<IconButtonProps, 'id'>> {
@@ -65,7 +66,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
       selectedChat,
       deleteChat: state.deleteChat,
     };
-  });
+  }, shallow);
 
   const handleRename = ({ title: newTitle = '' }) => {
     if (id) {
