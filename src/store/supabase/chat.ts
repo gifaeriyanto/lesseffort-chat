@@ -66,10 +66,7 @@ export const deleteSavedMessage = async (messageId: number) => {
   }
 };
 
-export const shareConversation = async (
-  title: string,
-  conversation: Message[],
-) => {
+export const shareConversation = async (title: string, messages: Message[]) => {
   const userData = await getUser();
   if (!userData?.id) {
     return;
@@ -79,7 +76,12 @@ export const shareConversation = async (
     .from('shared_conversations')
     .insert<Omit<SharedConversation, 'id' | 'uid' | 'user_id'>>({
       title,
-      content: conversation,
+      content: messages.map((message) => ({
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        createdAt: message.createdAt,
+      })),
       user_name: userData.name,
       user_avatar: avatar,
     })

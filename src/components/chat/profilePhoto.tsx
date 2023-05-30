@@ -29,7 +29,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = (props) => {
           align="center"
           justify="center"
           borderRadius="full"
-          _light={{ bgColor: 'gray.200' }}
+          _light={{ bgColor: 'gray.300' }}
           {...props}
         >
           <Icon as={TbUser} fontSize="2xl" color="gray.400" />
