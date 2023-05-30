@@ -14,7 +14,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { resendEmailConfirmation } from 'store/supabase/auth';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
-const COUNT_DOWN_SECONDS = 30;
+const COUNT_DOWN_SECONDS = 60;
 
 export const EmailConfirmationContainer: React.FC = () => {
   const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
