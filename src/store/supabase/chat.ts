@@ -4,6 +4,7 @@ import { standaloneToast } from 'index';
 import { supabase } from 'store/supabase';
 import { getUser } from 'store/supabase/auth';
 import { getLongLifeFileUrl } from 'store/supabase/bucket';
+import { accentColor } from 'theme/foundations/colors';
 
 export interface SavedMessage {
   id: number;
@@ -23,6 +24,7 @@ export interface SharedConversation {
   content: Message[];
   user_name: string;
   user_avatar: string | null;
+  color_scheme: string;
   created_at?: number;
 }
 
@@ -84,6 +86,7 @@ export const shareConversation = async (title: string, messages: Message[]) => {
       })),
       user_name: userData.name,
       user_avatar: avatar,
+      color_scheme: accentColor(),
     })
     .select()
     .single();

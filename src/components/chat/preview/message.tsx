@@ -22,7 +22,6 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import { accentColor } from 'theme/foundations/colors';
 // import remarkHTMLKatex from 'remark-html-katex';
 
 // import 'katex/dist/katex.min.css';
@@ -30,11 +29,12 @@ import { accentColor } from 'theme/foundations/colors';
 export interface ChatMessagePreviewProps {
   message: Message;
   photo: string;
+  accentColor: string;
 }
 
 export const ChatMessagePreview: React.FC<
   PropsWithChildren<ChatMessagePreviewProps>
-> = ({ message, photo }) => {
+> = ({ message, photo, accentColor = 'blue' }) => {
   const {
     isOpen: isOpenAllMessages,
     onOpen: onOpenAllMessages,
@@ -118,10 +118,10 @@ export const ChatMessagePreview: React.FC<
               borderColor: 'gray.400',
             },
             a: {
-              color: isMe ? accentColor('200') : accentColor('300'),
+              color: isMe ? `${accentColor}.200` : `${accentColor}.300`,
               textDecor: 'underline',
               _light: {
-                color: isMe ? accentColor('200') : accentColor('600'),
+                color: isMe ? `${accentColor}.200` : `${accentColor}.600`,
               },
             },
             ['.hljs']: {
@@ -163,18 +163,18 @@ export const ChatMessagePreview: React.FC<
             },
             blockquote: {
               borderLeft: '2px solid',
-              borderColor: isMe ? accentColor('200') : 'gray.400',
+              borderColor: isMe ? `${accentColor}.200` : 'gray.400',
               pl: 4,
             },
             '.md-wrapper': {
               w: oldGeneratedMessages.length ? 'full' : 'auto',
               maxW: 'full',
               color: isMe
-                ? ['cyan', 'yellow'].includes(accentColor())
+                ? ['cyan', 'yellow'].includes(accentColor)
                   ? 'gray.700'
                   : 'white'
                 : 'inherit',
-              bgColor: isMe ? accentColor('500') : 'gray.500',
+              bgColor: isMe ? `${accentColor}.500` : 'gray.500',
               display: 'inline-block',
               py: 2,
               px: 4,
@@ -188,7 +188,7 @@ export const ChatMessagePreview: React.FC<
                 mb: 2,
               },
               _light: {
-                bgColor: isMe ? accentColor('500') : 'gray.100',
+                bgColor: isMe ? `${accentColor}.500` : 'gray.100',
               },
               _after: rulesCount
                 ? {
@@ -196,7 +196,7 @@ export const ChatMessagePreview: React.FC<
                       rulesCount > 1 ? 'rules' : 'rule'
                     } applied"`,
                     display: 'block',
-                    color: accentColor('300'),
+                    color: `${accentColor}.300`,
                     fontSize: 'sm',
                   }
                 : undefined,

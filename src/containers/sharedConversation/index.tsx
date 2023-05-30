@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Box,
   Container,
@@ -16,7 +16,6 @@ import { reverse } from 'ramda';
 import { TbMoonFilled, TbSun } from 'react-icons/tb';
 import { useParams } from 'react-router-dom';
 import { getSharedConversation, SharedConversation } from 'store/supabase/chat';
-import { accentColor } from 'theme/foundations/colors';
 
 export const SharedConversationContainer: React.FC = () => {
   const [conversation, setConversation] = useState<
@@ -25,6 +24,13 @@ export const SharedConversationContainer: React.FC = () => {
   const params = useParams<{ sharedId: string }>();
   const [isLoading, { on, off }] = useBoolean();
   const { toggleColorMode, colorMode } = useColorMode();
+
+  const accentColor = useMemo(() => {
+    if (conversation) {
+      return conversation.color_scheme;
+    }
+    return 'blue';
+  }, [conversation]);
 
   useLayoutEffect(() => {
     if (!isLoading && params.sharedId) {
@@ -38,7 +44,7 @@ export const SharedConversationContainer: React.FC = () => {
   }
 
   return (
-    <Container maxW="container.lg" pt={8} pb={24}>
+    <Container maxW="container.lg" py={8}>
       <Flex justify="space-between">
         <Heading>{conversation.title}</Heading>
 
@@ -52,38 +58,23 @@ export const SharedConversationContainer: React.FC = () => {
         />
       </Flex>
 
-      <Flex
-        align="center"
-        bgColor="gray.500"
-        borderRadius="full"
-        display="inline-flex"
-        gap={4}
-        mb={8}
-        mt={4}
-        pl={4}
-        pr={8}
-        py={2}
-        _light={{ bgColor: 'gray.100' }}
-      >
-        <ProfilePhotoPreview
-          name={conversation.user_name || 'Anonym'}
-          photo={conversation.user_avatar}
-        />
-        <Box>
-          <Box color="gray.400" fontSize="sm">
-            Author
-          </Box>
-          <Box>{conversation.user_name}</Box>
+      <Box mb={8} mt={4}>
+        <Box color="gray.400" fontSize="sm">
+          Author
         </Box>
-      </Flex>
+        <Box>{conversation.user_name}</Box>
+      </Box>
 
-      {reverse(conversation.content).map((item) => (
-        <ChatMessagePreview
-          key={item.id}
-          message={item}
-          photo={conversation.user_avatar || ''}
-        />
-      ))}
+      <Box minH="60vh">
+        {reverse(conversation.content).map((item) => (
+          <ChatMessagePreview
+            key={item.id}
+            message={item}
+            photo={conversation.user_avatar || ''}
+            accentColor={accentColor}
+          />
+        ))}
+      </Box>
 
       <Flex justify="center" mt={12} pt={4}>
         <Flex
@@ -96,7 +87,7 @@ export const SharedConversationContainer: React.FC = () => {
           <Box as="img" src="/favicon-32x32.png" h="32px" w="32px" />
           <Box>
             <Text fontSize="sm">Powered by</Text>
-            <Text color={accentColor('500')} as="span" fontWeight="bold">
+            <Text color={`${accentColor}.500`} as="span" fontWeight="bold">
               Less Effort
             </Text>
           </Box>
