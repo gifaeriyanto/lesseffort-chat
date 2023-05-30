@@ -139,6 +139,7 @@ export const ChatHeader: React.FC = () => {
         <HistoryActions
           id={selectedChat?.id}
           bgColor="transparent !important"
+          isHeader
         />
       ) : (
         // to keep chat title centered

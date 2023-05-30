@@ -5,11 +5,13 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Icon,
   IconButton,
   IconButtonProps,
   Input,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Modal,
@@ -20,12 +22,15 @@ import {
   ModalHeader,
   ModalOverlay,
   Portal,
+  Text,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { TbChevronDown } from 'react-icons/tb';
+import { TbChevronDown, TbShare } from 'react-icons/tb';
+import { useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
+import { shareConversation } from 'store/supabase/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';
 import { shallow } from 'zustand/shallow';
@@ -33,6 +38,7 @@ import { shallow } from 'zustand/shallow';
 export interface HistoryActionsProps
   extends Partial<Omit<IconButtonProps, 'id'>> {
   id?: number;
+  isHeader?: boolean;
 }
 
 interface FormInputs {
@@ -41,6 +47,7 @@ interface FormInputs {
 
 export const HistoryActions: React.FC<HistoryActionsProps> = ({
   id,
+  isHeader,
   ...props
 }) => {
   const {
@@ -58,15 +65,20 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     formState: { errors },
     handleSubmit,
   } = useForm<FormInputs>();
-  const { selectedChat, deleteChat, renameChat } = useChat((state) => {
-    const selectedChat = state.chatHistory.find((item) => item.id === id);
-    return {
-      renameChat: state.renameChat,
-      chatHistoryCount: state.chatHistory.length,
-      selectedChat,
-      deleteChat: state.deleteChat,
-    };
-  }, shallow);
+  const { selectedChat, messages, deleteChat, renameChat } = useChat(
+    (state) => {
+      const selectedChat = state.chatHistory.find((item) => item.id === id);
+      return {
+        chatHistoryCount: state.chatHistory.length,
+        messages: state.messages,
+        selectedChat,
+        deleteChat: state.deleteChat,
+        renameChat: state.renameChat,
+      };
+    },
+    shallow,
+  );
+  const navigate = useNavigate();
 
   const handleRename = ({ title: newTitle = '' }) => {
     if (id) {
@@ -75,13 +87,47 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     onCloseRenameModal();
   };
 
+  const handleDelete = () => {
+    id && deleteChat(id);
+  };
+
+  const handleShareMessage = async () => {
+    const res = await shareConversation(selectedChat?.title || '', messages);
+    if (res) {
+      navigate(`/shared/${res.uid}`);
+    }
+  };
+
+  const actions = [
+    {
+      hidden: !isHeader,
+      icon: TbShare,
+      action: handleShareMessage,
+      text: 'Share conversation',
+      divider: true,
+    },
+    {
+      action: onOpenInfoModal,
+      text: 'Get Info',
+    },
+    {
+      action: onOpenRenameModal,
+      text: 'Rename',
+    },
+    {
+      action: handleDelete,
+      text: 'Delete',
+      color: 'red.400',
+    },
+  ];
+
   if (!id) {
     return null;
   }
 
   return (
     <>
-      <Menu>
+      <Menu autoSelect={false}>
         <MenuButton
           as={IconButton}
           icon={<TbChevronDown />}
@@ -103,16 +149,19 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
         />
         <Portal>
           <MenuList>
-            <MenuItem onClick={onOpenInfoModal}>Get Info</MenuItem>
-            <MenuItem onClick={onOpenRenameModal}>Rename</MenuItem>
-            <MenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteChat(id);
-              }}
-            >
-              Delete
-            </MenuItem>
+            {actions.map((item) => (
+              <React.Fragment key={item.text}>
+                {!item.hidden && (
+                  <>
+                    <MenuItem color={item.color} onClick={item.action}>
+                      {!!item.icon && <Icon as={item.icon} mr={3} />}
+                      <Text>{item.text}</Text>
+                    </MenuItem>
+                    {item.divider && <MenuDivider />}
+                  </>
+                )}
+              </React.Fragment>
+            ))}
           </MenuList>
         </Portal>
       </Menu>

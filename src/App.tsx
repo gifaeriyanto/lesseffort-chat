@@ -11,6 +11,7 @@ import { SignUpContainer } from 'containers/auth/signup';
 import { UpdatePasswordContainer } from 'containers/auth/updatePassword';
 import { ChatContainer } from 'containers/chat';
 import { SettingsContainer } from 'containers/settings';
+import { SharedConversationContainer } from 'containers/sharedConversation';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
     path: '/plans',
     loader: freeUser,
     element: <PlansContainer />,
+  },
+  {
+    path: '/shared/:sharedId',
+    element: <SharedConversationContainer />,
   },
 ]);
 

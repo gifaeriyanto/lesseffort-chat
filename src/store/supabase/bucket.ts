@@ -48,3 +48,18 @@ export const getFileUrl = async (filename: string) => {
 
   return data?.signedUrl || null;
 };
+
+export const getLongLifeFileUrl = async (filename: string) => {
+  const { data } = await supabase.storage
+    .from('user_profile_photos')
+    .createSignedUrl(filename, 63113904, {
+      transform: {
+        width: 50,
+        height: 50,
+        resize: 'cover',
+        quality: 50,
+      },
+    });
+
+  return data?.signedUrl || null;
+};
