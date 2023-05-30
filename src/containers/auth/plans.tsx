@@ -19,8 +19,10 @@ const PlansContainer: React.FC = () => {
       .then((res) => {
         window.location.href = res.data.data.attributes.url;
       })
-      .catch(captureException)
-      .finally(off);
+      .catch((error) => {
+        captureException(error);
+        off();
+      });
   };
 
   const handleSelectPlan = async (plan: Plan) => {
