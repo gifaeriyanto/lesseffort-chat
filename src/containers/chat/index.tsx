@@ -1,9 +1,11 @@
 import React, { useLayoutEffect } from 'react';
 import {
+  Box,
   Button,
   Grid,
   GridItem,
   Input,
+  LightMode,
   Modal,
   ModalBody,
   ModalContent,
@@ -15,10 +17,12 @@ import {
 } from '@chakra-ui/react';
 import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
+import Confetti from 'react-confetti';
 import { useForm } from 'react-hook-form';
 import { useChat } from 'store/chat';
 import { usePWA } from 'store/pwa';
 import { useProfilePhoto, useUserData } from 'store/user';
+import { accentColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';
 
 export const ChatContainer: React.FC = () => {
@@ -26,6 +30,11 @@ export const ChatContainer: React.FC = () => {
     isOpen: isOpenAPIKEYModal,
     onOpen: onOpenAPIKEYModal,
     onClose: onCloseAPIKEYModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenPurchasedModal,
+    onOpen: onOpenPurchasedModal,
+    onClose: onClosePurchasedModal,
   } = useDisclosure();
   const { register, handleSubmit } = useForm();
   const { getPWAStatus } = usePWA();
@@ -47,6 +56,11 @@ export const ChatContainer: React.FC = () => {
 
     if (!localStorage.getItem('OPENAI_KEY')) {
       onOpenAPIKEYModal();
+    }
+
+    if (localStorage.getItem('purchased')) {
+      onOpenPurchasedModal();
+      localStorage.removeItem('purchased');
     }
   }, []);
 
@@ -102,6 +116,31 @@ export const ChatContainer: React.FC = () => {
               </Button>
             </ModalFooter>
           </form>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenPurchasedModal} onClose={onClosePurchasedModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <Box pos="fixed" top={0}>
+            <Confetti width={400} height={390} />
+          </Box>
+          <ModalHeader fontWeight="bold">Congratulations 🎉🎉🎉</ModalHeader>
+
+          <ModalBody overflow="hidden">
+            You are premium user now, enjoy our premium service.
+          </ModalBody>
+
+          <ModalFooter>
+            <LightMode>
+              <Button
+                colorScheme={accentColor()}
+                onClick={onClosePurchasedModal}
+              >
+                Get started
+              </Button>
+            </LightMode>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

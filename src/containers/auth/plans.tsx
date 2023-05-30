@@ -1,18 +1,36 @@
 import React from 'react';
-import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, useBoolean } from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
+import { buyPremium } from 'api/plan';
 import { SimpleNavbar } from 'components/navbar/simple';
 import { Plan, PricingPlans } from 'components/pricingPlans';
 import { ComparePlans } from 'components/pricingPlans/comparePlans';
 import { useNavigate } from 'react-router-dom';
+import { getUser } from 'store/supabase/auth';
 import { accentColor } from 'theme/foundations/colors';
 
 const PlansContainer: React.FC = () => {
   const navigate = useNavigate();
+  const [isLoading, { on, off }] = useBoolean();
 
-  const handleSelectPlan = (plan: Plan) => {
+  const handleBuyPremium = async (userId: string) => {
+    on();
+    await buyPremium(userId)
+      .then((res) => {
+        window.location.href = res.data.data.attributes.url;
+      })
+      .catch(captureException)
+      .finally(off);
+  };
+
+  const handleSelectPlan = async (plan: Plan) => {
+    const userData = await getUser();
     switch (plan) {
       case Plan.premium:
-        // subs logic
+        if (!userData?.id) {
+          return;
+        }
+        await handleBuyPremium(userData.id);
         return;
 
       case Plan.free:
@@ -32,7 +50,7 @@ const PlansContainer: React.FC = () => {
             Plans
           </Text>
         </Heading>
-        <PricingPlans onSelect={handleSelectPlan} />
+        <PricingPlans onSelect={handleSelectPlan} isLoading={isLoading} />
         <Heading my="3rem" textAlign="center">
           Compare{' '}
           <Text as="span" color={accentColor('500')}>

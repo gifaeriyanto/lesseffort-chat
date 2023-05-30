@@ -10,6 +10,7 @@ import PlansContainer from 'containers/auth/plans';
 import { SignUpContainer } from 'containers/auth/signup';
 import { UpdatePasswordContainer } from 'containers/auth/updatePassword';
 import { ChatContainer } from 'containers/chat';
+import PurchasedRedirect from 'containers/redirect/purchased';
 import { SettingsContainer } from 'containers/settings';
 import { SharedConversationContainer } from 'containers/sharedConversation';
 import ReactGA from 'react-ga4';
@@ -79,6 +80,11 @@ const router = createBrowserRouter([
   {
     path: '/shared/:sharedId',
     element: <SharedConversationContainer />,
+  },
+  {
+    path: '/purchased',
+    loader: withAuth,
+    element: <PurchasedRedirect />,
   },
 ]);
 

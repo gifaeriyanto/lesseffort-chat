@@ -9,10 +9,14 @@ export enum Plan {
 }
 
 export interface PricingPlansProps {
+  isLoading?: boolean;
   onSelect?: (id: Plan) => void;
 }
 
-export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
+export const PricingPlans: React.FC<PricingPlansProps> = ({
+  isLoading,
+  onSelect,
+}) => (
   <Box as="section" py="14" px={{ base: '4', md: '8' }}>
     <SimpleGrid
       columns={{ base: 1, lg: 2 }}
@@ -59,7 +63,10 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({ onSelect }) => (
           ],
         }}
         button={
-          <ActionButton onClick={() => onSelect?.(Plan.premium)}>
+          <ActionButton
+            onClick={() => onSelect?.(Plan.premium)}
+            isLoading={isLoading}
+          >
             Buy now
           </ActionButton>
         }

@@ -68,7 +68,7 @@ export const SignUpContainer: React.FC = () => {
         </Heading>
 
         <Text mb={8} color="gray.400" textAlign="center">
-          <Text color="gray.400">Create a free account</Text>
+          Create a free account
         </Text>
 
         <form onSubmit={handleSubmit(handleSubmitSignup)}>

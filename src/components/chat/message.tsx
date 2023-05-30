@@ -36,6 +36,7 @@ import {
 import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
+import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import {
   TbArrowLeft,
