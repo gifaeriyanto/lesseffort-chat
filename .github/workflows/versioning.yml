@@ -7,7 +7,7 @@ on:
 jobs:
   update-version:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/develop') && startsWith(github.event.head_commit.message, 'feat:')
+    if: ${{ startsWith(github.event.inputs.from_branch, 'feat:') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
