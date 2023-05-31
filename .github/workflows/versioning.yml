@@ -2,7 +2,16 @@ name: Update App Version
 on:
   push:
     branches:
-      - main
+      - develop
+    paths:
+      - '**'
+    # Only run when the commit message includes 'feat:'
+    # Case-insensitive match
+    # You can modify 'feat:' to any keyword you want to match
+    # You can also add more keywords separated by '|'
+    # For example: '(?i)feat:|fix:'
+    # Matches 'feat: description', 'Feat: description', 'fix: something', etc.
+    condition: 'contains(github.event.head_commit.message, "(?i)feat:")'
 jobs:
   update-version:
     runs-on: ubuntu-latest
