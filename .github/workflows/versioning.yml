@@ -19,8 +19,8 @@ jobs:
           git config --global user.email 'gifa.eriyanto@gmail.com'
       - name: Upgrade version
         run: yarn version --patch
-      - name: Push update
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          git push origin develop
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          directory: '.'
+          github_token: ${{ secrets.GH_TOKEN }}
