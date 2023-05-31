@@ -13,7 +13,6 @@ import { ChatContainer } from 'containers/chat';
 import PurchasedRedirect from 'containers/redirect/purchased';
 import { SettingsContainer } from 'containers/settings';
 import { SharedConversationContainer } from 'containers/sharedConversation';
-import CacheBuster from 'react-cache-buster';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -22,8 +21,6 @@ import { getUser } from 'store/supabase/auth';
 import { useUserData } from 'store/user';
 import { theme } from 'theme';
 import { env } from 'utils/env';
-
-import packageJson from '../package.json';
 
 Sentry.init({
   dsn: env.SENTRY_DSN,
@@ -93,7 +90,6 @@ const router = createBrowserRouter([
 
 function App() {
   const { setUser } = useUserData();
-  const isProduction = process.env.NODE_ENV === 'production';
 
   useLayoutEffect(() => {
     upgradeDB();
@@ -101,16 +97,9 @@ function App() {
   }, []);
 
   return (
-    <CacheBuster
-      currentVersion={packageJson.version}
-      isEnabled={isProduction}
-      isVerboseMode={false}
-      metaFileDirectory={'.'}
-    >
-      <ChakraProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ChakraProvider>
-    </CacheBuster>
+    <ChakraProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ChakraProvider>
   );
 }
 
