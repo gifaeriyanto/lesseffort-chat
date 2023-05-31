@@ -15,11 +15,11 @@ import { ChatMessagePreview } from 'components/chat/preview/message';
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { reverse } from 'ramda';
 import { TbMoonFilled, TbShare, TbSun } from 'react-icons/tb';
+import MetaTags from 'react-meta-tags';
 import { useParams } from 'react-router-dom';
 import { getSharedConversation, SharedConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { copyToClipboard } from 'utils/copy';
-import { toastForCopy } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export const SharedConversationContainer: React.FC = () => {
@@ -62,6 +62,13 @@ export const SharedConversationContainer: React.FC = () => {
 
   return (
     <>
+      <MetaTags>
+        <title>{conversation.title}</title>
+        <meta name="description" content="Some description." />
+        <meta property="og:title" content={conversation.title} />
+        <meta property="og:image" content="path/to/image.jpg" />
+      </MetaTags>
+
       <Container maxW="container.lg" py={8}>
         <Flex justify="space-between">
           <Heading>{conversation.title}</Heading>
