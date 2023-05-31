@@ -1,6 +1,7 @@
 import { extendTheme, ThemeOverride } from '@chakra-ui/react';
 import { buttonTheme } from 'theme/components/button';
 import { inputTheme } from 'theme/components/input';
+import { menuTheme } from 'theme/components/menu';
 import { modalTheme } from 'theme/components/modal';
 import { popoverTheme } from 'theme/components/popover';
 import { selectTheme } from 'theme/components/select';
@@ -13,6 +14,7 @@ const config: ThemeOverride = {
   components: {
     Button: buttonTheme,
     Input: inputTheme,
+    Menu: menuTheme,
     Modal: modalTheme,
     Popover: popoverTheme,
     Select: selectTheme,

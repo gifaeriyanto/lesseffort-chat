@@ -487,6 +487,7 @@ export const ChatMessagesContainer: React.FC = () => {
             aria-label="Show rule options"
             size="sm"
             pointerEvents="initial"
+            borderTopRadius="lg"
             borderBottomRadius="0"
             bgColor="gray.500"
             onClick={toggleShowRuleOptions}
