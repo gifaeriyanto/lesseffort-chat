@@ -17,17 +17,18 @@ jobs:
         run: yarn install
       - name: Upgrade version
         run: yarn version --patch
-      - name: Check for changes
-        run: git status
-        id: check_changes
+      - name: Set Git Identity
+        run: |
+          git -C $GITHUB_WORKSPACE config user.email "${{ inputs.email }}"
+          git -C $GITHUB_WORKSPACE config user.name "${{ inputs.name }}"
       - name: Commit changes
         run: |
           if [ "$(git -C $GITHUB_WORKSPACE diff --shortstat)" != "" ]; then
-            git -C $GITHUB_WORKSPACE config --global user.name "${{ github.actor }}"
-            git -C $GITHUB_WORKSPACE config --global user.email "${{ inputs.email }}"
             git -C $GITHUB_WORKSPACE add package.json
             git -C $GITHUB_WORKSPACE commit -m "chore: Upgrade app version [skip ci]"
             git -C $GITHUB_WORKSPACE push origin develop
           else
             echo "No changes to commit."
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
