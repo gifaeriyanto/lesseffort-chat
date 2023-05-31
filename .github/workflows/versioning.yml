@@ -13,11 +13,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      - name: Upgrade version
-        run: yarn version --patch
-      - name: Commit update
+      - name: Set identity
         run: |
           git config --global user.name 'Gifa Eriyanto'
-          git config --global user.email 'gifaeriyanto@users.noreply.github.com'
-          git commit -am "chore: update version patch"
+          git config --global user.email 'gifa.eriyanto@gmail.com'
+      - name: Upgrade version
+        run: yarn version --patch
+      - name: Push update
+        run: |
           git push origin develop
