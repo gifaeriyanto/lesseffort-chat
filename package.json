@@ -23,7 +23,6 @@
     "openai-ext": "^1.2.6",
     "ramda": "^0.29.0",
     "react": "^18.2.0",
-    "react-cache-buster": "^0.1.8",
     "react-confetti": "^6.1.0",
     "react-dom": "^18.2.0",
     "react-ga4": "^2.1.0",
@@ -66,10 +65,9 @@
   },
   "scripts": {
     "start": "PORT=3999 react-app-rewired start",
-    "build": "npm run generate-meta-tag && react-app-rewired build",
+    "build": "react-app-rewired build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "generate-meta-tag": "node ./node_modules/react-cache-buster/dist/generate-meta-tag.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
