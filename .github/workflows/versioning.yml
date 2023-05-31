@@ -17,10 +17,10 @@ jobs:
         run: |
           git config --global user.name 'Gifa Eriyanto'
           git config --global user.email 'gifa.eriyanto@gmail.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
       - name: Upgrade version
         run: yarn version --patch
       - name: Commit update
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "chore: update version patch"
           git push origin develop
