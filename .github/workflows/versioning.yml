@@ -20,5 +20,7 @@ jobs:
       - name: Upgrade version
         run: yarn version --patch
       - name: Push update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git push origin develop
