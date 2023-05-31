@@ -64,9 +64,14 @@ export const SharedConversationContainer: React.FC = () => {
     <>
       <MetaTags>
         <title>{conversation.title}</title>
-        <meta name="description" content="Some description." />
+        <meta
+          name="description"
+          content={
+            conversation.content?.[0]?.content ||
+            `Shared conversation from ${conversation.user_name} with AI`
+          }
+        />
         <meta property="og:title" content={conversation.title} />
-        <meta property="og:image" content="path/to/image.jpg" />
       </MetaTags>
 
       <Container maxW="container.lg" py={8}>
