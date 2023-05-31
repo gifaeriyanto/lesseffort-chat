@@ -1,0 +1,33 @@
+name: Update App Version
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - name: Install dependencies
+        run: yarn install
+      - name: Upgrade version
+        run: yarn version --patch
+      - name: Check for changes
+        run: git status
+        id: check_changes
+      - name: Commit changes
+        run: |
+          if [ "$(git -C $GITHUB_WORKSPACE diff --shortstat)" != "" ]; then
+            git -C $GITHUB_WORKSPACE config --global user.name "${{ github.actor }}"
+            git -C $GITHUB_WORKSPACE config --global user.email "${{ inputs.email }}"
+            git -C $GITHUB_WORKSPACE add package.json
+            git -C $GITHUB_WORKSPACE commit -m "chore: Upgrade app version [skip ci]"
+            git -C $GITHUB_WORKSPACE push origin develop
+          else
+            echo "No changes to commit."
+          fi
