@@ -2,16 +2,25 @@ import React, { useLayoutEffect } from 'react';
 import {
   Box,
   Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormHelperText,
+  FormLabel,
   Grid,
   GridItem,
+  Heading,
+  Icon,
   Input,
   LightMode,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -19,11 +28,16 @@ import { Chat } from 'components/chat';
 import { ChatSidebar } from 'components/chat/sidebar';
 import Confetti from 'react-confetti';
 import { useForm } from 'react-hook-form';
+import { TbCircleKeyFilled } from 'react-icons/tb';
 import { useChat } from 'store/chat';
 import { usePWA } from 'store/pwa';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';
+
+interface FormInputs {
+  openaiKey: string;
+}
 
 export const ChatContainer: React.FC = () => {
   const {
@@ -36,7 +50,11 @@ export const ChatContainer: React.FC = () => {
     onOpen: onOpenPurchasedModal,
     onClose: onClosePurchasedModal,
   } = useDisclosure();
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInputs>();
   const { getPWAStatus } = usePWA();
   const setSelectedChatId = useChat(
     (state) => state.setSelectedChatId,
@@ -104,16 +122,52 @@ export const ChatContainer: React.FC = () => {
       <Modal isOpen={isOpenAPIKEYModal} onClose={() => {}}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Input OPENAI Key</ModalHeader>
+          <ModalHeader>
+            <Flex align="center" gap={2}>
+              <Icon as={TbCircleKeyFilled} color={accentColor('500')} />
+              <Box as="span">Enter API Key</Box>
+            </Flex>
+          </ModalHeader>
           <form onSubmit={handleSubmit(handleSaveOpenaiKey)}>
             <ModalBody>
-              <Input {...register('openaiKey')} />
+              <Text mb={4} fontSize="sm" color="gray.500">
+                Your API Key is stored locally on your browser and never sent
+                anywhere else.
+              </Text>
+              <FormControl isInvalid={!!errors['openaiKey']}>
+                <FormLabel>OpenAI Key</FormLabel>
+                <Input
+                  {...register('openaiKey', {
+                    required: {
+                      message: 'OpenAI Key is required',
+                      value: true,
+                    },
+                  })}
+                />
+                {errors['openaiKey'] && (
+                  <FormErrorMessage>
+                    {errors['openaiKey']?.message}
+                  </FormErrorMessage>
+                )}
+                <FormHelperText>
+                  Get your OpenAI API key{' '}
+                  <Link
+                    color={accentColor('500')}
+                    href="https://platform.openai.com/account/api-keys"
+                    target="_blank"
+                  >
+                    here
+                  </Link>
+                </FormHelperText>
+              </FormControl>
             </ModalBody>
 
             <ModalFooter>
-              <Button type="submit" variant="ghost">
-                Save
-              </Button>
+              <LightMode>
+                <Button type="submit" colorScheme={accentColor()}>
+                  Save
+                </Button>
+              </LightMode>
             </ModalFooter>
           </form>
         </ModalContent>
