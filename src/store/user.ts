@@ -20,7 +20,7 @@ export const useUsage = create<{
       set({ usage: total_usage });
       return total_usage;
     } catch (error) {
-      captureException(error);
+      // no need handler
     }
   },
 }));
