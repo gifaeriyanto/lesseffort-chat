@@ -13,7 +13,7 @@ export const modalTheme = defineMultiStyleConfig({
   sizes: {
     md: {
       dialog: {
-        maxW: '90vw',
+        maxW: { base: '90vw', md: 'md' },
         borderRadius: '2xl',
       },
     },
