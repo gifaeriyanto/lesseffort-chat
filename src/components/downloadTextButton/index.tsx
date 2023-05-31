@@ -46,6 +46,9 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
       case 'javascript':
         return 'js';
 
+      case 'typescript':
+        return 'ts';
+
       case 'python':
         return 'py';
 
