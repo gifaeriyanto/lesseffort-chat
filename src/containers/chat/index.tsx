@@ -119,7 +119,7 @@ export const ChatContainer: React.FC = () => {
         </GridItem>
       </Grid>
 
-      <Modal isOpen={isOpenAPIKEYModal} onClose={() => {}}>
+      <Modal isOpen={isOpenAPIKEYModal} onClose={onCloseAPIKEYModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -141,6 +141,10 @@ export const ChatContainer: React.FC = () => {
                     required: {
                       message: 'OpenAI Key is required',
                       value: true,
+                    },
+                    minLength: {
+                      message: 'Please input a valid OpenAI key',
+                      value: 50,
                     },
                   })}
                 />

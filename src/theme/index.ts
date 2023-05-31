@@ -1,5 +1,7 @@
 import { extendTheme, ThemeOverride } from '@chakra-ui/react';
+import { buttonTheme } from 'theme/components/button';
 import { inputTheme } from 'theme/components/input';
+import { modalTheme } from 'theme/components/modal';
 import { popoverTheme } from 'theme/components/popover';
 import { selectTheme } from 'theme/components/select';
 import { skeletonTheme } from 'theme/components/skeleton';
@@ -9,7 +11,9 @@ import { accentColor, colors, CustomColor } from 'theme/foundations/colors';
 const config: ThemeOverride = {
   colors,
   components: {
+    Button: buttonTheme,
     Input: inputTheme,
+    Modal: modalTheme,
     Popover: popoverTheme,
     Select: selectTheme,
     Skeleton: skeletonTheme,
