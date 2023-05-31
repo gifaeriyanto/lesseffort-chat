@@ -31,9 +31,7 @@ import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { ChatHistory } from 'components/chat/history';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
-import { Plan } from 'components/pricingPlans';
 import { Search } from 'components/search';
-import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import {
   TbBookmark,
@@ -267,7 +265,7 @@ export const ChatSidebar: React.FC = () => {
               }}
             >
               <Flex justify="space-between" w="full">
-                <HStack spacing={4}>
+                <Flex gap={4}>
                   {renderUserSettings()}
                   <Box>
                     <Text fontWeight="bold">Usages</Text>
@@ -282,7 +280,7 @@ export const ChatSidebar: React.FC = () => {
                       </Box>
                     </Text>
                   </Box>
-                </HStack>
+                </Flex>
 
                 {!isFreeUser && (
                   <IconButton
@@ -399,7 +397,7 @@ export const ChatSidebar: React.FC = () => {
         >
           <Flex gap={4}>
             <Flex justify="space-between" align="center" w="full">
-              <HStack spacing={4}>
+              <Flex gap={4}>
                 {renderUserSettings()}
                 <Box>
                   <Text fontWeight="bold">Usages</Text>
@@ -414,7 +412,7 @@ export const ChatSidebar: React.FC = () => {
                     </Box>
                   </Text>
                 </Box>
-              </HStack>
+              </Flex>
               <HStack>
                 <AccordionButton
                   w="auto"
