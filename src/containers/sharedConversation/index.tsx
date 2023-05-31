@@ -4,6 +4,7 @@ import {
   Container,
   Flex,
   Heading,
+  HStack,
   IconButton,
   Link,
   Text,
@@ -13,10 +14,12 @@ import {
 import { ChatMessagePreview } from 'components/chat/preview/message';
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { reverse } from 'ramda';
-import { TbMoonFilled, TbSun } from 'react-icons/tb';
+import { TbMoonFilled, TbShare, TbSun } from 'react-icons/tb';
 import { useParams } from 'react-router-dom';
 import { getSharedConversation, SharedConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
+import { copyToClipboard } from 'utils/copy';
+import { toastForCopy } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export const SharedConversationContainer: React.FC = () => {
@@ -49,6 +52,10 @@ export const SharedConversationContainer: React.FC = () => {
     }
   }, [params.sharedId]);
 
+  const handleCopy = () => {
+    copyToClipboard(window.location.href);
+  };
+
   if (!conversation) {
     return null;
   }
@@ -59,14 +66,24 @@ export const SharedConversationContainer: React.FC = () => {
         <Flex justify="space-between">
           <Heading>{conversation.title}</Heading>
 
-          <IconButton
-            variant="ghost"
-            icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-            aria-label="Toggle color mode"
-            onClick={toggleColorMode}
-            color="gray.400"
-            borderRadius="full"
-          />
+          <HStack spacing={4}>
+            <IconButton
+              variant="ghost"
+              icon={<TbShare />}
+              aria-label="Copy url"
+              onClick={handleCopy}
+              color="gray.400"
+              borderRadius="full"
+            />
+            <IconButton
+              variant="ghost"
+              icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+              aria-label="Toggle color mode"
+              onClick={toggleColorMode}
+              color="gray.400"
+              borderRadius="full"
+            />
+          </HStack>
         </Flex>
 
         <Box mb={8} mt={4}>

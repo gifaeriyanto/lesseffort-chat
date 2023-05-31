@@ -1,4 +1,4 @@
-import { Button, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Link, Text, UseToastOptions } from '@chakra-ui/react';
 import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 
@@ -33,6 +33,32 @@ export const toastForFreeUser = (
         </>
       ),
       status: 'warning',
+    });
+  }
+};
+
+export const toastForCopy = (id: string, options: UseToastOptions = {}) => {
+  if (!standaloneToast.isActive(id)) {
+    ReactGA.event({
+      action: `Limit ${id}`,
+      category: 'Action',
+    });
+    standaloneToast({
+      id,
+      position: 'bottom',
+      duration: 1000,
+      render: () => (
+        <Box
+          color="white"
+          p={3}
+          bg="gray.900"
+          borderRadius="2xl"
+          textAlign="center"
+        >
+          Copied to clipboard
+        </Box>
+      ),
+      ...options,
     });
   }
 };

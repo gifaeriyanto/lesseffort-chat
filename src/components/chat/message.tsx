@@ -36,7 +36,6 @@ import {
 import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
-import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 import {
   TbArrowLeft,
@@ -55,6 +54,7 @@ import { useChat } from 'store/chat';
 import { deleteSavedMessage, saveMessage } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
+import { copyToClipboard } from 'utils/copy';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
 import { toastForFreeUser } from 'utils/toasts';
@@ -182,14 +182,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     onCloseAllMessages();
   };
 
-  const handleCopy = () => {
-    ReactGA.event({
-      action: 'Copy message',
-      category: 'Action',
-    });
-    navigator.clipboard.writeText(message.content);
-  };
-
   const handleShowMobileActions = () => {
     const holdTimeout = setTimeout(() => {
       onOpen();
@@ -231,6 +223,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     if (isLessThanMd) {
       onClose();
     }
+  };
+
+  const handleCopy = () => {
+    copyToClipboard(message.content);
   };
 
   const renderActions = useCallback(() => {

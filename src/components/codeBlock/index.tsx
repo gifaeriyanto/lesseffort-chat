@@ -3,6 +3,7 @@ import { Box, HStack, IconButton } from '@chakra-ui/react';
 import { DownloadTextButton } from 'components/downloadTextButton';
 import { TbCopy, TbDownload } from 'react-icons/tb';
 import { CodeProps } from 'react-markdown/lib/ast-to-react';
+import { copyToClipboard } from 'utils/copy';
 
 export const CodeBlock = memo(
   ({ node, inline, children, ...props }: CodeProps) => {
@@ -15,7 +16,7 @@ export const CodeBlock = memo(
     }, []);
 
     const handleCopy = () => {
-      navigator.clipboard.writeText(codeBlockRef?.current?.textContent || '');
+      copyToClipboard(codeBlockRef?.current?.textContent || '');
     };
 
     if (inline) {
