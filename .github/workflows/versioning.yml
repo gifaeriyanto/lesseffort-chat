@@ -13,12 +13,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
+      - name: Set identity
+        run: |
+          git config --global user.name 'Gifa Eriyanto'
+          git config --global user.email 'gifa.eriyanto@gmail.com'
       - name: Upgrade version
         run: yarn version --patch
       - name: Commit update
         run: |
-          git config --global user.name 'Gifa Eriyanto'
-          git config --global user.email 'gifa.eriyanto@gmail.com'
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "chore: update version patch"
           git push origin develop
