@@ -6,6 +6,8 @@ import {
   useRadioGroup,
   UseRadioProps,
 } from '@chakra-ui/react';
+import { supabase } from 'store/supabase';
+import { SharedConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 
@@ -25,7 +27,13 @@ const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
   );
 };
 
-export const AccentColorRadio: React.FC = () => {
+export interface AccentColorRadioProps {
+  previewData?: SharedConversation;
+}
+
+export const AccentColorRadio: React.FC<AccentColorRadioProps> = ({
+  previewData,
+}) => {
   const { isFreeUser } = useUserData();
 
   const accentColorOptions = [
@@ -42,10 +50,20 @@ export const AccentColorRadio: React.FC = () => {
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'accentColor',
-    defaultValue: accentColor(),
-    onChange: (value) => {
-      localStorage.setItem('accentColor', value);
-      window.location.reload();
+    defaultValue: previewData ? previewData?.color_scheme : accentColor(),
+    onChange: async (value) => {
+      if (previewData) {
+        await supabase
+          .from('shared_conversations')
+          .update({
+            color_scheme: value,
+          })
+          .eq('uid', previewData?.uid);
+        window.location.reload();
+      } else {
+        localStorage.setItem('accentColor', value);
+        window.location.reload();
+      }
     },
   });
 
