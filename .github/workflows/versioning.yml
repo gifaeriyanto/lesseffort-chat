@@ -2,7 +2,7 @@ name: Update App Version
 on:
   push:
     branches:
-      - develop
+      - main
 jobs:
   update-version:
     runs-on: ubuntu-latest
