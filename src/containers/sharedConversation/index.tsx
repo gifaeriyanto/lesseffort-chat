@@ -74,21 +74,39 @@ export const SharedConversationContainer: React.FC = () => {
         <meta property="og:title" content={conversation.title} />
       </MetaTags>
 
+      {showControl && (
+        <Box
+          fontSize="xs"
+          bgColor="gray.500"
+          textAlign="center"
+          py={2}
+          _light={{ bgColor: 'gray.100' }}
+        >
+          This conversation is visible to everyone who has the link.
+        </Box>
+      )}
+
       <Container maxW="container.lg" py={8}>
-        <Flex justify="space-between" align="baseline">
-          <Heading
-            fontSize={{ base: '2xl', md: '4xl' }}
-            display="-webkit-box"
-            overflow="hidden"
-            mr={8}
-            title={conversation.title}
-            sx={{
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 3,
-            }}
-          >
-            {conversation.title}
-          </Heading>
+        <Heading
+          fontSize={{ base: '2xl', md: '4xl' }}
+          display="-webkit-box"
+          overflow="hidden"
+          title={conversation.title}
+          sx={{
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 3,
+          }}
+        >
+          {conversation.title}
+        </Heading>
+
+        <Flex justify="space-between" align="center" mb={8} mt={4}>
+          <Box>
+            <Box color="gray.400" fontSize="sm">
+              Author
+            </Box>
+            <Box>{conversation.user_name}</Box>
+          </Box>
 
           <HStack spacing={4}>
             <IconButton
@@ -109,13 +127,6 @@ export const SharedConversationContainer: React.FC = () => {
             />
           </HStack>
         </Flex>
-
-        <Box mb={8} mt={4}>
-          <Box color="gray.400" fontSize="sm">
-            Author
-          </Box>
-          <Box>{conversation.user_name}</Box>
-        </Box>
 
         <Box minH="60vh">
           {reverse(conversation.content).map((item) => (
