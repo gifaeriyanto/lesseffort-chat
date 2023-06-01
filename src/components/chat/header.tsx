@@ -31,7 +31,7 @@ export const ChatHeader: React.FC = () => {
     },
     shallow,
   );
-  const { onOpen } = useSidebar();
+  const onOpen = useSidebar((state) => state.onOpen, shallow);
   const isSavedMessages = useMemo(
     () => selectedChatId === -1,
     [selectedChatId],

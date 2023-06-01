@@ -41,9 +41,10 @@ import {
   TbPlus,
   TbSearch,
   TbSettings,
+  TbShare,
   TbSun,
 } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { signOut } from 'store/supabase/auth';
@@ -53,8 +54,14 @@ import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export const ChatSidebar: React.FC = () => {
-  const { isFreeUser } = useUserData();
-  const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const { isOpenSidebar, onCloseSidebar } = useSidebar(
+    (state) => ({
+      isOpenSidebar: state.isOpen,
+      onCloseSidebar: state.onClose,
+    }),
+    shallow,
+  );
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const {
@@ -79,6 +86,8 @@ export const ChatSidebar: React.FC = () => {
     today: 0,
   });
   const { toggleColorMode, colorMode } = useColorMode();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleToggleShowSearch = () => {
     if (isFreeUser) {
@@ -143,22 +152,29 @@ export const ChatSidebar: React.FC = () => {
   }, []);
 
   const handleNewChat = () => {
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
     reset();
     resetChatSettings();
     onCloseSidebar();
     richEditorRef?.current?.focus();
-    localStorage.removeItem('lastOpenChatId');
   };
 
   const openSavedMessages = () => {
     if (isFreeUser) {
-      toastForFreeUser(
-        'saved_messages_limit',
-        'Upgrade your plan to access saved messages!',
-      );
+      toastForFreeUser('saved_messages_limit');
       return;
     }
     setSelectedChatId(-1);
+  };
+
+  const handleGoToSharedConversationList = () => {
+    if (isFreeUser) {
+      toastForFreeUser('share_conversation_limit');
+    } else {
+      navigate('/shared');
+    }
   };
 
   const renderUserSettings = () => {
@@ -175,6 +191,10 @@ export const ChatSidebar: React.FC = () => {
           <MenuItem onClick={openSavedMessages}>
             <Icon as={TbBookmark} />
             <Text ml={4}>Saved messages</Text>
+          </MenuItem>
+          <MenuItem onClick={handleGoToSharedConversationList}>
+            <Icon as={TbShare} />
+            <Text ml={4}>Shared conversations</Text>
           </MenuItem>
           <MenuDivider />
           <MenuItem as={Link} to="/settings">

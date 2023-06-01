@@ -1,0 +1,340 @@
+import React, { useLayoutEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
+  IconButton,
+  Input,
+  LightMode,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Portal,
+  Tooltip,
+  useDisclosure,
+  VStack,
+} from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
+import { ChatSidebar } from 'components/chat/sidebar';
+import { id } from 'date-fns/locale';
+import { standaloneToast } from 'index';
+import { props } from 'ramda';
+import { useForm } from 'react-hook-form';
+import { TbChevronDown } from 'react-icons/tb';
+import { useChat } from 'store/chat';
+import {
+  deleteSharedConversation,
+  getSharedConversationList,
+  publishSharedConversation,
+  renameSharedConversation,
+  SharedConversation,
+  unpublishSharedConversation,
+} from 'store/supabase/chat';
+import { accentColor } from 'theme/foundations/colors';
+import { formatDate } from 'utils/common';
+import { shallow } from 'zustand/shallow';
+
+interface FormInputs {
+  title: string;
+}
+
+export const SharedConversationsContainer: React.FC = () => {
+  const [conversations, setConversations] = useState<SharedConversation[]>([]);
+  const reset = useChat((state) => state.reset, shallow);
+  const [count, setCount] = useState(0);
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
+  const [selectedId, setSelectedId] = useState(0);
+  const {
+    isOpen: isOpenRenameModal,
+    onOpen: onOpenRenameModal,
+    onClose: onCloseRenameModal,
+  } = useDisclosure();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<FormInputs>();
+
+  const handleGetConversations = () => {
+    getSharedConversationList().then(setConversations).catch(captureException);
+  };
+
+  useLayoutEffect(() => {
+    reset();
+    setCount(1);
+  }, []);
+
+  useLayoutEffect(() => {
+    handleGetConversations();
+  }, [count]);
+
+  const handleGoToDetail = (id: string) => {
+    window.open(`/shared/${id}`);
+  };
+
+  const handleAction = (action: Function) => () => {
+    action();
+    setCount((prev) => prev + 1);
+  };
+
+  const handleRename = ({ title: newTitle = '' }) => {
+    renameSharedConversation(selectedId, newTitle)
+      .then(() => {
+        setCount((prev) => prev + 1);
+        standaloneToast({
+          title: 'Successfully renamed the conversation',
+          status: 'success',
+        });
+      })
+      .catch(captureException)
+      .finally(onCloseRenameModal);
+  };
+
+  const renderActions = (content: SharedConversation) => {
+    const actions = [
+      {
+        hidden: content.status === 'published',
+        action: handleAction(() => {
+          publishSharedConversation(content.id);
+          standaloneToast({
+            title: 'Successfully published the conversation',
+            status: 'success',
+          });
+        }),
+        text: 'Publish',
+        divider: true,
+        color: accentColor('500'),
+      },
+      {
+        action: () => {
+          setSelectedId(content.id);
+          onOpenRenameModal();
+        },
+        text: 'Rename',
+      },
+      {
+        hidden: content.status === 'pending',
+        action: handleAction(() =>
+          unpublishSharedConversation(content.id).then(() =>
+            standaloneToast({
+              title: 'Successfully unpublished the conversation',
+              status: 'success',
+            }),
+          ),
+        ),
+        text: 'Unpublish',
+        color: 'red.400',
+      },
+      {
+        hidden: content.status === 'published',
+        action: () => {
+          setSelectedId(content.id);
+          onOpenDeleteModal();
+        },
+        text: 'Delete',
+        color: 'red.400',
+      },
+    ];
+
+    return (
+      <Menu autoSelect={false}>
+        <MenuButton
+          as={IconButton}
+          icon={<TbChevronDown />}
+          aria-label="Action menu"
+          variant="ghost"
+          color="gray.400"
+          fontSize="xl"
+          borderRadius="xl"
+          size="sm"
+          bgColor="gray.600"
+          _hover={{
+            bgColor: 'gray.500',
+          }}
+          onClick={(e) => e.stopPropagation()}
+          _light={{
+            bgColor: 'gray.200',
+          }}
+          {...props}
+        />
+        <Portal>
+          <MenuList>
+            {actions.map((item) => (
+              <React.Fragment key={item.text}>
+                {!item.hidden && (
+                  <>
+                    <MenuItem
+                      color={item.color}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        item.action();
+                      }}
+                    >
+                      {item.text}
+                    </MenuItem>
+                    {item.divider && <MenuDivider />}
+                  </>
+                )}
+              </React.Fragment>
+            ))}
+          </MenuList>
+        </Portal>
+      </Menu>
+    );
+  };
+
+  return (
+    <>
+      <Grid
+        templateColumns={{ base: '1fr', md: '18.75rem 1fr' }}
+        gap={{ base: 0, md: 4 }}
+        p={{ base: 0, md: 4 }}
+      >
+        <GridItem>
+          <ChatSidebar />
+        </GridItem>
+
+        <GridItem>
+          <Flex
+            w="full"
+            maxW="60rem"
+            direction="column"
+            h={{ base: 'auto', md: 'calc(100vh - 2rem)' }}
+            m="auto"
+          >
+            <Heading mt={4} mb={8} fontSize="2xl">
+              Shared Conversations
+            </Heading>
+
+            <VStack w="full" align="flex-start">
+              {conversations.map((item) => (
+                <Flex
+                  key={item.id}
+                  bgColor="gray.600"
+                  p="1rem 2rem"
+                  borderRadius="xl"
+                  w="full"
+                  justify="space-between"
+                  align="center"
+                  onClick={() => handleGoToDetail(item.uid)}
+                  role="button"
+                  _hover={{ bgColor: 'gray.500' }}
+                >
+                  <Box>
+                    <Flex align="center">
+                      {item.status === 'published' && (
+                        <Tooltip label="Published">
+                          <Box
+                            mr={2}
+                            bgColor="green.400"
+                            w="10px"
+                            h="10px"
+                            borderRadius="full"
+                          />
+                        </Tooltip>
+                      )}
+                      {item.title}
+                    </Flex>
+                    <Box color="gray.400">{item.content.length} messages</Box>
+                  </Box>
+                  <HStack spacing={4}>
+                    <Box color="gray.400">
+                      {formatDate(new Date(item.created_at as string))}
+                    </Box>
+                    {renderActions(item)}
+                  </HStack>
+                </Flex>
+              ))}
+            </VStack>
+          </Flex>
+        </GridItem>
+      </Grid>
+
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete shared conversation</ModalHeader>
+          <ModalBody>
+            This action can't be undone. Are you sure you want to delete this
+            shared conversation?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onCloseDeleteModal} mr={4}>
+              Cancel
+            </Button>
+            <LightMode>
+              <Button
+                colorScheme="red"
+                onClick={handleAction(async () => {
+                  await deleteSharedConversation(selectedId);
+                  setSelectedId(0);
+                  onCloseDeleteModal();
+                })}
+              >
+                Delete
+              </Button>
+            </LightMode>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenRenameModal} onClose={onCloseRenameModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Rename conversation title</ModalHeader>
+          <ModalCloseButton />
+          <form onSubmit={handleSubmit(handleRename)}>
+            <ModalBody pb={6}>
+              <FormControl isInvalid={!!errors.title}>
+                <FormLabel>Conversation title</FormLabel>
+                <Input
+                  defaultValue={
+                    conversations.find((item) => item.id === selectedId)
+                      ?.title || ''
+                  }
+                  {...register('title', {
+                    required: {
+                      message: 'Conversation title cannot be empty',
+                      value: true,
+                    },
+                  })}
+                />
+                {errors.title && (
+                  <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+                )}
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme={accentColor()} mr={3} type="submit">
+                Save
+              </Button>
+              <Button onClick={onCloseRenameModal}>Cancel</Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};

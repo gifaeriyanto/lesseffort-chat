@@ -297,7 +297,6 @@ export const useChat = create<{
     const { getChatHistory, reset } = get();
     await getChatHistory();
     await reset();
-    localStorage.removeItem('lastOpenChatId');
   },
   deleteMessage: async (messageId) => {
     const dbMessages = useIndexedDB('messages');
@@ -451,6 +450,7 @@ export const useChat = create<{
       generatingMessage: '',
       isTyping: false,
     });
+    localStorage.removeItem('lastOpenChatId');
   },
   resetChatSettings: () => {
     set({

@@ -1,31 +1,12 @@
 import React, { useLayoutEffect, useRef } from 'react';
-import {
-  Avatar,
-  AvatarProps,
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  HStack,
-  Icon,
-  Image,
-  LightMode,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
-import { standaloneToast } from 'index';
-import { props } from 'ramda';
-import { useForm } from 'react-hook-form';
-import { TbUser } from 'react-icons/tb';
-import { getFileUrl, uploadFile } from 'store/supabase/bucket';
+import { Box, FormControl, FormLabel, Text, VStack } from '@chakra-ui/react';
+import { uploadFile } from 'store/supabase/bucket';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
+import { shallow } from 'zustand/shallow';
 
 export const AccountSettings: React.FC = () => {
-  const { user } = useUserData();
+  const user = useUserData((state) => state.user, shallow);
   const { photo, getPhoto } = useProfilePhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
 

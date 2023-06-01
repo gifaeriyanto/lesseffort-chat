@@ -31,8 +31,10 @@ import { TbChevronDown, TbShare } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
 import { shareConversation } from 'store/supabase/chat';
+import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';
+import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export interface HistoryActionsProps
@@ -78,6 +80,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     },
     shallow,
   );
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
   const navigate = useNavigate();
 
   const handleRename = ({ title: newTitle = '' }) => {
@@ -92,9 +95,13 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
   };
 
   const handleShareMessage = async () => {
-    const res = await shareConversation(selectedChat?.title || '', messages);
-    if (res) {
-      navigate(`/shared/${res.uid}`);
+    if (isFreeUser) {
+      toastForFreeUser('share_conversation_limit');
+    } else {
+      const res = await shareConversation(selectedChat?.title || '', messages);
+      if (res) {
+        navigate(`/shared/${res.uid}`);
+      }
     }
   };
 

@@ -14,6 +14,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export interface SimpleNavbarProps {
   backLink?: string;
@@ -21,7 +22,7 @@ export interface SimpleNavbarProps {
 
 export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { isFreeUser } = useUserData();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
   const { toggleColorMode, colorMode } = useColorMode();
   const { pathname } = useLocation();
 

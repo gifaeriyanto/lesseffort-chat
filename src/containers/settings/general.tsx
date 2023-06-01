@@ -13,6 +13,7 @@ import { ColorModeRadio } from 'components/radios/colorMode';
 import { FontSizeRadio } from 'components/radios/fontSize';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
+import { shallow } from 'zustand/shallow';
 
 interface FormInputs {
   colorMode: string;
@@ -20,7 +21,7 @@ interface FormInputs {
 }
 
 export const GeneralSettings: React.FC = () => {
-  const { isFreeUser } = useUserData();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
 
   return (
     <>

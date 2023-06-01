@@ -13,6 +13,7 @@ import { ChatContainer } from 'containers/chat';
 import PurchasedRedirect from 'containers/redirect/purchased';
 import { SettingsContainer } from 'containers/settings';
 import { SharedConversationContainer } from 'containers/sharedConversation';
+import { SharedConversationsContainer } from 'containers/sharedConversation/list';
 import CacheBuster from 'react-cache-buster';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
@@ -22,6 +23,7 @@ import { getUser } from 'store/supabase/auth';
 import { useUserData } from 'store/user';
 import { theme } from 'theme';
 import { env } from 'utils/env';
+import { shallow } from 'zustand/shallow';
 
 import packageJson from '../package.json';
 
@@ -85,6 +87,11 @@ const router = createBrowserRouter([
     element: <SharedConversationContainer />,
   },
   {
+    path: '/shared',
+    loader: withAuth,
+    element: <SharedConversationsContainer />,
+  },
+  {
     path: '/purchased',
     loader: withAuth,
     element: <PurchasedRedirect />,
@@ -93,7 +100,7 @@ const router = createBrowserRouter([
 
 function App() {
   const isProduction = process.env.NODE_ENV === 'production';
-  const { setUser } = useUserData();
+  const setUser = useUserData((state) => state.setUser, shallow);
 
   useLayoutEffect(() => {
     upgradeDB();

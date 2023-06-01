@@ -61,7 +61,10 @@ export const ChatContainer: React.FC = () => {
     shallow,
   );
   const { getPhoto } = useProfilePhoto();
-  const { user, isFreeUser } = useUserData();
+  const { isFreeUser, user } = useUserData(
+    (state) => ({ isFreeUser: state.isFreeUser, user: state.user }),
+    shallow,
+  );
   const { toggleColorMode } = useColorMode();
 
   useLayoutEffect(() => {

@@ -106,7 +106,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   onEdit,
   onRegenerateResponse,
 }) => {
-  const { isFreeUser } = useUserData();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -259,11 +259,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       {
         hidden: isSavedMessages,
         action: isFreeUser
-          ? () =>
-              toastForFreeUser(
-                'save_message_limit',
-                'Upgrade your plan to save this message!',
-              )
+          ? () => toastForFreeUser('save_message_limit')
           : handleClose(handleSaveMessage),
         text: 'Save message',
         inMenu: true,

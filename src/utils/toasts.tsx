@@ -4,7 +4,7 @@ import ReactGA from 'react-ga4';
 
 export const toastForFreeUser = (
   id: string,
-  title: string,
+  title: string = 'Upgrade your plan to access saved messages!',
   description?: string,
 ) => {
   if (!standaloneToast.isActive(id)) {

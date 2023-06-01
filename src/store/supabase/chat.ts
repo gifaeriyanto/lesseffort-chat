@@ -17,15 +17,16 @@ export interface SavedMessage {
 }
 
 export interface SharedConversation {
-  id: number;
-  uid: string;
-  user_id: string;
-  title: string;
-  content: Message[];
-  user_name: string;
-  user_avatar: string | null;
   color_scheme: string;
-  created_at?: number;
+  content: Message[];
+  id: number;
+  status: 'pending' | 'published';
+  title: string;
+  uid: string;
+  user_avatar: string | null;
+  user_id: string;
+  user_name: string;
+  created_at?: string;
 }
 
 export const getSavedMessages = async () => {
@@ -76,7 +77,7 @@ export const shareConversation = async (title: string, messages: Message[]) => {
   const avatar = await getLongLifeFileUrl(userData.id);
   const { data, error } = await supabase
     .from('shared_conversations')
-    .insert<Omit<SharedConversation, 'id' | 'uid' | 'user_id'>>({
+    .insert<Omit<SharedConversation, 'id' | 'uid' | 'user_id' | 'status'>>({
       title,
       content: messages.map((message) => ({
         id: message.id,
@@ -98,11 +99,11 @@ export const shareConversation = async (title: string, messages: Message[]) => {
   return data as SharedConversation;
 };
 
-export const getSharedConversation = async (conversationId: string) => {
+export const getSharedConversation = async (conversationUid: string) => {
   const { data, error } = await supabase
     .from('shared_conversations')
     .select()
-    .eq('uid', conversationId)
+    .eq('uid', conversationUid)
     .single();
 
   if (error) {
@@ -110,4 +111,61 @@ export const getSharedConversation = async (conversationId: string) => {
   }
 
   return data as SharedConversation;
+};
+
+export const getSharedConversationList = async () => {
+  const userData = await getUser();
+  if (!userData?.id) {
+    return [];
+  }
+  const { data, error } = await supabase
+    .from('shared_conversations')
+    .select()
+    .eq('user_id', userData.id)
+    .order('id', { ascending: false });
+
+  if (error) {
+    captureException(error);
+  }
+
+  return data as SharedConversation[];
+};
+
+export const deleteSharedConversation = async (conversationId: number) => {
+  const { error } = await supabase
+    .from('shared_conversations')
+    .delete()
+    .eq('id', conversationId);
+
+  if (error) {
+    captureException(error);
+  }
+};
+
+export const updateSharedConversation = async (
+  editedData: Partial<SharedConversation>,
+) => {
+  const { error } = await supabase
+    .from('shared_conversations')
+    .update(editedData)
+    .eq('id', editedData.id);
+
+  if (error) {
+    captureException(error);
+  }
+};
+
+export const unpublishSharedConversation = (conversationId: number) => {
+  return updateSharedConversation({ id: conversationId, status: 'pending' });
+};
+
+export const publishSharedConversation = (conversationId: number) => {
+  return updateSharedConversation({ id: conversationId, status: 'published' });
+};
+
+export const renameSharedConversation = (
+  conversationId: number,
+  newTitle: string,
+) => {
+  return updateSharedConversation({ id: conversationId, title: newTitle });
 };

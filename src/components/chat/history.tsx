@@ -12,6 +12,7 @@ import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
 import { TbAlertCircle, TbLock } from 'react-icons/tb';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import LazyLoad from 'react-lazyload';
 import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
@@ -130,8 +131,10 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
     }),
     shallow,
   );
-  const { onClose: onCloseSidebar } = useSidebar();
-  const { isFreeUser } = useUserData();
+  const onCloseSidebar = useSidebar((state) => state.onClose, shallow);
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const filteredChatHistory = useMemo(() => {
     return sort(
@@ -181,6 +184,9 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           title={item.title}
           description={item.last_message}
           onSelect={(id) => {
+            if (location.pathname !== '/') {
+              navigate('/');
+            }
             setSelectedChatId(id);
             onCloseSidebar();
           }}

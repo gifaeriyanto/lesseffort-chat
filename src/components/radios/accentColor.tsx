@@ -10,6 +10,7 @@ import { supabase } from 'store/supabase';
 import { SharedConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
+import { shallow } from 'zustand/shallow';
 
 const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
   const { getInputProps, getRadioProps } = useRadio(props);
@@ -34,7 +35,7 @@ export interface AccentColorRadioProps {
 export const AccentColorRadio: React.FC<AccentColorRadioProps> = ({
   previewData,
 }) => {
-  const { isFreeUser } = useUserData();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
 
   const accentColorOptions = [
     'blue',

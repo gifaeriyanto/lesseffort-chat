@@ -2,11 +2,12 @@ import React from 'react';
 import { BoxProps, Flex, Icon, Image, ImageProps } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
 import { useProfilePhoto, useUserData } from 'store/user';
+import { shallow } from 'zustand/shallow';
 
 export interface ProfilePhotoProps extends BoxProps {}
 
 export const ProfilePhoto: React.FC<ProfilePhotoProps> = (props) => {
-  const { user } = useUserData();
+  const user = useUserData((state) => state.user, shallow);
   const { photo } = useProfilePhoto();
 
   return (
