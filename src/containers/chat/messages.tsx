@@ -229,7 +229,7 @@ export const ChatMessagesContainer: React.FC = () => {
     handleJumpToBottom();
 
     if (editingMessage) {
-      updateMessage(message);
+      updateMessage(message, chatRules);
       return;
     }
 

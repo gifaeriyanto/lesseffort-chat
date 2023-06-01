@@ -46,7 +46,7 @@ export const useChat = create<{
   deleteChat: (chatId: number) => Promise<void>;
   deleteMessage: (messageId: number) => Promise<void>;
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
-  updateMessage: (message: string) => void;
+  updateMessage: (message: string, rules: Rules) => void;
   updateMessageTemplate: (template: string) => void;
   selectGeneratedMessage: (message: Message, selectedIndex: number) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
@@ -476,7 +476,7 @@ export const useChat = create<{
       captureException(error);
     }
   },
-  updateMessage: async (message) => {
+  updateMessage: async (message, rules) => {
     const { update } = useIndexedDB('messages');
     const {
       editingMessage,
@@ -492,6 +492,7 @@ export const useChat = create<{
     try {
       await update({
         ...editingMessage,
+        rules,
         content: message,
         updatedAt: getUnixTime(new Date()),
       });
