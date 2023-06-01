@@ -28,7 +28,6 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown, TbShare } from 'react-icons/tb';
-import { useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
 import { shareConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
@@ -81,7 +80,6 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     shallow,
   );
   const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
-  const navigate = useNavigate();
 
   const handleRename = ({ title: newTitle = '' }) => {
     if (id) {
@@ -100,7 +98,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     } else {
       const res = await shareConversation(selectedChat?.title || '', messages);
       if (res) {
-        navigate(`/shared/${res.uid}`);
+        window.open(`/shared/${res.uid}`, '_blank');
       }
     }
   };

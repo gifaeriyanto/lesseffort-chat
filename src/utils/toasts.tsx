@@ -54,6 +54,7 @@ export const toastForCopy = (id: string, options: UseToastOptions = {}) => {
           bg="gray.900"
           borderRadius="2xl"
           textAlign="center"
+          w="12rem"
         >
           Copied to clipboard
         </Box>
