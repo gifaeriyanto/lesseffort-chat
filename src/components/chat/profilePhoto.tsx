@@ -19,6 +19,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = (props) => {
           w="2.188rem"
           h="2.188rem"
           borderRadius="full"
+          objectFit="cover"
           {...(props as ImageProps)}
         />
       ) : (
