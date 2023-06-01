@@ -173,7 +173,10 @@ export const SharedConversationsContainer: React.FC = () => {
           }}
           onClick={(e) => e.stopPropagation()}
           _light={{
-            bgColor: 'gray.200',
+            bgColor: 'gray.100',
+            _hover: {
+              bgColor: 'gray.200',
+            },
           }}
           {...props}
         />
@@ -208,7 +211,7 @@ export const SharedConversationsContainer: React.FC = () => {
       <Grid
         templateColumns={{ base: '1fr', md: '18.75rem 1fr' }}
         gap={{ base: 0, md: 4 }}
-        p={{ base: 0, md: 4 }}
+        p={{ base: 4, md: 4 }}
       >
         <GridItem>
           <ChatSidebar />
@@ -239,6 +242,9 @@ export const SharedConversationsContainer: React.FC = () => {
                   onClick={() => handleGoToDetail(item.uid)}
                   role="button"
                   _hover={{ bgColor: 'gray.500' }}
+                  _light={{
+                    bgColor: 'gray.100',
+                  }}
                 >
                   <Box>
                     <Flex align="center">
@@ -258,7 +264,10 @@ export const SharedConversationsContainer: React.FC = () => {
                     <Box color="gray.400">{item.content.length} messages</Box>
                   </Box>
                   <HStack spacing={4}>
-                    <Box color="gray.400">
+                    <Box
+                      color="gray.400"
+                      display={{ base: 'none', md: 'block' }}
+                    >
                       {formatDate(new Date(item.created_at as string))}
                     </Box>
                     {renderActions(item)}
