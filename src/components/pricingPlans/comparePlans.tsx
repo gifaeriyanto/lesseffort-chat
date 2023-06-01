@@ -4,7 +4,6 @@ import {
   Icon,
   LightMode,
   Table,
-  TableContainer,
   Tbody,
   Td,
   Tfoot,
@@ -13,8 +12,9 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { Plan } from 'components/pricingPlans';
+import { ResponsiveTable } from 'components/table';
 import { TbCheck, TbX } from 'react-icons/tb';
-import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { accentColor } from 'theme/foundations/colors';
 
 const features: [string, string | JSX.Element, string | JSX.Element][] = [
   ['Chat history', '5', 'Unlimited'],
@@ -109,18 +109,7 @@ export interface ComparePlansProps {
 
 export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
   return (
-    <TableContainer
-      maxW="calc(100vw - 2rem)"
-      overflow="auto"
-      sx={{
-        'td, th': {
-          borderColor: CustomColor.border,
-          _light: {
-            borderColor: CustomColor.lightBorder,
-          },
-        },
-      }}
-    >
+    <ResponsiveTable>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -176,6 +165,6 @@ export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
           </Tr>
         </Tfoot>
       </Table>
-    </TableContainer>
+    </ResponsiveTable>
   );
 };
