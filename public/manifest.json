@@ -1,7 +1,7 @@
 {
   "name": "Lesseffort Chat",
   "short_name": "Lesseffort",
-  "description": "Your personal assistant, ask me anything!",
+  "description": "A Beautiful UI for ChatGPT",
   "icons": [
     {
       "src": "favicon.ico",
