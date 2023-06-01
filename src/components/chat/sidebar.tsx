@@ -166,7 +166,9 @@ export const ChatSidebar: React.FC = () => {
       toastForFreeUser('saved_messages_limit');
       return;
     }
+    localStorage.setItem('lastOpenChatId', '-1');
     setSelectedChatId(-1);
+    navigate('/');
   };
 
   const handleGoToSharedConversationList = () => {

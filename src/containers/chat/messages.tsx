@@ -247,10 +247,12 @@ export const ChatMessagesContainer: React.FC = () => {
       if (selectedChatId) {
         await dbMessages.add<Message>(userMessage);
       } else {
+        const title =
+          message.length > 150 ? `${message.slice(0, 150)}...` : message;
         await newChat(
           {
-            last_message: message,
-            title: message,
+            last_message: title,
+            title,
           },
           userMessage,
         );

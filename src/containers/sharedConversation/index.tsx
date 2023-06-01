@@ -75,8 +75,20 @@ export const SharedConversationContainer: React.FC = () => {
       </MetaTags>
 
       <Container maxW="container.lg" py={8}>
-        <Flex justify="space-between">
-          <Heading>{conversation.title}</Heading>
+        <Flex justify="space-between" align="baseline">
+          <Heading
+            fontSize={{ base: '2xl', md: '4xl' }}
+            display="-webkit-box"
+            overflow="hidden"
+            mr={8}
+            title={conversation.title}
+            sx={{
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 3,
+            }}
+          >
+            {conversation.title}
+          </Heading>
 
           <HStack spacing={4}>
             <IconButton

@@ -324,8 +324,12 @@ export const SharedConversationsContainer: React.FC = () => {
                   }
                   {...register('title', {
                     required: {
-                      message: 'Conversation title cannot be empty',
+                      message: 'Title cannot be empty',
                       value: true,
+                    },
+                    maxLength: {
+                      message: 'Title should be less than 150 characters',
+                      value: 150,
                     },
                   })}
                 />

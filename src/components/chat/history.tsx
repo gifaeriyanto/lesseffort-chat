@@ -149,6 +149,15 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
     ) as Chat[];
   }, [chatHistory, search]);
 
+  const handleSelect = (id: number) => {
+    localStorage.setItem('lastOpenChatId', String(id));
+    setSelectedChatId(id);
+    onCloseSidebar();
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+  };
+
   if (!filteredChatHistory.length) {
     return (
       <Flex
@@ -183,13 +192,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           id={item.id}
           title={item.title}
           description={item.last_message}
-          onSelect={(id) => {
-            if (location.pathname !== '/') {
-              navigate('/');
-            }
-            setSelectedChatId(id);
-            onCloseSidebar();
-          }}
+          onSelect={handleSelect}
           isActive={selectedChatId === item.id}
           isLimited={item.limited}
           isLocked={isFreeUser && index > 4}
