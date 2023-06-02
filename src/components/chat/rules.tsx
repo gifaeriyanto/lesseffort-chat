@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { HStack, IconButton, Select, SelectProps } from '@chakra-ui/react';
-import { TbX } from 'react-icons/tb';
+import { Button, HStack, Select, SelectProps } from '@chakra-ui/react';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface Rules {
@@ -315,13 +314,9 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
         <option value="Answer in Q&amp;A format">Q&amp;A</option>
       </Select>
       {!!activeRulesCount && (
-        <IconButton
-          icon={<TbX />}
-          aria-label="Clear rules"
-          size="sm"
-          borderRadius="xl"
-          onClick={handleClear}
-        />
+        <Button size="sm" borderRadius="xl" onClick={handleClear}>
+          Clear
+        </Button>
       )}
     </HStack>
   );
