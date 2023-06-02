@@ -140,6 +140,11 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                 size="md"
                 borderRadius="xl"
                 variant="outline"
+                _light={{
+                  borderColor: CustomColor.lightBorder,
+                  bgColor: 'gray.100',
+                  color: 'gray.500',
+                }}
               />
             </PopoverTrigger>
             <PopoverContent>
