@@ -11,11 +11,12 @@ import {
   Select,
   Text,
   Textarea,
+  useBoolean,
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { defaultBotInstruction, OpenAIModel } from 'api/constants';
-import { standaloneToast } from 'index';
+import { TypingDots } from 'components/typingDots';
 import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
@@ -67,14 +68,15 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     formState: { errors },
     handleSubmit,
     setValue,
-    watch,
   } = useForm<FormInputs>();
   const dbSettings = useIndexedDB('settings');
   const [indexeddbReady, setIndexeddbReady] = useState(false);
+  const [isSaving, { on, off }] = useBoolean();
+  const [showSavingState, setShowSavingState] = useState(false);
 
   const debounceOnChange = debounce(
     (setter: Function, value: unknown) => setter(value),
-    500,
+    2000,
   );
 
   useLayoutEffect(() => {
@@ -103,16 +105,6 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     setValue('model', model);
   }, [model, botInstruction]);
 
-  const handleResetToDefault = () => {
-    setValue('botInstruction', defaultBotInstruction);
-    setValue('model', OpenAIModel.GPT_3_5);
-    handleSaveSettings({
-      title: 'New Chat',
-      botInstruction: defaultBotInstruction,
-      model: OpenAIModel.GPT_3_5,
-    });
-  };
-
   const handleSaveSettings: SubmitHandler<FormInputs> = async ({
     title,
     botInstruction: _botInstruction,
@@ -140,35 +132,18 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
       selectedChat?.id && renameChat(selectedChat.id, title);
     }
 
-    standaloneToast({
-      title: 'Configuration saved successfully!',
-      description:
-        'Your chat settings have been updated. You can now start chatting using your new configuration.',
-      status: 'success',
-    });
+    off();
+    setShowSavingState(true);
   };
 
-  const undoButton = (name: keyof FormInputs, defaultValue: string) => {
-    if (defaultValue === watch()[name] || isGlobalSetting) {
-      return null;
-    }
-
-    return (
-      <>
-        {' '}
-        <Text as="span" color="gray.400">
-          .{' '}
-        </Text>
-        <Button
-          variant="link"
-          size="sm"
-          color={accentColor('500')}
-          onClick={() => setValue(name, defaultValue)}
-        >
-          Undo
-        </Button>
-      </>
-    );
+  const handleResetToDefault = () => {
+    setValue('botInstruction', defaultBotInstruction);
+    setValue('model', OpenAIModel.GPT_3_5);
+    handleSaveSettings({
+      title: 'New Chat',
+      botInstruction: defaultBotInstruction,
+      model: OpenAIModel.GPT_3_5,
+    });
   };
 
   return (
@@ -181,12 +156,33 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
       </Box>
 
       <Box color="gray.400" fontSize="sm" mb={4}>
-        This setting will affect future chat.
+        {isGlobalSetting
+          ? 'This setting will affect future chats.'
+          : 'This setting will not affect future chats.'}
+        <Text
+          as="span"
+          color={accentColor('500')}
+          ml={2}
+          hidden={!showSavingState || !!Object.keys(errors).length}
+        >
+          {isSaving ? (
+            <>
+              Saving
+              <TypingDots />
+            </>
+          ) : (
+            'Saved'
+          )}
+        </Text>
       </Box>
 
       <form
         onSubmit={handleSubmit(handleSaveSettings)}
         onChange={(e) => {
+          if (!showSavingState) {
+            setShowSavingState(true);
+          }
+          on();
           debounceOnChange(handleSubmit(handleSaveSettings), e);
         }}
       >
@@ -209,11 +205,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
             </FormControl>
           )}
           <FormControl isInvalid={!!errors['botInstruction']}>
-            <FormLabel>
-              Initial System Instruction
-              {selectedChat &&
-                undoButton('botInstruction', selectedChat.bot_instruction)}
-            </FormLabel>
+            <FormLabel>Initial System Instruction</FormLabel>
             <Textarea
               defaultValue={botInstruction}
               rows={5}
@@ -241,10 +233,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
             </FormHelperText>
           </FormControl>
           <FormControl>
-            <FormLabel>
-              Model
-              {selectedChat && undoButton('model', selectedChat.model)}
-            </FormLabel>
+            <FormLabel>Model</FormLabel>
             <Select defaultValue={model} {...register('model')}>
               <option value={OpenAIModel.GPT_4}>
                 GPT 4 by Open AI (Only for ChatGPT plus users)
