@@ -36,6 +36,6 @@ export const getUsages = () => {
   });
 };
 
-export const getUserInfo = () => {
+export const getOpenaiUserInfo = () => {
   return openaiAPI.get('/dashboard/billing/subscription');
 };

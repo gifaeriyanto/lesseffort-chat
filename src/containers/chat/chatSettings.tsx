@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,9 +6,7 @@ import {
   FormErrorMessage,
   FormHelperText,
   FormLabel,
-  HStack,
   Input,
-  LightMode,
   Link,
   Select,
   Text,
@@ -23,6 +21,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
+import { debounce } from 'utils/common';
 import { shallow } from 'zustand/shallow';
 
 export interface DBChatSettings {
@@ -73,6 +72,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   const dbSettings = useIndexedDB('settings');
   const [indexeddbReady, setIndexeddbReady] = useState(false);
 
+  const debounceOnChange = debounce(
+    (setter: Function, value: unknown) => setter(value),
+    500,
+  );
+
   useLayoutEffect(() => {
     if (indexeddbReady) {
       return;
@@ -102,6 +106,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   const handleResetToDefault = () => {
     setValue('botInstruction', defaultBotInstruction);
     setValue('model', OpenAIModel.GPT_3_5);
+    handleSaveSettings({
+      title: 'New Chat',
+      botInstruction: defaultBotInstruction,
+      model: OpenAIModel.GPT_3_5,
+    });
   };
 
   const handleSaveSettings: SubmitHandler<FormInputs> = async ({
@@ -175,7 +184,12 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
         This setting will affect future chat.
       </Box>
 
-      <form onSubmit={handleSubmit(handleSaveSettings)}>
+      <form
+        onSubmit={handleSubmit(handleSaveSettings)}
+        onChange={(e) => {
+          debounceOnChange(handleSubmit(handleSaveSettings), e);
+        }}
+      >
         <VStack spacing={8}>
           {!isGlobalSetting && (
             <FormControl isInvalid={!!errors['title']}>
@@ -242,14 +256,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
             </Select>
           </FormControl>
 
-          <HStack>
-            <LightMode>
-              <Button colorScheme={accentColor()} type="submit">
-                Save
-              </Button>
-            </LightMode>
-            <Button onClick={handleResetToDefault}>Reset to Default</Button>
-          </HStack>
+          <Button onClick={handleResetToDefault}>Reset to Default</Button>
         </VStack>
       </form>
     </>

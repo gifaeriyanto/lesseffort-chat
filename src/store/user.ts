@@ -1,4 +1,3 @@
-import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { Plan } from 'components/pricingPlans';
 import { UserData } from 'store/supabase/auth';
