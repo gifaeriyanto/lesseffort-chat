@@ -1,6 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { TableContainer, TableContainerProps } from '@chakra-ui/react';
-import { ReactMarkdownProps } from 'react-markdown/lib/complex-types';
+import { Box, TableContainer, TableContainerProps } from '@chakra-ui/react';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const ResponsiveTable: React.FC<
@@ -10,7 +9,6 @@ export const ResponsiveTable: React.FC<
     <TableContainer
       maxW="calc(100vw - 2rem)"
       overflow="auto"
-      className="halo"
       sx={{
         'td, th': {
           borderColor: CustomColor.border,
@@ -23,5 +21,15 @@ export const ResponsiveTable: React.FC<
     >
       {children}
     </TableContainer>
+  );
+};
+
+export const ResponsiveTableMd = ({ children }: any) => {
+  return (
+    <ResponsiveTable mt={2} mb={4} _last={{ mb: '6px !important' }}>
+      <Box as="table" w="full" maxW="full" whiteSpace="pre-wrap">
+        {children}
+      </Box>
+    </ResponsiveTable>
   );
 };

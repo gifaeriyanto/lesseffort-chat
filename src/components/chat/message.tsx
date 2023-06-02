@@ -36,6 +36,7 @@ import {
 import { Message } from 'api/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
+import { ResponsiveTableMd } from 'components/table';
 import ReactGA from 'react-ga4';
 import {
   TbArrowLeft,
@@ -424,7 +425,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               p: 4,
             },
             table: {
-              marginBottom: '1rem',
               w: 'full',
             },
             ['td, th']: {
@@ -521,6 +521,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ReactMarkdown
             components={{
               code: CodeBlock,
+              table: ResponsiveTableMd,
             }}
             remarkPlugins={[remarkGfm, remarkBreaks]}
             // Math support conflicting with using usd symbol ($)

@@ -16,6 +16,7 @@ import {
 import { Message } from 'api/chat';
 import { ProfilePhotoPreview } from 'components/chat/preview/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
+import { ResponsiveTableMd } from 'components/table';
 import { TbBrandOpenai } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
 import rehypeExternalLinks from 'rehype-external-links';
@@ -109,7 +110,6 @@ export const ChatMessagePreview: React.FC<
               p: 4,
             },
             table: {
-              marginBottom: '1rem',
               w: 'full',
             },
             ['td, th']: {
@@ -206,6 +206,7 @@ export const ChatMessagePreview: React.FC<
           <ReactMarkdown
             components={{
               code: CodeBlock,
+              table: ResponsiveTableMd,
             }}
             remarkPlugins={[remarkGfm, remarkBreaks]}
             // Math support conflicting with using usd symbol ($)
