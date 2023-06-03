@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Alert,
   AlertDescription,
@@ -27,6 +27,8 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  useMediaQuery,
+  VStack,
 } from '@chakra-ui/react';
 import { MainLayout } from 'components/layout';
 import MainNavbar from 'components/navbar/main';
@@ -42,6 +44,121 @@ export const ManageSubscriptionContainer: React.FC = () => {
     onOpen: onOpenCancelSubsModal,
     onClose: onCloseCancelSubsModal,
   } = useDisclosure();
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+
+  const data = useMemo(() => {
+    if (!user) {
+      return [];
+    }
+
+    return [
+      {
+        label: 'Renewal date',
+        value: user?.renews_at
+          ? formatDate(new Date(user?.renews_at), true)
+          : '-',
+      },
+      {
+        label: 'Pricing',
+        value: '$9 / month',
+      },
+    ];
+  }, [user]);
+
+  const cancellationSection = (
+    <>
+      <Box>
+        If you have any questions, feel free to contact us at{' '}
+        <LightMode>
+          <Button
+            colorScheme={accentColor()}
+            variant="link"
+            size="sm"
+            as={Link}
+            href="mailto: hi@lesseffort.io"
+          >
+            hi@lesseffort.io
+          </Button>
+        </LightMode>
+        .
+      </Box>
+      <Box pb={2}>
+        To cancel your subscription,{' '}
+        <LightMode>
+          <Button
+            colorScheme={accentColor()}
+            variant="link"
+            size="sm"
+            onClick={onOpenCancelSubsModal}
+          >
+            cancel plan
+          </Button>
+        </LightMode>
+        .
+      </Box>
+    </>
+  );
+
+  const renderContent = () => {
+    if (isLessThanMd) {
+      return (
+        <Box
+          bgColor="gray.500"
+          mt={4}
+          p={4}
+          borderRadius="xl"
+          _light={{ bgColor: 'gray.100' }}
+        >
+          <VStack spacing={4} align="flex-start" mb={4}>
+            {data.map((item) => (
+              <Box key={item.label}>
+                <Box color="gray.300" _light={{ color: 'gray.400' }}>
+                  {item.label}
+                </Box>
+                <Box>{item.value}</Box>
+              </Box>
+            ))}
+          </VStack>
+          <hr />
+          <Box mt={4} fontSize="sm">
+            {cancellationSection}
+          </Box>
+        </Box>
+      );
+    }
+
+    return (
+      <Box
+        bgColor="gray.500"
+        mt={4}
+        borderRadius="xl"
+        _light={{ bgColor: 'gray.100' }}
+        sx={{
+          td: {
+            _light: {
+              borderColor: 'gray.200',
+            },
+          },
+        }}
+      >
+        <TableContainer>
+          <Table variant="simple">
+            <TableCaption textAlign="left">{cancellationSection}</TableCaption>
+            <Tbody>
+              {data.map((item) => (
+                <Tr key={item.label}>
+                  <Td color="gray.300" _light={{ color: 'gray.400' }}>
+                    {item.label}
+                  </Td>
+                  <Td>{item.value}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+    );
+  };
 
   return (
     <>
@@ -66,73 +183,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
           </Box>
         </Flex>
 
-        <Box
-          bgColor="gray.500"
-          mt={4}
-          borderRadius="xl"
-          _light={{ bgColor: 'gray.100' }}
-          sx={{
-            td: {
-              _light: {
-                borderColor: 'gray.200',
-              },
-            },
-          }}
-        >
-          <TableContainer>
-            <Table variant="simple">
-              <TableCaption textAlign="left">
-                <Box>
-                  If you have any questions, feel free to contact us at{' '}
-                  <LightMode>
-                    <Button
-                      colorScheme={accentColor()}
-                      variant="link"
-                      size="sm"
-                      as={Link}
-                      href="mailto: hi@lesseffort.io"
-                    >
-                      hi@lesseffort.io
-                    </Button>
-                  </LightMode>
-                  .
-                </Box>
-                <Box pb={2}>
-                  To cancel your subscription,{' '}
-                  <LightMode>
-                    <Button
-                      colorScheme={accentColor()}
-                      variant="link"
-                      size="sm"
-                      onClick={onOpenCancelSubsModal}
-                    >
-                      cancel plan
-                    </Button>
-                  </LightMode>
-                  .
-                </Box>
-              </TableCaption>
-              <Tbody>
-                <Tr>
-                  <Td color="gray.300" _light={{ color: 'gray.400' }}>
-                    Renewal date
-                  </Td>
-                  <Td>
-                    {user?.renews_at
-                      ? formatDate(new Date(user?.renews_at), true)
-                      : '-'}
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td color="gray.300" _light={{ color: 'gray.400' }}>
-                    Price
-                  </Td>
-                  <Td>$9 / month</Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Box>
+        {renderContent()}
       </MainLayout>
 
       <Modal

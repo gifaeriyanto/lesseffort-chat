@@ -17,6 +17,7 @@ export const ProfilePhoto: React.FC<ProfilePhotoProps> = (props) => {
           alt={user?.name}
           src={photo}
           w="2.188rem"
+          maxW="2.188rem"
           h="2.188rem"
           borderRadius="full"
           objectFit="cover"

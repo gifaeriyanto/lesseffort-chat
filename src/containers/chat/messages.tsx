@@ -392,7 +392,6 @@ export const ChatMessagesContainer: React.FC = () => {
         overflow={{ base: 'initial', md: 'auto' }}
         direction={messages.length ? 'column-reverse' : 'column'}
         ref={chatAreaRef}
-        px={{ base: 4, md: 0 }}
         pt={{ base: '5rem', md: 0 }}
         pb={{ base: '6rem', md: '2rem' }}
         sx={{

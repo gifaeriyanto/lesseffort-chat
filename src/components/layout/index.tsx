@@ -2,13 +2,16 @@ import React, { PropsWithChildren, useLayoutEffect } from 'react';
 import { Flex, Grid, GridItem } from '@chakra-ui/react';
 import { ChatSidebar } from 'components/chat/sidebar';
 import { useChat } from 'store/chat';
+import { useSidebar } from 'store/sidebar';
 import { shallow } from 'zustand/shallow';
 
 export const MainLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const reset = useChat((state) => state.reset, shallow);
+  const onCloseSidebar = useSidebar((state) => state.onClose, shallow);
 
   useLayoutEffect(() => {
     reset();
+    onCloseSidebar();
   }, []);
 
   return (

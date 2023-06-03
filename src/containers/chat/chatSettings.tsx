@@ -137,6 +137,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   };
 
   const handleResetToDefault = () => {
+    setValue('title', 'New Chat');
     setValue('botInstruction', defaultBotInstruction);
     setValue('model', OpenAIModel.GPT_3_5);
     handleSaveSettings({
