@@ -162,6 +162,7 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const openSavedMessages = () => {
+    onCloseSidebar();
     if (isFreeUser) {
       toastForFreeUser('saved_messages_limit');
       return;
@@ -172,6 +173,7 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const handleGoToSharedConversationList = () => {
+    onCloseSidebar();
     if (isFreeUser) {
       toastForFreeUser('share_conversation_limit');
     } else {

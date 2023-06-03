@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   Box,
   Flex,
@@ -7,63 +7,28 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { OpenAIModel } from 'api/constants';
-import { HistoryActions } from 'components/chat/historyActions';
-import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
-import { useChat } from 'store/chat';
+import { TbMenu2 } from 'react-icons/tb';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';
 
-export const ChatHeader: React.FC = () => {
+export interface MainNavbar {
+  title: string;
+  description?: string;
+  icon: any;
+}
+
+const MainNavbar: React.FC<MainNavbar> = ({ title, description, icon }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { messagesLength, selectedChat, selectedChatId, model } = useChat(
-    (state) => {
-      const selectedChat = state.chatHistory.find(
-        (item) => item.id === state.selectedChatId,
-      );
-      return {
-        messagesLength: state.messages.length,
-        selectedChat,
-        selectedChatId: state.selectedChatId,
-        model: state.model,
-      };
-    },
-    shallow,
-  );
   const onOpen = useSidebar((state) => state.onOpen, shallow);
-  const isSavedMessages = useMemo(
-    () => selectedChatId === -1,
-    [selectedChatId],
-  );
-
-  const renderTitle = () => {
-    if (isSavedMessages) {
-      return 'Saved Messages';
-    }
-
-    return selectedChat?.title || 'New Chat';
-  };
 
   const renderIcon = () => {
-    let bgColor = '#74AA9C';
-    let icon = TbBrandOpenai;
-
-    if (isSavedMessages) {
-      bgColor = accentColor('500');
-      icon = TbBookmark;
-    }
-
-    if (model === OpenAIModel.GPT_4) {
-      bgColor = 'pink.500';
-    }
-
     return (
       <>
         {!isLessThanMd && (
           <Flex
             p={4}
-            bgColor={bgColor}
+            bgColor={accentColor('500')}
             w="2.188rem"
             h="2.188rem"
             align="center"
@@ -124,27 +89,23 @@ export const ChatHeader: React.FC = () => {
             isTruncated
             textAlign={{ base: 'center', md: 'initial' }}
           >
-            {renderTitle()}
+            {title}
           </Text>
-          <Text
-            fontSize="sm"
-            color="gray.400"
-            textAlign={{ base: 'center', md: 'initial' }}
-          >
-            {messagesLength ? `${messagesLength} messages` : 'No messages'}
-          </Text>
+          {description && (
+            <Text
+              fontSize="sm"
+              color="gray.400"
+              textAlign={{ base: 'center', md: 'initial' }}
+            >
+              {description}
+            </Text>
+          )}
         </Box>
       </Flex>
-      {!!messagesLength && !isSavedMessages ? (
-        <HistoryActions
-          id={selectedChat?.id}
-          bgColor="transparent !important"
-          isHeader
-        />
-      ) : (
-        // to keep chat title centered
-        <Box w="2.188rem" />
-      )}
+      {/* to keep chat title centered */}
+      <Box w="2.188rem" />
     </Flex>
   );
 };
+
+export default MainNavbar;

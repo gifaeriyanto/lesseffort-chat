@@ -8,7 +8,6 @@ import {
   FormLabel,
   Grid,
   GridItem,
-  Heading,
   HStack,
   IconButton,
   Input,
@@ -26,17 +25,19 @@ import {
   ModalHeader,
   ModalOverlay,
   Portal,
+  Text,
   Tooltip,
   useDisclosure,
+  useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { ChatSidebar } from 'components/chat/sidebar';
-import { id } from 'date-fns/locale';
+import MainNavbar from 'components/navbar/main';
 import { standaloneToast } from 'index';
 import { props } from 'ramda';
 import { useForm } from 'react-hook-form';
-import { TbChevronDown } from 'react-icons/tb';
+import { TbChevronDown, TbShare } from 'react-icons/tb';
 import { useChat } from 'store/chat';
 import {
   deleteSharedConversation,
@@ -55,6 +56,7 @@ interface FormInputs {
 }
 
 export const SharedConversationsContainer: React.FC = () => {
+  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const [conversations, setConversations] = useState<SharedConversation[]>([]);
   const reset = useChat((state) => state.reset, shallow);
   const [count, setCount] = useState(0);
@@ -108,6 +110,30 @@ export const SharedConversationsContainer: React.FC = () => {
       })
       .catch(captureException)
       .finally(onCloseRenameModal);
+  };
+
+  const renderSubTitle = () => {
+    switch (conversations.length) {
+      case 0:
+        return 'No messages';
+
+      case 1:
+        return '1 conversation';
+
+      default:
+        return `${conversations.length} conversations`;
+    }
+  };
+
+  const titleTruncate = () => {
+    if (isLessThanMd) {
+      return {
+        isTruncated: true,
+        maxW: 'calc(100vw - 10rem)',
+      };
+    }
+
+    return {};
   };
 
   const renderActions = (content: SharedConversation) => {
@@ -225,16 +251,23 @@ export const SharedConversationsContainer: React.FC = () => {
             h={{ base: 'auto', md: 'calc(100vh - 2rem)' }}
             m="auto"
           >
-            <Heading mt={4} mb={8} fontSize="2xl">
-              Shared Conversations
-            </Heading>
+            <MainNavbar
+              title="Shared Conversations"
+              icon={TbShare}
+              description={renderSubTitle()}
+            />
 
-            <VStack w="full" align="flex-start">
+            <VStack
+              w="full"
+              align="flex-start"
+              mt={{ base: '5rem', md: '2rem' }}
+            >
               {conversations.map((item) => (
                 <Flex
                   key={item.id}
                   bgColor="gray.600"
                   p="1rem 2rem"
+                  pr="1rem"
                   borderRadius="xl"
                   w="full"
                   justify="space-between"
@@ -259,7 +292,7 @@ export const SharedConversationsContainer: React.FC = () => {
                           />
                         </Tooltip>
                       )}
-                      {item.title}
+                      <Text {...titleTruncate()}>{item.title}</Text>
                     </Flex>
                     <Box color="gray.400">{item.content.length} messages</Box>
                   </Box>
@@ -267,6 +300,7 @@ export const SharedConversationsContainer: React.FC = () => {
                     <Box
                       color="gray.400"
                       display={{ base: 'none', md: 'block' }}
+                      fontSize="sm"
                     >
                       {formatDate(new Date(item.created_at as string))}
                     </Box>
