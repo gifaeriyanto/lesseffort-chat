@@ -84,27 +84,31 @@ export const ManageSubscriptionContainer: React.FC = () => {
               <TableCaption textAlign="left">
                 <Box>
                   If you have any questions, feel free to contact us at{' '}
-                  <Button
-                    colorScheme={accentColor()}
-                    variant="link"
-                    size="sm"
-                    as={Link}
-                    href="mailto: hi@lesseffort.io"
-                  >
-                    hi@lesseffort.io
-                  </Button>
+                  <LightMode>
+                    <Button
+                      colorScheme={accentColor()}
+                      variant="link"
+                      size="sm"
+                      as={Link}
+                      href="mailto: hi@lesseffort.io"
+                    >
+                      hi@lesseffort.io
+                    </Button>
+                  </LightMode>
                   .
                 </Box>
                 <Box pb={2}>
                   To cancel your subscription,{' '}
-                  <Button
-                    colorScheme={accentColor()}
-                    variant="link"
-                    size="sm"
-                    onClick={onOpenCancelSubsModal}
-                  >
-                    cancel plan
-                  </Button>
+                  <LightMode>
+                    <Button
+                      colorScheme={accentColor()}
+                      variant="link"
+                      size="sm"
+                      onClick={onOpenCancelSubsModal}
+                    >
+                      cancel plan
+                    </Button>
+                  </LightMode>
                   .
                 </Box>
               </TableCaption>
