@@ -14,6 +14,7 @@ import PurchasedRedirect from 'containers/redirect/purchased';
 import { SettingsContainer } from 'containers/settings';
 import { SharedConversationContainer } from 'containers/sharedConversation';
 import { SharedConversationsContainer } from 'containers/sharedConversation/list';
+import { ManageSubscriptionContainer } from 'containers/subscription';
 import CacheBuster from 'react-cache-buster';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
@@ -95,6 +96,11 @@ const router = createBrowserRouter([
     path: '/purchased',
     loader: withAuth,
     element: <PurchasedRedirect />,
+  },
+  {
+    path: '/manage-subs',
+    loader: withAuth,
+    element: <ManageSubscriptionContainer />,
   },
 ]);
 

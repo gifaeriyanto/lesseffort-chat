@@ -6,8 +6,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Grid,
-  GridItem,
   HStack,
   IconButton,
   Input,
@@ -32,13 +30,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { ChatSidebar } from 'components/chat/sidebar';
+import { MainLayout } from 'components/layout';
 import MainNavbar from 'components/navbar/main';
 import { standaloneToast } from 'index';
 import { props } from 'ramda';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown, TbShare } from 'react-icons/tb';
-import { useChat } from 'store/chat';
 import {
   deleteSharedConversation,
   getSharedConversationList,
@@ -49,7 +46,6 @@ import {
 } from 'store/supabase/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDate } from 'utils/common';
-import { shallow } from 'zustand/shallow';
 
 interface FormInputs {
   title: string;
@@ -58,7 +54,6 @@ interface FormInputs {
 export const SharedConversationsContainer: React.FC = () => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const [conversations, setConversations] = useState<SharedConversation[]>([]);
-  const reset = useChat((state) => state.reset, shallow);
   const [count, setCount] = useState(0);
   const {
     isOpen: isOpenDeleteModal,
@@ -82,7 +77,6 @@ export const SharedConversationsContainer: React.FC = () => {
   };
 
   useLayoutEffect(() => {
-    reset();
     setCount(1);
   }, []);
 
@@ -234,84 +228,62 @@ export const SharedConversationsContainer: React.FC = () => {
 
   return (
     <>
-      <Grid
-        templateColumns={{ base: '1fr', md: '18.75rem 1fr' }}
-        gap={{ base: 0, md: 4 }}
-        p={{ base: 4, md: 4 }}
-      >
-        <GridItem>
-          <ChatSidebar />
-        </GridItem>
+      <MainLayout>
+        <MainNavbar
+          title="Shared Conversations"
+          icon={TbShare}
+          description={renderSubTitle()}
+        />
 
-        <GridItem>
-          <Flex
-            w="full"
-            maxW="60rem"
-            direction="column"
-            h={{ base: 'auto', md: 'calc(100vh - 2rem)' }}
-            m="auto"
-          >
-            <MainNavbar
-              title="Shared Conversations"
-              icon={TbShare}
-              description={renderSubTitle()}
-            />
-
-            <VStack
+        <VStack w="full" align="flex-start" mt={{ base: '5rem', md: '2rem' }}>
+          {conversations.map((item) => (
+            <Flex
+              key={item.id}
+              bgColor="gray.600"
+              p="1rem 2rem"
+              pr="1rem"
+              borderRadius="xl"
               w="full"
-              align="flex-start"
-              mt={{ base: '5rem', md: '2rem' }}
+              justify="space-between"
+              align="center"
+              onClick={() => handleGoToDetail(item.uid)}
+              role="button"
+              _hover={{ bgColor: 'gray.500' }}
+              _light={{
+                bgColor: 'gray.100',
+              }}
             >
-              {conversations.map((item) => (
-                <Flex
-                  key={item.id}
-                  bgColor="gray.600"
-                  p="1rem 2rem"
-                  pr="1rem"
-                  borderRadius="xl"
-                  w="full"
-                  justify="space-between"
-                  align="center"
-                  onClick={() => handleGoToDetail(item.uid)}
-                  role="button"
-                  _hover={{ bgColor: 'gray.500' }}
-                  _light={{
-                    bgColor: 'gray.100',
-                  }}
-                >
-                  <Box>
-                    <Flex align="center">
-                      {item.status === 'published' && (
-                        <Tooltip label="Published">
-                          <Box
-                            mr={2}
-                            bgColor="green.400"
-                            w="10px"
-                            h="10px"
-                            borderRadius="full"
-                          />
-                        </Tooltip>
-                      )}
-                      <Text {...titleTruncate()}>{item.title}</Text>
-                    </Flex>
-                    <Box color="gray.400">{item.content.length} messages</Box>
-                  </Box>
-                  <HStack spacing={4}>
-                    <Box
-                      color="gray.400"
-                      display={{ base: 'none', md: 'block' }}
-                      fontSize="sm"
-                    >
-                      {formatDate(new Date(item.created_at as string))}
-                    </Box>
-                    {renderActions(item)}
-                  </HStack>
+              <Box>
+                <Flex align="center">
+                  {item.status === 'published' && (
+                    <Tooltip label="Published">
+                      <Box
+                        mr={2}
+                        bgColor="green.400"
+                        w="10px"
+                        h="10px"
+                        borderRadius="full"
+                      />
+                    </Tooltip>
+                  )}
+                  <Text {...titleTruncate()}>{item.title}</Text>
                 </Flex>
-              ))}
-            </VStack>
-          </Flex>
-        </GridItem>
-      </Grid>
+                <Box color="gray.400">{item.content.length} messages</Box>
+              </Box>
+              <HStack spacing={4}>
+                <Box
+                  color="gray.400"
+                  display={{ base: 'none', md: 'block' }}
+                  fontSize="sm"
+                >
+                  {formatDate(new Date(item.created_at as string))}
+                </Box>
+                {renderActions(item)}
+              </HStack>
+            </Flex>
+          ))}
+        </VStack>
+      </MainLayout>
 
       <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
         <ModalOverlay />

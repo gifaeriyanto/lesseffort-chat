@@ -61,8 +61,12 @@ export const sanitizeString = pipe(
   uppercaseFirstLetter,
 );
 
-export const formatDate = (date: Date) => {
-  const formattedDate = format(date, 'MMMM dd, yyyy p');
+export const formatDate = (date: Date, noTime = false) => {
+  let template = 'MMMM dd, yyyy p';
+  if (noTime) {
+    template = 'MMMM dd, yyyy';
+  }
+  const formattedDate = format(date, template);
   return formattedDate;
 };
 

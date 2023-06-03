@@ -76,6 +76,7 @@ const MainNavbar: React.FC<MainNavbar> = ({ title, description, icon }) => {
         justify={{ base: 'center', md: 'initial' }}
         gap={4}
         minW="0"
+        py={description ? 'initial' : '0.4rem'}
       >
         {renderIcon()}
         <Box

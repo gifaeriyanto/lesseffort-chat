@@ -35,6 +35,7 @@ import { Search } from 'components/search';
 import ReactGA from 'react-ga4';
 import {
   TbBookmark,
+  TbDiamond,
   TbDiscountCheck,
   TbLogout,
   TbMoonFilled,
@@ -205,6 +206,17 @@ export const ChatSidebar: React.FC = () => {
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
           </MenuItem>
+          {isFreeUser ? (
+            <MenuItem as={Link} to="/plans" color={accentColor('500')}>
+              <Icon as={TbDiscountCheck} />
+              <Text ml={4}>Upgrade to premium</Text>
+            </MenuItem>
+          ) : (
+            <MenuItem as={Link} to="/manage-subs">
+              <Icon as={TbDiamond} />
+              <Text ml={4}>Manage Subscription</Text>
+            </MenuItem>
+          )}
           {!isLessThanMd && !isFreeUser && (
             <MenuItem onClick={handleToggleColorMode}>
               {colorMode === 'light' ? (
@@ -215,12 +227,6 @@ export const ChatSidebar: React.FC = () => {
               <Text ml={4}>
                 Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
               </Text>
-            </MenuItem>
-          )}
-          {isFreeUser && (
-            <MenuItem as={Link} to="/plans" color={accentColor('500')}>
-              <Icon as={TbDiscountCheck} />
-              <Text ml={4}>Upgrade to premium</Text>
             </MenuItem>
           )}
           <MenuItem onClick={signOut}>

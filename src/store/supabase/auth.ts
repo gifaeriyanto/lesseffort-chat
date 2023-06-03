@@ -126,7 +126,8 @@ export interface UserData {
   id: string;
   name: string;
   plan: Plan;
-  // status_plan: 'Active' | 'Nonactive';
+  status_formatted: 'Active' | 'Nonactive' | 'On Trial' | null;
+  renews_at: string | null;
   // email: string;
   // provider: string;
   // confirmed_at: string;
@@ -138,7 +139,8 @@ export interface UserData {
 }
 
 export const getUser = async () => {
-  const res = await supabase.from('profiles').select('id, name, plan');
+  const res = await supabase.from('profiles').select();
+
   if (!res.data?.[0]) {
     return;
   }

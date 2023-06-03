@@ -25,7 +25,10 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { Chat } from 'components/chat';
+import { ChatHeader } from 'components/chat/header';
 import { ChatSidebar } from 'components/chat/sidebar';
+import { MainLayout } from 'components/layout';
+import { ChatMessagesContainer } from 'containers/chat/messages';
 import Confetti from 'react-confetti';
 import { useForm } from 'react-hook-form';
 import { TbCircleKeyFilled } from 'react-icons/tb';
@@ -108,19 +111,10 @@ export const ChatContainer: React.FC = () => {
 
   return (
     <>
-      <Grid
-        templateColumns={{ base: '1fr', md: '18.75rem 1fr' }}
-        gap={{ base: 0, md: 4 }}
-        p={{ base: 0, md: 4 }}
-      >
-        <GridItem>
-          <ChatSidebar />
-        </GridItem>
-
-        <GridItem>
-          <Chat />
-        </GridItem>
-      </Grid>
+      <MainLayout>
+        <ChatHeader />
+        <ChatMessagesContainer />
+      </MainLayout>
 
       <Modal isOpen={isOpenAPIKEYModal} onClose={onCloseAPIKEYModal}>
         <ModalOverlay />
