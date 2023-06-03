@@ -572,6 +572,7 @@ export const ChatMessagesContainer: React.FC = () => {
                 pos="absolute"
                 right="1rem"
                 top="-4rem"
+                backdropFilter="blur(6px)"
                 _light={{
                   border: '1px solid',
                   borderColor: CustomColor.lightBorder,
