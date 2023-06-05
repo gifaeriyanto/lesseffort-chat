@@ -40,12 +40,15 @@ const config: ThemeOverride = {
     sm: '0.143rem',
   },
   styles: {
-    global: ({ colorMode }) => ({
+    global: () => ({
       'html, body': {
         fontSize: localStorage.getItem('fontSize') || '16px',
         fontWeight: 500,
         lineHeight: 'tall',
-        bgColor: colorMode === 'dark' ? CustomColor.background : 'gray.200',
+        bgColor:
+          localStorage.getItem('chakra-ui-color-mode') === 'dark'
+            ? CustomColor.background
+            : 'gray.200',
       },
       html: {
         h: '100%',
