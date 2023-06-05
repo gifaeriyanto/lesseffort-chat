@@ -123,7 +123,7 @@ export const updatePassword = async (newPassword: string) => {
 };
 
 export interface UserData {
-  canceled: boolean;
+  cancelled: boolean;
   confirmed_at: string;
   created_at: string;
   email_confirmed_at: string;

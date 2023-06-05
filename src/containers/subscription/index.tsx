@@ -51,7 +51,9 @@ export const ManageSubscriptionContainer: React.FC = () => {
     isOpen: isOpenConfirmationModal,
     onOpen: onOpenConfirmationModal,
     onClose: onCloseConfirmationModal,
-  } = useDisclosure();
+  } = useDisclosure({
+    onClose: () => window.location.reload(),
+  });
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const [isLoading, { on, off }] = useBoolean();
 
@@ -62,7 +64,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
 
     return [
       {
-        label: user?.canceled ? 'Cancelling on' : 'Renewal date',
+        label: user?.cancelled ? 'Cancelling on' : 'Renewal date',
         value: user?.renews_at
           ? formatDate(new Date(user?.renews_at), true)
           : '-',
@@ -76,12 +78,18 @@ export const ManageSubscriptionContainer: React.FC = () => {
 
   const handleAction = () => {
     let action = cancelPlan;
-    if (user?.canceled) {
+    if (user?.cancelled) {
       action = resumePlan;
     }
 
     on();
-    action().then(onOpenConfirmationModal).catch(captureException).finally(off);
+    action()
+      .then(() => {
+        onCloseCancelSubsModal();
+        onOpenConfirmationModal();
+      })
+      .catch(captureException)
+      .finally(off);
   };
 
   const cancellationSection = (
@@ -101,7 +109,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
         </LightMode>
         .
       </Box>
-      {user?.canceled ? (
+      {user?.cancelled ? (
         <Box pb={2}>
           To uncancel your subscription,{' '}
           <LightMode>
@@ -213,7 +221,10 @@ export const ManageSubscriptionContainer: React.FC = () => {
             </Text>
           </Box>
           <Box>
-            <Tag colorScheme="green" borderRadius="xl">
+            <Tag
+              colorScheme={user?.cancelled ? 'red' : 'green'}
+              borderRadius="xl"
+            >
               {user?.status_formatted}
             </Tag>
           </Box>
@@ -230,13 +241,13 @@ export const ManageSubscriptionContainer: React.FC = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            {user?.canceled
+            {user?.cancelled
               ? `We're happy to see you again!`
               : `We're sorry to see you go!`}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {user?.canceled ? (
+            {user?.cancelled ? (
               <Box>
                 If you proceed, your plan will be set to <b>not cancel</b> at
                 the end of your current subscription period.
@@ -259,16 +270,21 @@ export const ManageSubscriptionContainer: React.FC = () => {
           </ModalBody>
 
           <ModalFooter pb={6}>
-            <Button variant="ghost" onClick={onCloseCancelSubsModal} mr={4}>
+            <Button
+              variant="ghost"
+              onClick={onCloseCancelSubsModal}
+              mr={4}
+              isDisabled={isLoading}
+            >
               Back
             </Button>
             <LightMode>
               <Button
-                colorScheme={user?.canceled ? accentColor() : 'red'}
+                colorScheme={user?.cancelled ? accentColor() : 'red'}
                 onClick={handleAction}
                 isLoading={isLoading}
               >
-                {user?.canceled
+                {user?.cancelled
                   ? 'Confirm Uncancellation 🥳️️️'
                   : 'Confirm Cancellation 😞'}
               </Button>
@@ -298,8 +314,8 @@ export const ManageSubscriptionContainer: React.FC = () => {
           <ModalFooter pb={6}>
             <LightMode>
               <Button
-                colorScheme={user?.canceled ? accentColor() : 'red'}
-                onClick={() => window.location.reload()}
+                colorScheme={user?.cancelled ? accentColor() : 'red'}
+                onClick={onCloseConfirmationModal}
                 w="full"
               >
                 Close

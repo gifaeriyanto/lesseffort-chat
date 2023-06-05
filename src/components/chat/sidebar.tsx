@@ -156,6 +156,7 @@ export const ChatSidebar: React.FC = () => {
     if (location.pathname !== '/') {
       navigate('/');
     }
+    localStorage.removeItem('lastOpenChatId');
     reset();
     resetChatSettings();
     onCloseSidebar();

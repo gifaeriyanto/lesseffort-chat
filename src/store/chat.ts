@@ -353,7 +353,7 @@ export const useChat = create<{
   },
   newChat: async (data, userMessage) => {
     const { reset, getChatHistory } = get();
-    reset();
+    await reset();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
     const { data: userData } = await supabase.auth.getUser();
@@ -450,7 +450,6 @@ export const useChat = create<{
       generatingMessage: '',
       isTyping: false,
     });
-    localStorage.removeItem('lastOpenChatId');
   },
   resetChatSettings: () => {
     set({

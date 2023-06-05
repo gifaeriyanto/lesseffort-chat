@@ -9,6 +9,7 @@ import {
   IconButton,
   IconButtonProps,
   Input,
+  LightMode,
   Menu,
   MenuButton,
   MenuDivider,
@@ -62,6 +63,11 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     onClose: onCloseRenameModal,
   } = useDisclosure();
   const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
+  const {
     register,
     formState: { errors },
     handleSubmit,
@@ -90,6 +96,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
 
   const handleDelete = () => {
     id && deleteChat(id);
+    localStorage.removeItem('lastOpenChatId');
   };
 
   const handleShareMessage = async () => {
@@ -120,7 +127,7 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
       text: 'Rename',
     },
     {
-      action: handleDelete,
+      action: onOpenDeleteModal,
       text: 'Delete',
       color: 'red.400',
     },
@@ -243,6 +250,28 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
               )}
             </VStack>
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete chat</ModalHeader>
+          <ModalBody>
+            This action can't be undone. Are you sure you want to delete the
+            selected chat?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onCloseDeleteModal} mr={4}>
+              Cancel
+            </Button>
+            <LightMode>
+              <Button colorScheme="red" onClick={handleDelete}>
+                Delete
+              </Button>
+            </LightMode>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

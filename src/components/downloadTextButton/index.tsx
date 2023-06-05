@@ -38,7 +38,7 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
     register,
     formState: { errors },
     handleSubmit,
-    reset,
+    reset: resetForm,
   } = useForm<FormInputs>();
 
   const langParser = () => {
@@ -75,7 +75,7 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
   const handleDownload = ({ filename }: FormInputs) => {
     downloadFile(filename);
     onClose();
-    reset();
+    resetForm();
   };
 
   return (
