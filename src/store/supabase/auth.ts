@@ -123,19 +123,21 @@ export const updatePassword = async (newPassword: string) => {
 };
 
 export interface UserData {
+  canceled: boolean;
+  confirmed_at: string;
+  created_at: string;
+  email_confirmed_at: string;
+  email: string;
+  expired_plan: string | null;
   id: string;
+  last_sign_in_at: string;
   name: string;
   plan: Plan;
-  status_formatted: 'Active' | 'Nonactive' | 'On Trial' | null;
+  provider: string;
   renews_at: string | null;
-  // email: string;
-  // provider: string;
-  // confirmed_at: string;
-  // email_confirmed_at: string;
-  // created_at: string;
-  // updated_at: string;
-  // last_sign_in_at: string;
-  // expired_plan: string | null;
+  status_formatted: 'Active' | 'Nonactive' | 'On Trial' | null;
+  subscription_id: string;
+  updated_at: string;
 }
 
 export const getUser = async () => {

@@ -1,23 +1,22 @@
 import React from 'react';
 import { Box, Flex, Heading, Text, useBoolean } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { buyPremium } from 'api/plan';
+import { createPlan } from 'api/plan';
 import { SimpleNavbar } from 'components/navbar/simple';
 import { Plan, PricingPlans } from 'components/pricingPlans';
 import { ComparePlans } from 'components/pricingPlans/comparePlans';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from 'store/supabase/auth';
 import { accentColor } from 'theme/foundations/colors';
 
 const PlansContainer: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, { on, off }] = useBoolean();
 
-  const handleBuyPremium = async (userId: string) => {
+  const handleBuyPremium = async () => {
     on();
-    await buyPremium(userId)
+    await createPlan()
       .then((res) => {
-        window.location.href = res.data.data.attributes.url;
+        window.location.href = res?.data.data.attributes.url;
       })
       .catch((error) => {
         captureException(error);
@@ -26,13 +25,9 @@ const PlansContainer: React.FC = () => {
   };
 
   const handleSelectPlan = async (plan: Plan) => {
-    const userData = await getUser();
     switch (plan) {
       case Plan.premium:
-        if (!userData?.id) {
-          return;
-        }
-        await handleBuyPremium(userData.id);
+        await handleBuyPremium();
         return;
 
       case Plan.free:

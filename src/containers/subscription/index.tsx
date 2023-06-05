@@ -26,10 +26,13 @@ import {
   Th,
   Thead,
   Tr,
+  useBoolean,
   useDisclosure,
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { captureException } from '@sentry/react';
+import { cancelPlan, resumePlan } from 'api/plan';
 import { MainLayout } from 'components/layout';
 import MainNavbar from 'components/navbar/main';
 import { TbDiamond } from 'react-icons/tb';
@@ -44,7 +47,13 @@ export const ManageSubscriptionContainer: React.FC = () => {
     onOpen: onOpenCancelSubsModal,
     onClose: onCloseCancelSubsModal,
   } = useDisclosure();
+  const {
+    isOpen: isOpenConfirmationModal,
+    onOpen: onOpenConfirmationModal,
+    onClose: onCloseConfirmationModal,
+  } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+  const [isLoading, { on, off }] = useBoolean();
 
   const data = useMemo(() => {
     if (!user) {
@@ -53,7 +62,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
 
     return [
       {
-        label: 'Renewal date',
+        label: user?.canceled ? 'Cancelling on' : 'Renewal date',
         value: user?.renews_at
           ? formatDate(new Date(user?.renews_at), true)
           : '-',
@@ -64,6 +73,16 @@ export const ManageSubscriptionContainer: React.FC = () => {
       },
     ];
   }, [user]);
+
+  const handleAction = () => {
+    let action = cancelPlan;
+    if (user?.canceled) {
+      action = resumePlan;
+    }
+
+    on();
+    action().then(onOpenConfirmationModal).catch(captureException).finally(off);
+  };
 
   const cancellationSection = (
     <>
@@ -82,20 +101,37 @@ export const ManageSubscriptionContainer: React.FC = () => {
         </LightMode>
         .
       </Box>
-      <Box pb={2}>
-        To cancel your subscription,{' '}
-        <LightMode>
-          <Button
-            colorScheme={accentColor()}
-            variant="link"
-            size="sm"
-            onClick={onOpenCancelSubsModal}
-          >
-            cancel plan
-          </Button>
-        </LightMode>
-        .
-      </Box>
+      {user?.canceled ? (
+        <Box pb={2}>
+          To uncancel your subscription,{' '}
+          <LightMode>
+            <Button
+              colorScheme={accentColor()}
+              variant="link"
+              size="sm"
+              onClick={onOpenCancelSubsModal}
+            >
+              uncancel plan
+            </Button>
+          </LightMode>
+          .
+        </Box>
+      ) : (
+        <Box pb={2}>
+          To cancel your subscription,{' '}
+          <LightMode>
+            <Button
+              colorScheme={accentColor()}
+              variant="link"
+              size="sm"
+              onClick={onOpenCancelSubsModal}
+            >
+              cancel plan
+            </Button>
+          </LightMode>
+          .
+        </Box>
+      )}
     </>
   );
 
@@ -193,29 +229,81 @@ export const ManageSubscriptionContainer: React.FC = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>We're sorry to see you go!</ModalHeader>
+          <ModalHeader>
+            {user?.canceled
+              ? `We're happy to see you again!`
+              : `We're sorry to see you go!`}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box>
-              If you proceed, your plan will be set to{' '}
-              <Text as="b">cancel</Text> at the end of your current subscription
-              period.
-            </Box>
-            <Alert borderRadius="xl" mt={4} status="warning" fontSize="sm">
-              <AlertIcon alignSelf="baseline" />
-              <AlertDescription>
-                If you change your mind, you can uncancel any time before the
-                cancellation goes through.
-              </AlertDescription>
-            </Alert>
+            {user?.canceled ? (
+              <Box>
+                If you proceed, your plan will be set to <b>not cancel</b> at
+                the end of your current subscription period.
+              </Box>
+            ) : (
+              <>
+                <Box>
+                  If you proceed, your plan will be set to <b>cancel</b> at the
+                  end of your current subscription period.
+                </Box>
+                <Alert borderRadius="xl" mt={4} status="warning" fontSize="sm">
+                  <AlertIcon alignSelf="baseline" />
+                  <AlertDescription>
+                    If you change your mind, you can uncancel any time before
+                    the cancellation goes through.
+                  </AlertDescription>
+                </Alert>
+              </>
+            )}
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter pb={6}>
             <Button variant="ghost" onClick={onCloseCancelSubsModal} mr={4}>
               Back
             </Button>
             <LightMode>
-              <Button colorScheme="red">Confirm Cancellation 😞</Button>
+              <Button
+                colorScheme={user?.canceled ? accentColor() : 'red'}
+                onClick={handleAction}
+                isLoading={isLoading}
+              >
+                {user?.canceled
+                  ? 'Confirm Uncancellation 🥳️️️'
+                  : 'Confirm Cancellation 😞'}
+              </Button>
+            </LightMode>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isOpenConfirmationModal}
+        onClose={onCloseConfirmationModal}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Success!</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box>Your change has been confirmed.</Box>
+
+            <Alert borderRadius="xl" mt={4} status="success" fontSize="sm">
+              <AlertIcon alignSelf="baseline" />
+              <AlertDescription>Update confirmed</AlertDescription>
+            </Alert>
+          </ModalBody>
+
+          <ModalFooter pb={6}>
+            <LightMode>
+              <Button
+                colorScheme={user?.canceled ? accentColor() : 'red'}
+                onClick={() => window.location.reload()}
+                w="full"
+              >
+                Close
+              </Button>
             </LightMode>
           </ModalFooter>
         </ModalContent>

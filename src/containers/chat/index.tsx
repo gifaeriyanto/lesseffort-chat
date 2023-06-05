@@ -7,9 +7,6 @@ import {
   FormErrorMessage,
   FormHelperText,
   FormLabel,
-  Grid,
-  GridItem,
-  Heading,
   Icon,
   Input,
   LightMode,
@@ -24,9 +21,7 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Chat } from 'components/chat';
 import { ChatHeader } from 'components/chat/header';
-import { ChatSidebar } from 'components/chat/sidebar';
 import { MainLayout } from 'components/layout';
 import { ChatMessagesContainer } from 'containers/chat/messages';
 import Confetti from 'react-confetti';
