@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { ChatMessageAction } from 'components/chat/message';
+import { Empty } from 'components/empty';
 import { Search } from 'components/search';
 import { TbFilter, TbInfoCircle, TbThumbUp } from 'react-icons/tb';
 import {
@@ -181,6 +182,16 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           </Box>
         </Flex>
       </Flex>
+
+      <Empty
+        hidden={
+          isLoading &&
+          !prompts.filter((item) => item.Title.match(new RegExp(keyword, 'i')))
+            .length
+        }
+        message="No prompts match your filter"
+        h={{ base: 'calc(100vh - 470px)', md: 'calc(100vh - 350px)' }}
+      />
 
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4} mt={4}>
         {isLoading ? (

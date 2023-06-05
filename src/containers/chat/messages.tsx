@@ -24,6 +24,7 @@ import { Chat, Message } from 'api/chat';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { ChatRules, defaultRules, Rules } from 'components/chat/rules';
 import { SelectedMessage } from 'components/chat/selectedMessage';
+import { Empty } from 'components/empty';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';
@@ -346,6 +347,15 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const renderMessages = useCallback(() => {
     if (!messages.length) {
+      if (isSavedMessages) {
+        return (
+          <Empty
+            message="You don't have any saved messages yet"
+            alignSelf="center"
+            h={{ base: 'calc(100vh - 400px)', md: 'full' }}
+          />
+        );
+      }
       return <StarterContainer onSelectPrompt={setTemplate} />;
     }
 

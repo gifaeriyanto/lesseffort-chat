@@ -25,15 +25,17 @@ import {
   Portal,
   Text,
   Tooltip,
+  useBoolean,
   useDisclosure,
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
+import { Empty } from 'components/empty';
 import { MainLayout } from 'components/layout';
+import { Loading } from 'components/loading';
 import MainNavbar from 'components/navbar/main';
 import { standaloneToast } from 'index';
-import { props } from 'ramda';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown, TbShare } from 'react-icons/tb';
 import {
@@ -71,9 +73,13 @@ export const SharedConversationsContainer: React.FC = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<FormInputs>();
+  const [isLoading, { on, off }] = useBoolean(true);
 
   const handleGetConversations = () => {
-    getSharedConversationList().then(setConversations).catch(captureException);
+    getSharedConversationList()
+      .then(setConversations)
+      .catch(captureException)
+      .finally(off);
   };
 
   useLayoutEffect(() => {
@@ -109,7 +115,7 @@ export const SharedConversationsContainer: React.FC = () => {
   const renderSubTitle = () => {
     switch (conversations.length) {
       case 0:
-        return 'No messages';
+        return 'No conversations';
 
       case 1:
         return '1 conversation';
@@ -198,7 +204,6 @@ export const SharedConversationsContainer: React.FC = () => {
               bgColor: 'gray.200',
             },
           }}
-          {...props}
         />
         <Portal>
           <MenuList>
@@ -233,6 +238,13 @@ export const SharedConversationsContainer: React.FC = () => {
           title="Shared Conversations"
           icon={TbShare}
           description={renderSubTitle()}
+        />
+
+        {isLoading && <Loading />}
+
+        <Empty
+          hidden={isLoading && !conversations.length}
+          message="You don't have any shared conversation yet"
         />
 
         <VStack w="full" align="flex-start" mt={{ base: '5rem', md: '2rem' }}>
