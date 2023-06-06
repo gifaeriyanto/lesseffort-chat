@@ -1,6 +1,6 @@
+import { supabase } from 'api/supabase/prompts';
 import { standaloneToast } from 'index';
 import FileResizer from 'react-image-file-resizer';
-import { supabase } from 'store/supabase';
 
 const resizeFile = (file: File) =>
   new Promise((resolve) => {

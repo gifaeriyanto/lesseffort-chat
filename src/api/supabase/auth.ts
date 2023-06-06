@@ -1,6 +1,7 @@
+import { captureException } from '@sentry/react';
+import { supabase } from 'api/supabase/prompts';
 import { Plan } from 'components/pricingPlans';
 import { standaloneToast } from 'index';
-import { supabase } from 'store/supabase';
 
 export interface SignWithEmailParams {
   email: string;
@@ -148,4 +149,13 @@ export const getUser = async () => {
   }
 
   return res.data[0] as UserData;
+};
+
+export const getAccessToken = async () => {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    captureException(error);
+    return '';
+  }
+  return data.session?.access_token || '';
 };

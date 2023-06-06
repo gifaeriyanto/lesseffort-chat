@@ -2,6 +2,9 @@ import { RefObject } from 'react';
 import { captureException } from '@sentry/react';
 import { Chat, generateResponse, Message } from 'api/chat';
 import { defaultBotInstruction, OpenAIModel } from 'api/constants';
+import { getUser } from 'api/supabase/auth';
+import { getSavedMessages } from 'api/supabase/chat';
+import { supabase } from 'api/supabase/prompts';
 import { Rules } from 'components/chat/rules';
 import { Plan } from 'components/pricingPlans';
 import { getUnixTime } from 'date-fns';
@@ -10,9 +13,6 @@ import { standaloneToast } from 'index';
 import { prepend, reverse } from 'ramda';
 import { useIndexedDB } from 'react-indexed-db';
 import { getMessagesDB } from 'store/db/queries';
-import { supabase } from 'store/supabase';
-import { getUser } from 'store/supabase/auth';
-import { getSavedMessages } from 'store/supabase/chat';
 import { create } from 'zustand';
 
 export const modifyTemplate = (

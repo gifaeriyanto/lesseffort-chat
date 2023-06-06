@@ -9,7 +9,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Icon,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -18,22 +17,22 @@ import {
   Select,
   Skeleton,
   Text,
-  useBoolean,
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { ChatMessageAction } from 'components/chat/message';
-import { Empty } from 'components/empty';
-import { Search } from 'components/search';
-import { CreatePrompt } from 'containers/chat/createPrompt';
-import { TbFilter, TbThumbUp } from 'react-icons/tb';
 import {
   defaultOrder,
   getPage,
   getPrompts,
   getPromptsCount,
   PromptData,
-} from 'store/supabase';
+} from 'api/supabase/prompts';
+import { ChatMessageAction } from 'components/chat/message';
+import { Empty } from 'components/empty';
+import { Search } from 'components/search';
+import { CreatePrompt } from 'containers/chat/createPrompt';
+import { TbFilter } from 'react-icons/tb';
+import { useQuery } from 'react-query';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
   createIncrementArray,
@@ -42,12 +41,12 @@ import {
 } from 'utils/common';
 
 export enum PromptCategory {
-  'Copywriting' = 'Copywriting',
-  'Generative AI' = 'Generative AI',
-  'Marketing' = 'Marketing',
-  'Productivity' = 'Productivity',
-  'Software Engineering' = 'Software Engineering',
-  'Other' = 'Other',
+  'copywriting' = 'Copywriting',
+  'generativeAI' = 'Generative AI',
+  'marketing' = 'Marketing',
+  'productivity' = 'Productivity',
+  'softwareEngineering' = 'Software Engineering',
+  'other' = 'Other',
 }
 
 export interface StarterPromptsProps {
@@ -60,38 +59,49 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
   const [category, setCategory] = useState('');
-  const [prompts, setPrompts] = useState<PromptData[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [count, setCount] = useState(0);
-  const [isLoading, { on: onLoading, off: offLoading }] = useBoolean();
+
+  const fetchPrompts = () =>
+    Promise.all([
+      getPrompts({ page, pageSize, keyword, order, category }),
+      getPromptsCount({ keyword, category }),
+    ]);
+
+  const { data, isLoading, error, refetch } = useQuery(
+    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}`,
+    fetchPrompts,
+  );
+
+  useLayoutEffect(() => {
+    setPage(1);
+  }, [keyword, order, category]);
+
+  const [prompts, count] = useMemo(() => {
+    if (!data) {
+      return [[], 0];
+    }
+    return data;
+  }, [data]);
+
+  const isLastPage = useMemo(() => {
+    const lastPage = Math.ceil(count / pageSize);
+    return page >= lastPage;
+  }, [prompts, count]);
 
   const pageFromTo = useMemo(() => {
     const { from, to } = getPage(page, pageSize);
-    const _to = to + 1;
     return {
       from: from + 1,
-      to: (_to > count ? count : _to) || pageSize,
+      to: to + 1,
     };
   }, [page]);
 
   useLayoutEffect(() => {
-    setPage(1);
-  }, [count, order]);
-
-  useLayoutEffect(() => {
-    onLoading();
-    Promise.all([
-      getPrompts({ page, pageSize, keyword, order, category }),
-      getPromptsCount({ keyword, category }),
-    ])
-      .then((res) => {
-        setPrompts((res[0].data as PromptData[]) || []);
-        setCount(res[1].count || 0);
-      })
-      .catch(captureException)
-      .finally(offLoading);
-  }, [page, pageSize, keyword, order, category]);
+    if (error) {
+      captureException(error);
+    }
+  }, [error]);
 
   return (
     <>
@@ -122,7 +132,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           </Box>
         </Box>
         <Flex gap={4} w={{ base: 'full', md: 'auto' }}>
-          <CreatePrompt />
+          <CreatePrompt onSuccess={refetch} />
           <Popover>
             <PopoverTrigger>
               <ChatMessageAction
@@ -145,8 +155,10 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                   <FormControl>
                     <FormLabel fontSize="sm">Sort by</FormLabel>
                     <Select onChange={(e) => setOrder(e.currentTarget.value)}>
-                      <option value="votes">Top votes</option>
-                      <option value="views">Top views</option>
+                      <option value="usages">Top usage</option>
+                      <option value="usages_last_week">
+                        Top usage (weekly)
+                      </option>
                       <option value="created_at">Latest updates</option>
                     </Select>
                   </FormControl>
@@ -244,11 +256,12 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       {item.title}
                     </Box>
                     <Box fontSize="sm" color="gray.400" mb={4}>
-                      {item.category}
+                      {item.category} . by {item.author_name}
                     </Box>
                     <Box
                       fontSize="sm"
                       color="gray.300"
+                      fontStyle="italic"
                       _light={{ color: 'gray.400' }}
                     >
                       {item.description}
@@ -262,11 +275,9 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       pt={4}
                       _light={{ color: 'gray.400' }}
                     >
-                      <Box>{formatNumber(item.usages)} used</Box>
-                      <Box>.</Box>
-                      <Flex align="center" gap={2}>
-                        <Icon as={TbThumbUp} /> {formatNumber(item.votes)}
-                      </Flex>
+                      <Box>
+                        {item.usages ? formatNumber(item.usages) : 'Never'} used
+                      </Box>
                     </HStack>
                   </Flex>
                 </GridItem>
@@ -284,13 +295,13 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         justify="space-between"
         fontSize="sm"
         align="center"
-        hidden={count < pageSize && page === 1}
+        hidden={count <= pageSize && page === 1}
         _light={{
           borderColor: CustomColor.lightBorder,
         }}
       >
         <Box pl={2} color="gray.400">
-          {pageFromTo.from === pageFromTo.to ? (
+          {pageFromTo.from === pageFromTo.to || pageFromTo.to > count ? (
             <>
               Results: {formatLocaleNumber(count)} of{' '}
               {formatLocaleNumber(count)}
@@ -311,7 +322,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           </Button>
           <Button
             onClick={() => setPage((prev) => prev + 1)}
-            isDisabled={count < pageSize}
+            isDisabled={isLastPage}
           >
             Next
           </Button>

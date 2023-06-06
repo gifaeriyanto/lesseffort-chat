@@ -1,16 +1,6 @@
-import { captureException } from '@sentry/react';
+import { getAccessToken } from 'api/supabase/auth';
 import axios from 'axios';
 import { standaloneToast } from 'index';
-import { supabase } from 'store/supabase';
-
-export const getAccessToken = async () => {
-  const { data, error } = await supabase.auth.getSession();
-  if (error) {
-    captureException(error);
-    return '';
-  }
-  return data.session?.access_token || '';
-};
 
 export const APIInstance = axios.create({
   baseURL: 'https://api-subs.lesseffort.io',

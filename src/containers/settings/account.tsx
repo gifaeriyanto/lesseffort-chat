@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { Box, FormControl, FormLabel, Text, VStack } from '@chakra-ui/react';
-import { uploadFile } from 'store/supabase/bucket';
+import { uploadFile } from 'api/supabase/bucket';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';

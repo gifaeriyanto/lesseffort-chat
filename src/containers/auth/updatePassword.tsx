@@ -14,10 +14,10 @@ import {
   LightMode,
   useBoolean,
 } from '@chakra-ui/react';
+import { SignWithEmailParams, updatePassword } from 'api/supabase/auth';
 import { useForm } from 'react-hook-form';
 import { TbLock } from 'react-icons/tb';
 import { redirect } from 'react-router-dom';
-import { SignWithEmailParams, updatePassword } from 'store/supabase/auth';
 import { accentColor } from 'theme/foundations/colors';
 
 type UpdatePasswordParams = Pick<SignWithEmailParams, 'password'>;

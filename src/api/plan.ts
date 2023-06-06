@@ -1,6 +1,6 @@
 import { API } from 'api/api';
+import { getUser } from 'api/supabase/auth';
 import axios from 'axios';
-import { getUser } from 'store/supabase/auth';
 
 export enum PlanAction {
   cancel = 'cancel',

@@ -1,7 +1,7 @@
+import { supabase } from 'api/supabase/prompts';
+import { getUser } from 'api/supabase/auth';
 import { Plan } from 'components/pricingPlans';
 import { redirect } from 'react-router-dom';
-import { supabase } from 'store/supabase';
-import { getUser } from 'store/supabase/auth';
 
 export const withAuth = async () => {
   const res = await supabase.auth.getSession();

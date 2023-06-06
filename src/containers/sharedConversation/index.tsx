@@ -11,13 +11,13 @@ import {
   useBoolean,
   useColorMode,
 } from '@chakra-ui/react';
+import { getSharedConversation, SharedConversation } from 'api/supabase/chat';
 import { ChatMessagePreview } from 'components/chat/preview/message';
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { reverse } from 'ramda';
 import { TbCopy, TbMoon, TbSun } from 'react-icons/tb';
 import MetaTags from 'react-meta-tags';
 import { useParams } from 'react-router-dom';
-import { getSharedConversation, SharedConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { copyToClipboard } from 'utils/copy';
 import { shallow } from 'zustand/shallow';

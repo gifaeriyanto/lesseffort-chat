@@ -6,7 +6,6 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const baseStyle = definePartsStyle({
   dialog: {
-    maxW: { base: '90vw', md: 'md' },
     borderRadius: '2xl',
   },
   footer: {
@@ -16,4 +15,21 @@ const baseStyle = definePartsStyle({
 
 export const modalTheme = defineMultiStyleConfig({
   baseStyle,
+  sizes: {
+    md: {
+      dialog: {
+        maxW: { base: '90vw', md: 'md' },
+      },
+    },
+    lg: {
+      dialog: {
+        maxW: { base: '90vw', lg: 'lg' },
+      },
+    },
+    xl: {
+      dialog: {
+        maxW: { base: '90vw', xl: 'xl' },
+      },
+    },
+  },
 });

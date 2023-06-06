@@ -6,8 +6,8 @@ import {
   useRadioGroup,
   UseRadioProps,
 } from '@chakra-ui/react';
-import { supabase } from 'store/supabase';
-import { SharedConversation } from 'store/supabase/chat';
+import { supabase } from 'api/supabase/prompts';
+import { SharedConversation } from 'api/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { shallow } from 'zustand/shallow';

@@ -13,6 +13,7 @@ import {
   IconButton,
   LightMode,
   Tag,
+  Text,
   Tooltip,
   useBoolean,
   useDisclosure,
@@ -20,6 +21,8 @@ import {
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { Chat, Message } from 'api/chat';
+import { saveMessage } from 'api/supabase/chat';
+import { PromptData, usePrompt } from 'api/supabase/prompts';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { ChatRules, defaultRules, Rules } from 'components/chat/rules';
 import { SelectedMessage } from 'components/chat/selectedMessage';
@@ -43,8 +46,6 @@ import {
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/chat';
-import { PromptData } from 'store/supabase';
-import { saveMessage } from 'store/supabase/chat';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
 import { shallow } from 'zustand/shallow';
@@ -256,6 +257,9 @@ export const ChatMessagesContainer: React.FC = () => {
           },
           userMessage,
         );
+        if (template) {
+          await usePrompt(template.id);
+        }
       }
     } catch (error) {
       captureException(error);
@@ -284,9 +288,7 @@ export const ChatMessagesContainer: React.FC = () => {
         onSubmit={isTyping ? undefined : handleSendMessage}
         key={editingMessage?.id}
         placeholder={
-          template?.description
-            ? sanitizeString(template?.description)
-            : undefined
+          template?.hint ? sanitizeString(template?.hint) : undefined
         }
       />
     );
@@ -465,19 +467,14 @@ export const ChatMessagesContainer: React.FC = () => {
             icon={TbTemplate}
             onClose={() => setTemplate(undefined)}
             title={template.title}
-            // info={
-            //   <>
-            //     By{' '}
-            //     <Link
-            //       href={template.author_name}
-            //       target="_blank"
-            //       ml={1}
-            //       isTruncated
-            //     >
-            //       {template.author_name}
-            //     </Link>
-            //   </>
-            // }
+            info={
+              <>
+                By{' '}
+                <Text as="span" ml={1} isTruncated>
+                  {template.author_name}
+                </Text>
+              </>
+            }
           />
         )}
 

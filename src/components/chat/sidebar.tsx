@@ -29,6 +29,7 @@ import {
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
+import { signOut } from 'api/supabase/auth';
 import { ChatHistory } from 'components/chat/history';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { Search } from 'components/search';
@@ -49,7 +50,6 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
-import { signOut } from 'store/supabase/auth';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { toastForFreeUser } from 'utils/toasts';

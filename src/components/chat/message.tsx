@@ -34,6 +34,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Message } from 'api/chat';
+import { deleteSavedMessage, saveMessage } from 'api/supabase/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
 import { ResponsiveTableMd } from 'components/table';
@@ -52,7 +53,6 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { useChat } from 'store/chat';
-import { deleteSavedMessage, saveMessage } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { copyToClipboard } from 'utils/copy';
@@ -498,6 +498,12 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               borderBottomRadius: oldGeneratedMessages.length ? 0 : 'xl',
               '& > *:last-child': {
                 mb: 0,
+              },
+              '& > pre': {
+                borderRadius: 'lg',
+              },
+              '& > pre:first-child': {
+                mt: 2,
               },
               '& > pre:last-child': {
                 mb: 2,

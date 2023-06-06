@@ -31,13 +31,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { Empty } from 'components/empty';
-import { MainLayout } from 'components/layout';
-import { Loading } from 'components/loading';
-import MainNavbar from 'components/navbar/main';
-import { standaloneToast } from 'index';
-import { useForm } from 'react-hook-form';
-import { TbChevronDown, TbShare } from 'react-icons/tb';
 import {
   deleteSharedConversation,
   getSharedConversationList,
@@ -45,7 +38,14 @@ import {
   renameSharedConversation,
   SharedConversation,
   unpublishSharedConversation,
-} from 'store/supabase/chat';
+} from 'api/supabase/chat';
+import { Empty } from 'components/empty';
+import { MainLayout } from 'components/layout';
+import { Loading } from 'components/loading';
+import MainNavbar from 'components/navbar/main';
+import { standaloneToast } from 'index';
+import { useForm } from 'react-hook-form';
+import { TbChevronDown, TbShare } from 'react-icons/tb';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDate } from 'utils/common';
 

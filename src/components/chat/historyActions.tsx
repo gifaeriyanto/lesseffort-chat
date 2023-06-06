@@ -27,10 +27,10 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { shareConversation } from 'api/supabase/chat';
 import { useForm } from 'react-hook-form';
 import { TbChevronDown, TbShare } from 'react-icons/tb';
 import { useChat } from 'store/chat';
-import { shareConversation } from 'store/supabase/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';

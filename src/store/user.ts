@@ -1,7 +1,7 @@
 import { getUsages } from 'api/openai';
+import { UserData } from 'api/supabase/auth';
+import { getFileUrl } from 'api/supabase/bucket';
 import { Plan } from 'components/pricingPlans';
-import { UserData } from 'store/supabase/auth';
-import { getFileUrl } from 'store/supabase/bucket';
 import { create } from 'zustand';
 
 export const useUsage = create<{

@@ -14,10 +14,10 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { PromptData } from 'api/supabase/prompts';
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { StarterPrompts } from 'containers/chat/starterPrompts';
 import { TbSettings, TbTemplate } from 'react-icons/tb';
-import { PromptData } from 'store/supabase';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface StarterContainerProps {

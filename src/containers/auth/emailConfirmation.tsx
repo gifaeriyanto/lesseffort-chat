@@ -9,9 +9,9 @@ import {
   Text,
   useBoolean,
 } from '@chakra-ui/react';
+import { resendEmailConfirmation } from 'api/supabase/auth';
 import { TbSend } from 'react-icons/tb';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { resendEmailConfirmation } from 'store/supabase/auth';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 const COUNT_DOWN_SECONDS = 60;

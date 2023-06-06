@@ -2,6 +2,7 @@ import { useLayoutEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { captureException } from '@sentry/react';
+import { getUser } from 'api/supabase/auth';
 import { freeUser, noAuth, withAuth } from 'components/protectedRoute';
 import { EmailConfirmationContainer } from 'containers/auth/emailConfirmation';
 import { ForgotContainer } from 'containers/auth/forgot';
@@ -18,9 +19,10 @@ import { ManageSubscriptionContainer } from 'containers/subscription';
 import CacheBuster from 'react-cache-buster';
 import ReactGA from 'react-ga4';
 import { initDB } from 'react-indexed-db';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DBConfig, upgradeDB } from 'store/db/config';
-import { getUser } from 'store/supabase/auth';
 import { useUserData } from 'store/user';
 import { theme } from 'theme';
 import { env } from 'utils/env';
@@ -104,6 +106,8 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 function App() {
   const isProduction = process.env.NODE_ENV === 'production';
   const setUser = useUserData((state) => state.setUser, shallow);
@@ -120,9 +124,12 @@ function App() {
       isVerboseMode={false}
       metaFileDirectory={'.'}
     >
-      <ChakraProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ChakraProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider theme={theme}>
+          <RouterProvider router={router} />
+        </ChakraProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </CacheBuster>
   );
 }

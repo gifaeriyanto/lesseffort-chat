@@ -1,9 +1,9 @@
 import { captureException } from '@sentry/react';
 import { Message } from 'api/chat';
+import { getUser } from 'api/supabase/auth';
+import { getLongLifeFileUrl } from 'api/supabase/bucket';
+import { supabase } from 'api/supabase/prompts';
 import { standaloneToast } from 'index';
-import { supabase } from 'store/supabase';
-import { getUser } from 'store/supabase/auth';
-import { getLongLifeFileUrl } from 'store/supabase/bucket';
 import { accentColor } from 'theme/foundations/colors';
 
 export interface SavedMessage {

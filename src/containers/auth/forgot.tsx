@@ -13,9 +13,9 @@ import {
   LightMode,
   useBoolean,
 } from '@chakra-ui/react';
+import { forgotPassword, SignWithEmailParams } from 'api/supabase/auth';
 import { useForm } from 'react-hook-form';
 import { TbMail } from 'react-icons/tb';
-import { forgotPassword, SignWithEmailParams } from 'store/supabase/auth';
 import { accentColor } from 'theme/foundations/colors';
 
 type ForgotParams = Pick<SignWithEmailParams, 'email'>;
