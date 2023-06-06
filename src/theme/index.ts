@@ -68,7 +68,7 @@ const config: ThemeOverride = {
         borderRadius: 'full',
       },
       _selection: {
-        bgColor: accentColor('500'),
+        bgColor: accentColor('600'),
         color: 'white',
       },
       'button:focus-visible, button[data-focus-visible], a:focus-visible, a[data-focus-visible]':
