@@ -502,7 +502,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               '& > pre': {
                 borderRadius: 'lg',
               },
-              '& > pre:first-child': {
+              '& > pre:first-of-type': {
                 mt: 2,
               },
               '& > pre:last-child': {

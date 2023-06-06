@@ -1,5 +1,5 @@
-import { supabase } from 'api/supabase/prompts';
 import { getUser } from 'api/supabase/auth';
+import { supabase } from 'api/supabase/prompts';
 import { Plan } from 'components/pricingPlans';
 import { redirect } from 'react-router-dom';
 
