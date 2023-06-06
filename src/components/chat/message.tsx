@@ -603,9 +603,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                   bgColor="gray.500"
                   p={4}
                   borderRadius="xl"
+                  w="full"
                   _light={{ bgColor: 'gray.100' }}
                 >
-                  <Box>{item}</Box>
+                  <Box mb={4}>{item}</Box>
                   <Flex justify="flex-end">
                     <LightMode>
                       <Button
