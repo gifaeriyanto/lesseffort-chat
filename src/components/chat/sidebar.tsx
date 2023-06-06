@@ -38,6 +38,7 @@ import {
   TbDiamond,
   TbDiscountCheck,
   TbLogout,
+  TbMoon,
   TbMoonFilled,
   TbPlus,
   TbSearch,
@@ -219,7 +220,7 @@ export const ChatSidebar: React.FC = () => {
           {!isLessThanMd && !isFreeUser && (
             <MenuItem onClick={handleToggleColorMode}>
               {colorMode === 'light' ? (
-                <Icon as={TbMoonFilled} />
+                <Icon as={TbMoon} />
               ) : (
                 <Icon as={TbSun} />
               )}

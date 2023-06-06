@@ -14,7 +14,7 @@ import {
 import { ChatMessagePreview } from 'components/chat/preview/message';
 import { AccentColorRadio } from 'components/radios/accentColor';
 import { reverse } from 'ramda';
-import { TbCopy, TbMoonFilled, TbSun } from 'react-icons/tb';
+import { TbCopy, TbMoon, TbSun } from 'react-icons/tb';
 import MetaTags from 'react-meta-tags';
 import { useParams } from 'react-router-dom';
 import { getSharedConversation, SharedConversation } from 'store/supabase/chat';
@@ -119,7 +119,7 @@ export const SharedConversationContainer: React.FC = () => {
             />
             <IconButton
               variant="ghost"
-              icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+              icon={colorMode === 'light' ? <TbMoon /> : <TbSun />}
               aria-label="Toggle color mode"
               onClick={toggleColorMode}
               color="gray.400"
