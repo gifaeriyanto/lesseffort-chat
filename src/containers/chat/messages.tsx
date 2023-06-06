@@ -12,7 +12,6 @@ import {
   Icon,
   IconButton,
   LightMode,
-  Link,
   Tag,
   Tooltip,
   useBoolean,
@@ -44,7 +43,7 @@ import {
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/chat';
-import { Prompt } from 'store/supabase';
+import { PromptData } from 'store/supabase';
 import { saveMessage } from 'store/supabase/chat';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
@@ -99,7 +98,7 @@ export const ChatMessagesContainer: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
   const [readyToUse, setReadyToUse] = useState(false);
   const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
-  const [template, setTemplate] = useState<Prompt | undefined>(undefined);
+  const [template, setTemplate] = useState<PromptData | undefined>(undefined);
   const [chatRulesCount, setChatRulesCount] = useState(0);
   const [chatRules, setChatRules] = useState<Rules>(defaultRules);
   const {
@@ -240,7 +239,7 @@ export const ChatMessagesContainer: React.FC = () => {
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
       content: message,
-      template: template?.Prompt || '',
+      template: template?.prompt || '',
       rules: chatRules,
     };
 
@@ -285,8 +284,8 @@ export const ChatMessagesContainer: React.FC = () => {
         onSubmit={isTyping ? undefined : handleSendMessage}
         key={editingMessage?.id}
         placeholder={
-          template?.PromptHint
-            ? sanitizeString(template?.PromptHint)
+          template?.description
+            ? sanitizeString(template?.description)
             : undefined
         }
       />
@@ -465,20 +464,20 @@ export const ChatMessagesContainer: React.FC = () => {
           <SelectedMessage
             icon={TbTemplate}
             onClose={() => setTemplate(undefined)}
-            title={template.Title}
-            info={
-              <>
-                By{' '}
-                <Link
-                  href={template.AuthorURL}
-                  target="_blank"
-                  ml={1}
-                  isTruncated
-                >
-                  {template.AuthorName}
-                </Link>
-              </>
-            }
+            title={template.title}
+            // info={
+            //   <>
+            //     By{' '}
+            //     <Link
+            //       href={template.author_name}
+            //       target="_blank"
+            //       ml={1}
+            //       isTruncated
+            //     >
+            //       {template.author_name}
+            //     </Link>
+            //   </>
+            // }
           />
         )}
 

@@ -10,7 +10,6 @@ import {
   GridItem,
   HStack,
   Icon,
-  Link,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -19,7 +18,6 @@ import {
   Select,
   Skeleton,
   Text,
-  Tooltip,
   useBoolean,
   VStack,
 } from '@chakra-ui/react';
@@ -27,13 +25,14 @@ import { captureException } from '@sentry/react';
 import { ChatMessageAction } from 'components/chat/message';
 import { Empty } from 'components/empty';
 import { Search } from 'components/search';
-import { TbFilter, TbInfoCircle, TbThumbUp } from 'react-icons/tb';
+import { CreatePrompt } from 'containers/chat/createPrompt';
+import { TbFilter, TbThumbUp } from 'react-icons/tb';
 import {
   defaultOrder,
   getPage,
   getPrompts,
   getPromptsCount,
-  Prompt,
+  PromptData,
 } from 'store/supabase';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
@@ -42,22 +41,17 @@ import {
   formatNumber,
 } from 'utils/common';
 
-const COMMUNITIES: Record<string, string> = {
-  'Copywriting-00ea56f446414284': 'Copywriting',
-  'DevOps-f3e52afbf831197f': 'DevOps',
-  'Generative-AI-b983edfcaa490850': 'Generative AI',
-  'Marketing-cc647f5cf02ffd02': 'Marketing',
-  'OperatingSystems-8a5ca60d957fe707': 'Operating Systems',
-  'Productivity-b5a49cdd0796137a': 'Productivity',
-  'SaaS-84c5d6a7b8e9f0c2': 'SaaS',
-  'SEO-84c5d6a7b8e9f0c1': 'SEO',
-  'Applications-f69b52b4213a6bd3': 'Software Applications',
-  'SoftwareEngineering-f1858b980c341d28': 'Software Engineering',
-  'Unsure-f69c57b424376b23': 'UNSURE',
-};
+export enum PromptCategory {
+  'Copywriting' = 'Copywriting',
+  'Generative AI' = 'Generative AI',
+  'Marketing' = 'Marketing',
+  'Productivity' = 'Productivity',
+  'Software Engineering' = 'Software Engineering',
+  'Other' = 'Other',
+}
 
 export interface StarterPromptsProps {
-  onSelectPrompt: (prompt: Prompt) => void;
+  onSelectPrompt: (prompt: PromptData) => void;
 }
 
 export const StarterPrompts: React.FC<StarterPromptsProps> = ({
@@ -65,8 +59,8 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 }) => {
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
-  const [community, setCommunity] = useState('');
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [category, setCategory] = useState('');
+  const [prompts, setPrompts] = useState<PromptData[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [count, setCount] = useState(0);
@@ -88,16 +82,16 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   useLayoutEffect(() => {
     onLoading();
     Promise.all([
-      getPrompts({ page, pageSize, keyword, order, community }),
-      getPromptsCount({ keyword, community }),
+      getPrompts({ page, pageSize, keyword, order, category }),
+      getPromptsCount({ keyword, category }),
     ])
       .then((res) => {
-        setPrompts((res[0].data as Prompt[]) || []);
+        setPrompts((res[0].data as PromptData[]) || []);
         setCount(res[1].count || 0);
       })
       .catch(captureException)
       .finally(offLoading);
-  }, [page, pageSize, keyword, order, community]);
+  }, [page, pageSize, keyword, order, category]);
 
   return (
     <>
@@ -113,11 +107,6 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
               Starter
             </Text>
             <Text>Prompts</Text>
-            <Tooltip label="The source of these prompts is from AIPRM.">
-              <Box>
-                <Icon as={TbInfoCircle} fontSize="sm" />
-              </Box>
-            </Tooltip>
           </Flex>
           <Box fontSize="sm" color="gray.400">
             {!!count ? (
@@ -133,6 +122,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           </Box>
         </Box>
         <Flex gap={4} w={{ base: 'full', md: 'auto' }}>
+          <CreatePrompt />
           <Popover>
             <PopoverTrigger>
               <ChatMessageAction
@@ -148,26 +138,26 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                 }}
               />
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent borderRadius="xl">
               <PopoverArrow />
               <PopoverBody>
                 <VStack spacing={4}>
                   <FormControl>
-                    <FormLabel>Sort by</FormLabel>
+                    <FormLabel fontSize="sm">Sort by</FormLabel>
                     <Select onChange={(e) => setOrder(e.currentTarget.value)}>
-                      <option value="Votes">Top votes</option>
-                      <option value="Views">Top views</option>
-                      <option value="CreationTime">Latest updates</option>
+                      <option value="votes">Top votes</option>
+                      <option value="views">Top views</option>
+                      <option value="created_at">Latest updates</option>
                     </Select>
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Topic</FormLabel>
+                    <FormLabel fontSize="sm">Category</FormLabel>
                     <Select
-                      onChange={(e) => setCommunity(e.currentTarget.value)}
+                      onChange={(e) => setCategory(e.currentTarget.value)}
                     >
                       <option value="">All</option>
-                      {Object.entries(COMMUNITIES).map(([key, value]) => (
-                        <option value={key} key={key}>
+                      {Object.values(PromptCategory).map((value) => (
+                        <option value={value} key={value}>
                           {value}
                         </option>
                       ))}
@@ -186,7 +176,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       <Empty
         hidden={
           isLoading ||
-          !!prompts.filter((item) => item.Title.match(new RegExp(keyword, 'i')))
+          !!prompts.filter((item) => item.title.match(new RegExp(keyword, 'i')))
             .length
         }
         message="No prompts match your filter"
@@ -227,9 +217,9 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         ) : (
           <>
             {prompts
-              .filter((item) => item.Title.match(new RegExp(keyword, 'i')))
+              .filter((item) => item.title.match(new RegExp(keyword, 'i')))
               .map((item) => (
-                <GridItem key={item.ID}>
+                <GridItem key={item.id}>
                   <Flex
                     border="1px solid"
                     borderColor={CustomColor.border}
@@ -251,24 +241,17 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                     }}
                   >
                     <Box fontWeight="bold" fontSize="lg">
-                      {item.Title}
+                      {item.title}
                     </Box>
                     <Box fontSize="sm" color="gray.400" mb={4}>
-                      <Link
-                        href={item.AuthorURL}
-                        target="_blank"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {item.AuthorName}
-                      </Link>{' '}
-                      . {COMMUNITIES[item.Community]}
+                      {item.category}
                     </Box>
                     <Box
                       fontSize="sm"
                       color="gray.300"
                       _light={{ color: 'gray.400' }}
                     >
-                      {item.Teaser}
+                      {item.description}
                     </Box>
 
                     <HStack
@@ -279,10 +262,10 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       pt={4}
                       _light={{ color: 'gray.400' }}
                     >
-                      <Box>{formatNumber(item.Views)} views</Box>
+                      <Box>{formatNumber(item.usages)} used</Box>
                       <Box>.</Box>
                       <Flex align="center" gap={2}>
-                        <Icon as={TbThumbUp} /> {formatNumber(item.Votes)}
+                        <Icon as={TbThumbUp} /> {formatNumber(item.votes)}
                       </Flex>
                     </HStack>
                   </Flex>

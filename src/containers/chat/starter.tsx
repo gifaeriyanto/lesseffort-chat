@@ -17,11 +17,11 @@ import {
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { StarterPrompts } from 'containers/chat/starterPrompts';
 import { TbSettings, TbTemplate } from 'react-icons/tb';
-import { Prompt } from 'store/supabase';
+import { PromptData } from 'store/supabase';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface StarterContainerProps {
-  onSelectPrompt: (prompt: Prompt) => void;
+  onSelectPrompt: (prompt: PromptData) => void;
 }
 
 export const StarterContainer: React.FC<StarterContainerProps> = ({

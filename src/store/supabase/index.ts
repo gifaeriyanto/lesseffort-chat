@@ -3,25 +3,18 @@ import { env } from 'utils/env';
 
 export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
-export interface Prompt {
-  AuthorName: string;
-  AuthorURL: string;
-  Category: string;
-  Community: string;
-  CreationTime: string;
-  Help: string;
-  ID: number;
-  OwnPrompt: boolean;
-  Prompt: string;
-  PromptHint: string;
-  PromptPackageID: string;
-  PromptTypeNo: number;
-  RevisionTime: string;
-  Teaser: string;
-  Title: string;
-  Usages: number;
-  Views: number;
-  Votes: number;
+export interface PromptData {
+  category: string;
+  created_at: number;
+  description: string;
+  id: number;
+  prompt: string;
+  status: 'public' | 'private';
+  title: string;
+  updated_at: number;
+  usages: number;
+  user_id: string;
+  votes: number;
 }
 
 export interface PromptFilters {
@@ -29,10 +22,10 @@ export interface PromptFilters {
   pageSize?: number;
   keyword?: string;
   order?: string;
-  community?: string;
+  category?: string;
 }
 
-export const defaultOrder = 'Votes';
+export const defaultOrder = 'votes';
 
 export const getPage = (page: number, size: number) => {
   const from = (page - 1) * size;
@@ -48,26 +41,26 @@ export const getPrompts = ({
   pageSize = 10,
   keyword = '',
   order = defaultOrder,
-  community = '',
+  category = '',
 }: PromptFilters) => {
   const { from, to } = getPage(page, pageSize);
 
   return supabase
-    .from('chat_prompt_v3')
+    .from('chat_prompt_v4')
     .select()
-    .ilike('Title', `%${keyword}%`)
-    .ilike('Community', `%${community}%`)
+    .ilike('title', `%${keyword}%`)
+    .ilike('category', `%${category}%`)
     .order(order, { ascending: false })
     .range(from, to);
 };
 
 export const getPromptsCount = ({
   keyword = '',
-  community = '',
+  category = '',
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
   return supabase
-    .from('chat_prompt_v3')
+    .from('chat_prompt_v4')
     .select('*', { count: 'exact', head: true })
-    .ilike('Title', `%${keyword}%`)
-    .ilike('Community', `%${community}%`);
+    .ilike('title', `%${keyword}%`)
+    .ilike('category', `%${category}%`);
 };
