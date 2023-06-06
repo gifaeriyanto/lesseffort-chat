@@ -192,7 +192,7 @@ export const ChatSidebar: React.FC = () => {
             _light={{ bgColor: 'gray.200' }}
           />
         </MenuButton>
-        <MenuList>
+        <MenuList fontWeight="normal">
           <MenuItem onClick={openSavedMessages}>
             <Icon as={TbBookmark} />
             <Text ml={4}>Saved messages</Text>
