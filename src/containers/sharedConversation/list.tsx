@@ -243,7 +243,7 @@ export const SharedConversationsContainer: React.FC = () => {
         {isLoading && <Loading />}
 
         <Empty
-          hidden={isLoading && !conversations.length}
+          hidden={isLoading || !!conversations.length}
           message="You don't have any shared conversation yet"
         />
 
