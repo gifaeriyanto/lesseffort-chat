@@ -22,8 +22,8 @@ const config: ThemeOverride = {
     Textarea: textareaTheme,
   },
   config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
+    initialColorMode: 'system',
+    useSystemColorMode: true,
   },
   fonts: {
     body: '"Inter", sans-serif',
