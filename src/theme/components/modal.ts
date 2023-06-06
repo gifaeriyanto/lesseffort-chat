@@ -16,6 +16,9 @@ export const modalTheme = defineMultiStyleConfig({
         maxW: { base: '90vw', md: 'md' },
         borderRadius: '2xl',
       },
+      footer: {
+        pb: 6,
+      },
     },
   },
 });

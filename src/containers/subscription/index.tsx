@@ -269,7 +269,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
             )}
           </ModalBody>
 
-          <ModalFooter pb={6}>
+          <ModalFooter>
             <Button
               variant="ghost"
               onClick={onCloseCancelSubsModal}
@@ -311,7 +311,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
             </Alert>
           </ModalBody>
 
-          <ModalFooter pb={6}>
+          <ModalFooter>
             <LightMode>
               <Button
                 colorScheme={user?.cancelled ? accentColor() : 'red'}
