@@ -184,6 +184,12 @@ export const ChatMessagePreview: React.FC<
               '& > *:last-child': {
                 mb: 0,
               },
+              '& > pre': {
+                borderRadius: 'lg',
+              },
+              '& > pre:first-of-type': {
+                mt: 2,
+              },
               '& > pre:last-child': {
                 mb: 2,
               },
