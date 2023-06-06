@@ -53,7 +53,7 @@ export const getPrompts = ({
   const { from, to } = getPage(page, pageSize);
 
   return supabase
-    .from('chat_prompt_v4')
+    .from('chat_prompt_v3')
     .select()
     .ilike('Title', `%${keyword}%`)
     .ilike('Community', `%${community}%`)
@@ -66,7 +66,7 @@ export const getPromptsCount = ({
   community = '',
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
   return supabase
-    .from('chat_prompt_v4')
+    .from('chat_prompt_v3')
     .select('*', { count: 'exact', head: true })
     .ilike('Title', `%${keyword}%`)
     .ilike('Community', `%${community}%`);

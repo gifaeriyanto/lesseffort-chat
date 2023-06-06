@@ -185,8 +185,8 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
       <Empty
         hidden={
-          isLoading &&
-          !prompts.filter((item) => item.Title.match(new RegExp(keyword, 'i')))
+          isLoading ||
+          !!prompts.filter((item) => item.Title.match(new RegExp(keyword, 'i')))
             .length
         }
         message="No prompts match your filter"
