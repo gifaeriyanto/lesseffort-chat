@@ -125,7 +125,12 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
           <form onSubmit={handleSubmit(handleSavePrompt)}>
             <ModalBody>
               <VStack spacing={4}>
-                <SimpleGrid columns={2} spacing={8} w="full">
+                <SimpleGrid
+                  columns={{ base: 1, md: 2 }}
+                  spacing={4}
+                  w="full"
+                  alignItems="baseline"
+                >
                   <FormControl isInvalid={!!errors.title}>
                     <FormLabel>Title</FormLabel>
                     <Input
