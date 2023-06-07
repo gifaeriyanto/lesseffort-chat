@@ -108,6 +108,11 @@ export const updatePrompt = async (
 
   if (error) {
     captureException(error);
+  } else {
+    standaloneToast({
+      title: 'Successfully update the prompt data',
+      status: 'success',
+    });
   }
 };
 
@@ -119,6 +124,11 @@ export const deletePrompt = async (promptId: number) => {
 
   if (error) {
     captureException(error);
+  } else {
+    standaloneToast({
+      title: 'Successfully delete the prompt',
+      status: 'success',
+    });
   }
 };
 

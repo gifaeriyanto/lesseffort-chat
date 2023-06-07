@@ -1,5 +1,8 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
   ButtonGroup,
@@ -9,20 +12,36 @@ import {
   Grid,
   GridItem,
   HStack,
+  Icon,
+  IconButton,
+  LightMode,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Portal,
   Select,
   Skeleton,
   Tag,
   Text,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import {
   defaultOrder,
+  deletePrompt,
   getPage,
   getPrompts,
   getPromptsCount,
@@ -32,8 +51,15 @@ import { ChatMessageAction } from 'components/chat/message';
 import { Empty } from 'components/empty';
 import { Search } from 'components/search';
 import { CreatePrompt } from 'containers/chat/createPrompt';
-import { TbFilter } from 'react-icons/tb';
-import { useQuery } from 'react-query';
+import {
+  TbChevronDown,
+  TbFilter,
+  TbPencil,
+  TbTemplate,
+  TbTrash,
+} from 'react-icons/tb';
+import { useMutation, useQuery } from 'react-query';
+import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
   createIncrementArray,
@@ -63,6 +89,15 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [category, setCategory] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [editingPrompt, setEditingPrompt] = useState<PromptData | undefined>(
+    undefined,
+  );
+  const user = useUserData((state) => state.user);
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
 
   const fetchPrompts = () =>
     Promise.all([
@@ -74,6 +109,14 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
     `prompts-${page}-${pageSize}-${order}-${keyword}-${category}`,
     fetchPrompts,
   );
+
+  const { mutate: deletePromptMutate, isLoading: isLoadingDeletePrompt } =
+    useMutation('delete-prompt', deletePrompt, {
+      onSuccess: () => {
+        onCloseDeleteModal();
+        refetch();
+      },
+    });
 
   useLayoutEffect(() => {
     setPage(1);
@@ -104,6 +147,59 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       captureException(error);
     }
   }, [error]);
+
+  const handleDelete = () => {
+    if (!editingPrompt) {
+      return;
+    }
+    deletePromptMutate(editingPrompt.id);
+  };
+
+  const renderActions = (prompt: PromptData) => {
+    if (prompt.user_id !== user?.id) {
+      return null;
+    }
+
+    const handleAction = (action: Function) => () => {
+      setEditingPrompt(prompt);
+      action();
+    };
+
+    return (
+      <>
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={IconButton}
+            icon={<TbChevronDown />}
+            aria-label="Action menu"
+            variant="ghost"
+            color="gray.400"
+            fontSize="lg"
+            size="xs"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <Portal>
+            <MenuList fontWeight="normal" onClick={(e) => e.stopPropagation()}>
+              <MenuItem isDisabled>
+                <Text fontSize="sm">Only you can take this action</Text>
+              </MenuItem>
+              <MenuItem onClick={handleAction(onOpenDeleteModal)}>
+                <Icon as={TbPencil} />
+                <Text ml={4}>Edit prompt</Text>
+              </MenuItem>
+              <MenuItem
+                color="red.400"
+                onClick={handleAction(onOpenDeleteModal)}
+              >
+                <Icon as={TbTrash} />
+                <Text ml={4}>Delete prompt</Text>
+              </MenuItem>
+            </MenuList>
+          </Portal>
+        </Menu>
+      </>
+    );
+  };
 
   const renderStatus = (status: PromptData['status']) => {
     switch (status) {
@@ -275,9 +371,12 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       borderColor: CustomColor.lightBorder,
                     }}
                   >
-                    <Box fontWeight="bold" fontSize="lg">
-                      {item.title}
-                    </Box>
+                    <Flex justify="space-between">
+                      <Box fontWeight="bold" fontSize="lg">
+                        {item.title}
+                      </Box>
+                      {renderActions(item)}
+                    </Flex>
                     <Box fontSize="sm" color="gray.400" mb={4}>
                       {item.category} . by {item.author_name}
                     </Box>
@@ -353,6 +452,43 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           </Button>
         </ButtonGroup>
       </Flex>
+
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete prompt</ModalHeader>
+          <ModalBody>
+            <Alert borderRadius="xl" mb={4} status="error" fontSize="sm">
+              <AlertIcon alignSelf="baseline" as={TbTemplate} />
+              <AlertDescription>{editingPrompt?.title}</AlertDescription>
+            </Alert>
+            <Box>
+              This action can't be undone. Are you sure you want to delete{' '}
+              prompt?
+            </Box>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              variant="ghost"
+              onClick={onCloseDeleteModal}
+              mr={4}
+              isDisabled={isLoadingDeletePrompt}
+            >
+              Cancel
+            </Button>
+            <LightMode>
+              <Button
+                colorScheme="red"
+                onClick={handleDelete}
+                isLoading={isLoadingDeletePrompt}
+              >
+                Delete
+              </Button>
+            </LightMode>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
