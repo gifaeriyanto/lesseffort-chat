@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   Box,
   Button,
@@ -30,19 +30,30 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { createPrompt, PromptParams } from 'api/supabase/prompts';
+import {
+  createPrompt,
+  PromptData,
+  PromptParams,
+  updatePrompt,
+} from 'api/supabase/prompts';
 import { PromptCategory } from 'containers/chat/starterPrompts';
 import { useForm } from 'react-hook-form';
 import { TbInfoCircle, TbPlus } from 'react-icons/tb';
 import { accentColor } from 'theme/foundations/colors';
 
-type FormInputs = PromptParams;
+type FormInputs = PromptParams & Pick<PromptData, 'id'>;
 
 export interface CreatePromptProps {
+  defaultValue?: PromptData;
   onSuccess?: () => void;
+  onCloseModal?: () => void;
 }
 
-export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
+export const CreatePrompt: React.FC<CreatePromptProps> = ({
+  defaultValue,
+  onSuccess,
+  onCloseModal,
+}) => {
   const [isLessThanXl] = useMediaQuery('(max-width: 80em)');
   const {
     register,
@@ -54,8 +65,16 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
   const { isOpen, onOpen, onClose } = useDisclosure({
     onClose: () => {
       off();
+      onCloseModal?.();
+      resetForm();
     },
   });
+
+  useLayoutEffect(() => {
+    if (defaultValue) {
+      onOpen();
+    }
+  }, [defaultValue]);
 
   const promptValidator = (value: string) => {
     if (!value.includes('[PROMPT]')) {
@@ -69,8 +88,13 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
       ...value,
       status: value.status || 'private',
     };
+    if (defaultValue?.id) {
+      _value['id'] = defaultValue.id;
+    }
+
     on();
-    createPrompt(_value)
+    const fetcher = defaultValue ? updatePrompt : createPrompt;
+    fetcher(_value)
       .then(onSuccess)
       .finally(() => {
         onClose();
@@ -107,7 +131,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
             <Flex gap={2} align="center">
               <Box>
                 <Text color={accentColor('500')} as="span">
-                  Create
+                  {defaultValue ? 'Edit' : 'Create'}
                 </Text>{' '}
                 Prompt
               </Box>
@@ -134,6 +158,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
                   <FormControl isInvalid={!!errors.title}>
                     <FormLabel>Title</FormLabel>
                     <Input
+                      defaultValue={defaultValue?.title}
                       {...register('title', {
                         required: {
                           message: 'Title cannot be empty',
@@ -151,6 +176,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
                   <FormControl isInvalid={!!errors.category}>
                     <FormLabel fontSize="sm">Category</FormLabel>
                     <Select
+                      defaultValue={defaultValue?.category}
                       placeholder="Select category"
                       {...register('category', {
                         required: {
@@ -176,6 +202,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
                 <FormControl isInvalid={!!errors.description}>
                   <FormLabel>Description</FormLabel>
                   <Input
+                    defaultValue={defaultValue?.description}
                     {...register('description', {
                       required: {
                         message: 'Description cannot be empty',
@@ -202,6 +229,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
                 <FormControl isInvalid={!!errors.hint}>
                   <FormLabel>Hint</FormLabel>
                   <Input
+                    defaultValue={defaultValue?.hint}
                     placeholder="e.q. Your keyword, Title for your article, etc."
                     {...register('hint', {
                       required: {
@@ -226,6 +254,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
                 <FormControl isInvalid={!!errors.prompt}>
                   <FormLabel>Prompt template</FormLabel>
                   <Textarea
+                    defaultValue={defaultValue?.prompt}
                     placeholder="e.q. Fix grammar: [PROMPT]"
                     rows={10}
                     resize="none"
@@ -261,7 +290,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
               <Flex justify="space-between" align="center" w="full" gap={8}>
                 <FormControl isInvalid={!!errors.status}>
                   <Checkbox
-                    defaultChecked
+                    defaultChecked={defaultValue?.status !== 'private'}
                     {...register('status')}
                     value="pending"
                   >

@@ -92,6 +92,9 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [editingPrompt, setEditingPrompt] = useState<PromptData | undefined>(
     undefined,
   );
+  const [deletingPrompt, setDeletingPrompt] = useState<PromptData | undefined>(
+    undefined,
+  );
   const user = useUserData((state) => state.user);
   const {
     isOpen: isOpenDeleteModal,
@@ -148,22 +151,19 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
     }
   }, [error]);
 
+  const handleEdit = () => {};
+
   const handleDelete = () => {
-    if (!editingPrompt) {
+    if (!deletingPrompt) {
       return;
     }
-    deletePromptMutate(editingPrompt.id);
+    deletePromptMutate(deletingPrompt.id);
   };
 
   const renderActions = (prompt: PromptData) => {
     if (prompt.user_id !== user?.id) {
       return null;
     }
-
-    const handleAction = (action: Function) => () => {
-      setEditingPrompt(prompt);
-      action();
-    };
 
     return (
       <>
@@ -183,13 +183,20 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
               <MenuItem isDisabled>
                 <Text fontSize="sm">Only you can take this action</Text>
               </MenuItem>
-              <MenuItem onClick={handleAction(onOpenDeleteModal)}>
+              <MenuItem
+                onClick={() => {
+                  setEditingPrompt(prompt);
+                }}
+              >
                 <Icon as={TbPencil} />
                 <Text ml={4}>Edit prompt</Text>
               </MenuItem>
               <MenuItem
                 color="red.400"
-                onClick={handleAction(onOpenDeleteModal)}
+                onClick={() => {
+                  setDeletingPrompt(prompt);
+                  onOpenDeleteModal();
+                }}
               >
                 <Icon as={TbTrash} />
                 <Text ml={4}>Delete prompt</Text>
@@ -251,7 +258,11 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           </Box>
         </Box>
         <Flex gap={4} w={{ base: 'full', md: 'auto' }}>
-          <CreatePrompt onSuccess={refetch} />
+          <CreatePrompt
+            onSuccess={refetch}
+            defaultValue={editingPrompt}
+            onCloseModal={() => setEditingPrompt(undefined)}
+          />
           <Popover>
             <PopoverTrigger>
               <ChatMessageAction
@@ -460,10 +471,10 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
           <ModalBody>
             <Alert borderRadius="xl" mb={4} status="error" fontSize="sm">
               <AlertIcon alignSelf="baseline" as={TbTemplate} />
-              <AlertDescription>{editingPrompt?.title}</AlertDescription>
+              <AlertDescription>{deletingPrompt?.title}</AlertDescription>
             </Alert>
             <Box>
-              This action can't be undone. Are you sure you want to delete{' '}
+              This action can't be undone. Are you sure you want to delete this
               prompt?
             </Box>
           </ModalBody>
