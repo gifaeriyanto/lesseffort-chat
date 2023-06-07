@@ -578,8 +578,9 @@ export const ChatMessagesContainer: React.FC = () => {
                 right="1rem"
                 top="-4rem"
                 backdropFilter="blur(6px)"
+                border="1px solid"
+                borderColor="whiteAlpha.200"
                 _light={{
-                  border: '1px solid',
                   borderColor: CustomColor.lightBorder,
                 }}
               />
