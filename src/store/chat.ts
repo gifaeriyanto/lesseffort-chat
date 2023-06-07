@@ -258,8 +258,8 @@ export const useChat = create<{
 
         case 429:
           standaloneToast({
-            title: 'Oops! Something went wrong. 😕',
-            description: `${error.message}\nError status: ${status}`,
+            title: 'Too many requests. Rate limit exceeded 😓',
+            description: `We're sorry, but our system has received too many requests from you in a short period of time. Please wait a few moments and try again later.`,
             status: 'error',
           });
           break;
