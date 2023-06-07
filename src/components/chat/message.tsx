@@ -381,7 +381,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         }}
         id={`message-${message.id || 0}`}
       >
-        <Box>
+        <Box display={{ base: 'none', md: 'block' }}>
           {isMe ? (
             <ProfilePhoto mt="0.5rem" />
           ) : (
@@ -407,7 +407,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           _light={{
             color: 'gray.600',
           }}
-          maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
+          maxW={{ base: 'calc(100vw - 2rem)', md: 'calc(100% - 4.375rem)' }}
           w="full"
           onTouchStart={handleShowMobileActions}
           onTouchEnd={handleClearTimeout}
@@ -493,7 +493,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               display: 'inline-block',
               py: 2,
               px: 4,
-              mb: oldGeneratedMessages.length ? 0 : '1rem',
+              mb: oldGeneratedMessages.length ? 0 : '0.25rem',
               borderRadius: 'xl',
               borderBottomRadius: oldGeneratedMessages.length ? 0 : 'xl',
               '& > *:last-child': {
@@ -556,7 +556,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               bgColor="gray.600"
               p="0.5rem 1rem"
               borderBottomRadius="xl"
-              mb={4}
+              mb="0.25rem"
               justify="space-between"
               _light={{ bgColor: 'gray.50' }}
             >
