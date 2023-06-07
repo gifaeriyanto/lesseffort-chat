@@ -13,7 +13,7 @@ export interface PromptData {
   hint: string;
   id: number;
   prompt: string;
-  status: 'public' | 'private';
+  status: 'public' | 'private' | 'pending';
   title: string;
   updated_at: number;
   usages: number;

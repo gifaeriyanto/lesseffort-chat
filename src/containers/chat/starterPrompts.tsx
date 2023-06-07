@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
   Select,
   Skeleton,
+  Tag,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -38,6 +39,7 @@ import {
   createIncrementArray,
   formatLocaleNumber,
   formatNumber,
+  uppercaseFirstLetter,
 } from 'utils/common';
 
 export enum PromptCategory {
@@ -102,6 +104,27 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       captureException(error);
     }
   }, [error]);
+
+  const renderStatus = (status: PromptData['status']) => {
+    switch (status) {
+      case 'pending':
+        return (
+          <Tag colorScheme="red" size="sm">
+            {uppercaseFirstLetter(status)}
+          </Tag>
+        );
+
+      case 'private':
+        return (
+          <Tag colorScheme={accentColor()} size="sm">
+            {uppercaseFirstLetter(status)}
+          </Tag>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -267,10 +290,10 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       {item.description}
                     </Box>
 
-                    <HStack
+                    <Flex
+                      justify="space-between"
                       fontSize="sm"
                       color="gray.300"
-                      spacing={2}
                       mt="auto"
                       pt={4}
                       _light={{ color: 'gray.400' }}
@@ -278,7 +301,9 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       <Box>
                         {item.usages ? formatNumber(item.usages) : 'Never'} used
                       </Box>
-                    </HStack>
+
+                      <Box>{renderStatus(item.status)}</Box>
+                    </Flex>
                   </Flex>
                 </GridItem>
               ))}

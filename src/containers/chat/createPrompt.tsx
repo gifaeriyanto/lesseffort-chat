@@ -263,7 +263,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({ onSuccess }) => {
                   <Checkbox
                     defaultChecked
                     {...register('status')}
-                    value="public"
+                    value="pending"
                   >
                     Set as public
                   </Checkbox>

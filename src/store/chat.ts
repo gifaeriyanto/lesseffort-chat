@@ -5,7 +5,7 @@ import { defaultBotInstruction, OpenAIModel } from 'api/constants';
 import { getUser } from 'api/supabase/auth';
 import { getSavedMessages } from 'api/supabase/chat';
 import { supabase } from 'api/supabase/prompts';
-import { Rules } from 'components/chat/rules';
+import { chatRulesPrompt, Rules } from 'components/chat/rules';
 import { Plan } from 'components/pricingPlans';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
@@ -20,12 +20,16 @@ export const modifyTemplate = (
   template: string,
   rules?: Rules,
 ) => {
+  let rulesText = '';
+
+  if (rules) {
+    rulesText = '\n\n' + chatRulesPrompt(rules);
+  }
+
   return (
-    template
-      .replaceAll('[PROMPT]', prompt)
-      .replaceAll('[TARGETLANGUAGE]', rules?.outputLanguage || '')
-      .replaceAll('[TONE]', rules?.tone || '') +
-    '\n\nAlways use markdown format.'
+    template.replaceAll('[PROMPT]', prompt) +
+    '\n\nAlways use markdown format.' +
+    rulesText
   );
 };
 
