@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -47,6 +47,7 @@ import {
   TbShare,
   TbSun,
 } from 'react-icons/tb';
+import { useQuery } from 'react-query';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
@@ -83,13 +84,22 @@ export const ChatSidebar: React.FC = () => {
     shallow,
   );
   const [search, setSearch] = useState('');
-  const [usages, setUsages] = useState({
-    total: 0,
-    today: 0,
-  });
   const { toggleColorMode, colorMode } = useColorMode();
   const location = useLocation();
   const navigate = useNavigate();
+  const { data } = useQuery('usages', getUsages, {
+    refetchInterval: 60000, // 1 min
+  });
+
+  const usages = useMemo(() => {
+    if (!data) {
+      return {
+        total: 0,
+        today: 0,
+      };
+    }
+    return data;
+  }, [data]);
 
   const handleToggleShowSearch = () => {
     if (isFreeUser) {
@@ -120,37 +130,8 @@ export const ChatSidebar: React.FC = () => {
     });
   };
 
-  const fetchUsages = () => {
-    getUsages()
-      .then((res) => {
-        const todayItemIndex = res.data.daily_costs.findIndex((item) => {
-          return (
-            new Date(item.timestamp * 1000).getDate() ===
-            new Date().getUTCDate()
-          );
-        });
-
-        const todayUsageItems = res.data.daily_costs[
-          todayItemIndex
-        ].line_items.reduce((prev, curr) => {
-          return prev + curr.cost;
-        }, 0);
-
-        setUsages({
-          total: res.data.total_usage * 0.01,
-          today: todayUsageItems * 0.01,
-        });
-      })
-      .catch(captureException);
-  };
-
   useLayoutEffect(() => {
     getChatHistory();
-    fetchUsages();
-
-    const intervalId = setInterval(fetchUsages, 60000); // 1 minute
-
-    return () => clearInterval(intervalId);
   }, []);
 
   const handleNewChat = () => {

@@ -4,26 +4,6 @@ import { getFileUrl } from 'api/supabase/bucket';
 import { Plan } from 'components/pricingPlans';
 import { create } from 'zustand';
 
-export const useUsage = create<{
-  usage: number;
-  getUsages: () => Promise<number | void>;
-}>((set) => ({
-  usage: 0,
-  getUsages: async () => {
-    try {
-      const res = await getUsages();
-      if (!res) {
-        return;
-      }
-      const { total_usage } = res.data;
-      set({ usage: total_usage });
-      return total_usage;
-    } catch (error) {
-      // no need handler
-    }
-  },
-}));
-
 export const useProfilePhoto = create<{
   photo: string | null;
   setPhoto: (image: string | null) => void;
