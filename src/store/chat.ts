@@ -259,7 +259,7 @@ export const useChat = create<{
         case 429:
           standaloneToast({
             title: 'Too many requests. Rate limit exceeded 😓',
-            description: `We're sorry, but our system has received too many requests from you in a short period of time. Please wait a few moments and try again later.`,
+            description: `We're sorry, but the OpenAI API, the provider of GPT model, has received too many requests from you in a short period of time. Please wait a few moments and try again later.`,
             status: 'error',
           });
           break;
