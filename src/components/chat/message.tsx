@@ -315,7 +315,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         bgColor="gray.700"
         className="message-actions"
         opacity={0}
-        ml="1rem"
+        ml="0.5rem"
         _light={{ bgColor: 'gray.200' }}
       >
         {primaryActions.map((item) =>
@@ -494,6 +494,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               py: 2,
               px: 4,
               mb: oldGeneratedMessages.length ? 0 : '0.25rem',
+              mr: {
+                base: 0,
+                md: '0.5rem',
+              },
               borderRadius: 'xl',
               borderBottomRadius: oldGeneratedMessages.length ? 0 : 'xl',
               '& > *:last-child': {
