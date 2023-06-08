@@ -28,7 +28,7 @@ export const modifyTemplate = (
 
   return (
     template.replaceAll('[PROMPT]', prompt) +
-    '\n\nAlways use markdown format.' +
+    '\n\nNote:\n\nPlease response always with markdown format.' +
     rulesText
   );
 };

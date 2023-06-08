@@ -236,6 +236,9 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
           <FormControl>
             <FormLabel>Model</FormLabel>
             <Select defaultValue={model} {...register('model')}>
+              <option value={OpenAIModel.GPT_4_32K}>
+                GPT 4 32k by OpenAI (Only for ChatGPT plus users)
+              </option>
               <option value={OpenAIModel.GPT_4}>
                 GPT 4 by Open AI (Only for ChatGPT plus users)
               </option>
