@@ -185,7 +185,7 @@ export const ChatContainer: React.FC = () => {
             <LightMode>
               <Button
                 colorScheme={accentColor()}
-                onClick={onClosePurchasedModal}
+                onClick={() => window.location.reload()}
               >
                 Get started
               </Button>
