@@ -30,11 +30,19 @@ export const getUsages = async () => {
       line_items: { name: string; cost: number }[];
       timestamp: number;
     }[];
-  }>('/billing-usage', {
-    start_date: format(getUTCTime(), 'yyyy-MM-01'),
-    end_date: format(getNextMonthFirstDate(), 'yyyy-MM-dd'),
-    token_api: localStorage.getItem('OPENAI_KEY'),
-  });
+  }>(
+    '/billing-usage',
+    {
+      start_date: format(getUTCTime(), 'yyyy-MM-01'),
+      end_date: format(getNextMonthFirstDate(), 'yyyy-MM-dd'),
+      token_api: localStorage.getItem('OPENAI_KEY'),
+    },
+    {
+      headers: {
+        'Cache-Control': 'max-age=300', // 5 min
+      },
+    },
+  );
 
   const todayItemIndex = res.data.daily_costs.findIndex((item) => {
     return (
