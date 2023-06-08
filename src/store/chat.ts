@@ -23,7 +23,7 @@ export const modifyTemplate = (
   let rulesText = '';
 
   if (rules) {
-    rulesText = '\n\n' + chatRulesPrompt(rules);
+    rulesText = ' ' + chatRulesPrompt(rules, true);
   }
 
   return (

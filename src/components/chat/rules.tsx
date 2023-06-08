@@ -17,8 +17,10 @@ export interface ChatRulesProps {
   hidden?: Array<keyof Rules>;
 }
 
-export const chatRulesPrompt = (rules: Rules) => {
+export const chatRulesPrompt = (rules: Rules, noEnter = false) => {
   const prompts = [];
+
+  const enterPrefix = noEnter ? '' : '\n\n';
 
   if (rules.outputLanguage) {
     prompts.push(`${rules.outputLanguage} language`);
@@ -36,7 +38,7 @@ export const chatRulesPrompt = (rules: Rules) => {
     prompt += rules.format;
   }
 
-  return prompt ? `\n\n${prompt}` : '';
+  return prompt ? `${enterPrefix}${prompt}` : '';
 };
 
 export const defaultRules: Rules = {
