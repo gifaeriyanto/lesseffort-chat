@@ -235,7 +235,7 @@ export const SharedConversationsContainer: React.FC = () => {
     <>
       <MainLayout>
         <MainNavbar
-          title="Shared Conversations"
+          title="Saved Conversations"
           icon={TbShare}
           description={renderSubTitle()}
         />

@@ -27,9 +27,9 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { shareConversation } from 'api/supabase/chat';
+import { shareConversation, SharedConversation } from 'api/supabase/chat';
 import { useForm } from 'react-hook-form';
-import { TbChevronDown, TbShare } from 'react-icons/tb';
+import { TbBookmark, TbChevronDown, TbShare } from 'react-icons/tb';
 import { useChat } from 'store/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
@@ -99,23 +99,34 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     localStorage.removeItem('lastOpenChatId');
   };
 
-  const handleShareMessage = async () => {
-    if (isFreeUser) {
-      toastForFreeUser('share_conversation_limit');
-    } else {
-      const res = await shareConversation(selectedChat?.title || '', messages);
-      if (res) {
-        window.open(`/shared/${res.uid}`, '_blank');
+  const handleShareMessage =
+    (status: SharedConversation['status']) => async () => {
+      if (isFreeUser) {
+        toastForFreeUser('share_conversation_limit');
+      } else {
+        const res = await shareConversation(
+          selectedChat?.title || '',
+          messages,
+          status,
+        );
+        if (res) {
+          window.open(`/shared/${res.uid}`, '_blank');
+        }
       }
-    }
-  };
+    };
 
   const actions = [
     {
       hidden: !isHeader,
+      icon: TbBookmark,
+      action: handleShareMessage('pending'),
+      text: 'Save conversation',
+    },
+    {
+      hidden: !isHeader,
       icon: TbShare,
-      action: handleShareMessage,
-      text: 'Share conversation',
+      action: handleShareMessage('published'),
+      text: 'Save and Share conversation',
       divider: true,
     },
     {

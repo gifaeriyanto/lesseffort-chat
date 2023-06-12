@@ -27,7 +27,6 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
 import { signOut } from 'api/supabase/auth';
 import { ChatHistory } from 'components/chat/history';
@@ -36,6 +35,7 @@ import { Search } from 'components/search';
 import ReactGA from 'react-ga4';
 import {
   TbBookmark,
+  TbBookmarks,
   TbDiamond,
   TbDiscountCheck,
   TbLogout,
@@ -44,7 +44,6 @@ import {
   TbPlus,
   TbSearch,
   TbSettings,
-  TbShare,
   TbSun,
 } from 'react-icons/tb';
 import { useQuery } from 'react-query';
@@ -179,8 +178,8 @@ export const ChatSidebar: React.FC = () => {
             <Text ml={4}>Saved messages</Text>
           </MenuItem>
           <MenuItem onClick={handleGoToSharedConversationList}>
-            <Icon as={TbShare} />
-            <Text ml={4}>Shared conversations</Text>
+            <Icon as={TbBookmarks} />
+            <Text ml={4}>Saved conversations</Text>
           </MenuItem>
           <MenuDivider />
           <MenuItem as={Link} to="/settings">

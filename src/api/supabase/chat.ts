@@ -69,7 +69,11 @@ export const deleteSavedMessage = async (messageId: number) => {
   }
 };
 
-export const shareConversation = async (title: string, messages: Message[]) => {
+export const shareConversation = async (
+  title: string,
+  messages: Message[],
+  status: SharedConversation['status'] = 'pending',
+) => {
   const userData = await getUser();
   if (!userData?.id) {
     return;
@@ -77,7 +81,7 @@ export const shareConversation = async (title: string, messages: Message[]) => {
   const avatar = await getLongLifeFileUrl(userData.id);
   const { data, error } = await supabase
     .from('shared_conversations')
-    .insert<Omit<SharedConversation, 'id' | 'uid' | 'user_id' | 'status'>>({
+    .insert<Omit<SharedConversation, 'id' | 'uid' | 'user_id'>>({
       title,
       content: messages.map((message) => ({
         id: message.id,
@@ -88,6 +92,7 @@ export const shareConversation = async (title: string, messages: Message[]) => {
       user_name: userData.name,
       user_avatar: avatar,
       color_scheme: accentColor(),
+      status,
     })
     .select()
     .single();
