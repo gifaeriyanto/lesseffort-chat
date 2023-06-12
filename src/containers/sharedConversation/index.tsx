@@ -40,7 +40,11 @@ export const SharedConversationContainer: React.FC = () => {
   }, [conversation]);
 
   useLayoutEffect(() => {
-    if (conversation?.user_id && user?.id === conversation.user_id) {
+    if (
+      conversation?.user_id &&
+      user?.id === conversation.user_id &&
+      conversation.status === 'published'
+    ) {
       setShowControl(true);
     }
   }, [user, conversation]);
@@ -56,8 +60,18 @@ export const SharedConversationContainer: React.FC = () => {
     copyToClipboard(window.location.href);
   };
 
-  if (!conversation) {
+  console.log(conversation);
+
+  if (conversation === undefined) {
     return null;
+  }
+
+  if (conversation === null) {
+    return (
+      <Flex h="100vh" w="100vw" align="center" justify="center">
+        The conversation could not be found or it has been removed.
+      </Flex>
+    );
   }
 
   return (
@@ -74,7 +88,7 @@ export const SharedConversationContainer: React.FC = () => {
         <meta property="og:title" content={conversation.title} />
       </MetaTags>
 
-      {showControl && (
+      {showControl && conversation.status === 'published' && (
         <Box
           fontSize="xs"
           bgColor="gray.500"
@@ -109,14 +123,16 @@ export const SharedConversationContainer: React.FC = () => {
           </Box>
 
           <HStack spacing={4}>
-            <IconButton
-              variant="ghost"
-              icon={<TbCopy />}
-              aria-label="Copy url"
-              onClick={handleCopy}
-              color="gray.400"
-              borderRadius="full"
-            />
+            {conversation.status === 'published' && (
+              <IconButton
+                variant="ghost"
+                icon={<TbCopy />}
+                aria-label="Copy url"
+                onClick={handleCopy}
+                color="gray.400"
+                borderRadius="full"
+              />
+            )}
             <IconButton
               variant="ghost"
               icon={colorMode === 'light' ? <TbMoon /> : <TbSun />}

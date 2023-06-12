@@ -28,6 +28,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { shareConversation, SharedConversation } from 'api/supabase/chat';
+import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { TbBookmark, TbChevronDown, TbShare } from 'react-icons/tb';
 import { useChat } from 'store/chat';
@@ -109,8 +110,13 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
           messages,
           status,
         );
-        if (res) {
+        if (res && status === 'published') {
           window.open(`/shared/${res.uid}`, '_blank');
+        } else {
+          standaloneToast({
+            title: 'Successfully saved the conversation',
+            status: 'success',
+          });
         }
       }
     };
