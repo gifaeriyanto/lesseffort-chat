@@ -60,8 +60,6 @@ export const SharedConversationContainer: React.FC = () => {
     copyToClipboard(window.location.href);
   };
 
-  console.log(conversation);
-
   if (conversation === undefined) {
     return null;
   }
