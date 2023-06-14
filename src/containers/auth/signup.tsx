@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Button,
@@ -18,7 +18,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { signInWithGoogle, signUp, SignUpParams } from 'api/supabase/auth';
-import { Plan } from 'components/pricingPlans';
 import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
@@ -82,10 +81,10 @@ export const SignUpContainer: React.FC = () => {
                   fontSize="md"
                   borderRadius="xl"
                   type="text"
-                  placeholder="Enter your name"
+                  placeholder="Enter your user name"
                   {...register('name', {
                     required: {
-                      message: 'Name is required',
+                      message: 'User name is required',
                       value: true,
                     },
                   })}
