@@ -242,6 +242,9 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
               <option value={OpenAIModel.GPT_4}>
                 GPT 4 by Open AI (Only for ChatGPT plus users)
               </option>
+              <option value={OpenAIModel.GPT_3_5_16K}>
+                GPT 3.5 16k by Open AI
+              </option>
               <option value={OpenAIModel.GPT_3_5}>GPT 3.5 by Open AI</option>
               <option value={OpenAIModel.GPT_3_5_LEGACY}>
                 GPT 3.5 (Legacy) by Open AI
