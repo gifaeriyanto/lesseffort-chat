@@ -14,6 +14,10 @@ APIInstance.interceptors.response.use(
     return response;
   },
   (error) => {
+    const whitelist = ['/billing-usage']; // means no error if this endpoints fail to fetch
+    if (whitelist.includes(error.config.url)) {
+      return;
+    }
     standaloneToast({
       title: 'Oops! Something went wrong. 😕',
       description: error.message || undefined,

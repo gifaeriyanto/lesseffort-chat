@@ -87,7 +87,7 @@ export const ChatSidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { data } = useQuery('usages', getUsages, {
-    refetchInterval: 60000 * 5, // 1 min
+    refetchInterval: 60000 * 5, // 5 min
   });
 
   const usages = useMemo(() => {
