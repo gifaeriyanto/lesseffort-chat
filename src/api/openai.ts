@@ -23,17 +23,17 @@ const getNextMonthFirstDate = () => {
 };
 
 export const getUsages = async () => {
-  const fetcher = await API();
-  const res = await fetcher.post<{
+  const res = await openaiAPI.get<{
     total_usage: number;
     daily_costs: {
       line_items: { name: string; cost: number }[];
       timestamp: number;
     }[];
-  }>('/billing-usage', {
-    start_date: format(getUTCTime(), 'yyyy-MM-01'),
-    end_date: format(getNextMonthFirstDate(), 'yyyy-MM-dd'),
-    token_api: localStorage.getItem('OPENAI_KEY'),
+  }>('/dashboard/billing/usage', {
+    params: {
+      start_date: format(getUTCTime(), 'yyyy-MM-01'),
+      end_date: format(getNextMonthFirstDate(), 'yyyy-MM-dd'),
+    },
   });
 
   const todayItemIndex = res.data.daily_costs.findIndex((item) => {
