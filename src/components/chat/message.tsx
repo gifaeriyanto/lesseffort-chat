@@ -505,6 +505,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               },
               '& > pre': {
                 borderRadius: 'lg',
+                minW: '16rem',
               },
               '& > pre:first-of-type': {
                 mt: 2,

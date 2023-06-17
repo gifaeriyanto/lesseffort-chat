@@ -11,6 +11,7 @@ import {
 import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
+import { RiWifiOffLine } from 'react-icons/ri';
 import { TbAlertCircle, TbLock } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import LazyLoad from 'react-lazyload';
@@ -18,6 +19,7 @@ import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { useOnlineStatus } from 'utils/hooks/useOnlineStatus';
 import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
@@ -135,6 +137,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
   const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
   const location = useLocation();
   const navigate = useNavigate();
+  const isOnline = useOnlineStatus();
 
   const filteredChatHistory = useMemo(() => {
     return sort(
@@ -180,6 +183,31 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
       className="history-scroll-container"
       mb="-1px"
     >
+      {!isOnline && (
+        <Box
+          p={4}
+          borderBottom="1px solid"
+          borderColor={CustomColor.border}
+          bgColor="gray.700"
+          _light={{
+            borderColor: CustomColor.lightBorder,
+            bgColor: 'antiquewhite',
+          }}
+        >
+          <Flex
+            align="center"
+            gap={2}
+            color="yellow.500"
+            _light={{ color: 'yellow.600' }}
+          >
+            <Icon as={RiWifiOffLine} />
+            <Text>Computer not connected</Text>
+          </Flex>
+          <Text fontSize="sm" color="gray.400">
+            Make sure your computer has an active internet connection.
+          </Text>
+        </Box>
+      )}
       {filteredChatHistory.map((item, index) => (
         // <LazyLoad
         //   key={item.id || index}

@@ -31,6 +31,7 @@ import { useChat } from 'store/chat';
 import { usePWA } from 'store/pwa';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
+import { useOnlineStatus } from 'utils/hooks/useOnlineStatus';
 import { shallow } from 'zustand/shallow';
 
 interface FormInputs {
@@ -64,6 +65,7 @@ export const ChatContainer: React.FC = () => {
     shallow,
   );
   const { toggleColorMode } = useColorMode();
+  const isOnline = useOnlineStatus();
 
   useLayoutEffect(() => {
     getPWAStatus();
@@ -106,7 +108,7 @@ export const ChatContainer: React.FC = () => {
 
   return (
     <>
-      <MainLayout>
+      <MainLayout filter={isOnline ? undefined : 'grayscale(100%)'}>
         <ChatHeader />
         <ChatMessagesContainer />
       </MainLayout>
