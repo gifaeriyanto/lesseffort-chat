@@ -220,10 +220,14 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
             </ModalBody>
 
             <ModalFooter>
-              <Button colorScheme={accentColor()} mr={3} type="submit">
-                Save
+              <Button onClick={onCloseRenameModal} mr={3}>
+                Cancel
               </Button>
-              <Button onClick={onCloseRenameModal}>Cancel</Button>
+              <LightMode>
+                <Button colorScheme={accentColor()} type="submit">
+                  Save
+                </Button>
+              </LightMode>
             </ModalFooter>
           </form>
         </ModalContent>

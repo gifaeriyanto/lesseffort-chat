@@ -358,9 +358,11 @@ export const SharedConversationsContainer: React.FC = () => {
             </ModalBody>
 
             <ModalFooter>
-              <Button onClick={onCloseRenameModal}>Cancel</Button>
+              <Button onClick={onCloseRenameModal} mr={3}>
+                Cancel
+              </Button>
               <LightMode>
-                <Button colorScheme={accentColor()} mr={3} type="submit">
+                <Button colorScheme={accentColor()} type="submit">
                   Save
                 </Button>
               </LightMode>
