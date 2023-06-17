@@ -186,6 +186,7 @@ export const ChatMessagePreview: React.FC<
               },
               '& > pre': {
                 borderRadius: 'lg',
+                minW: '16rem',
               },
               '& > pre:first-of-type': {
                 mt: 2,
