@@ -1,90 +1,43 @@
-import React, { useRef } from 'react';
-import {
-  Avatar,
-  AvatarProps,
-  BoxProps,
-  Flex,
-  Icon,
-  Tooltip,
-} from '@chakra-ui/react';
+import React from 'react';
+import { BoxProps, Flex, Icon, Image, ImageProps } from '@chakra-ui/react';
 import { TbUser } from 'react-icons/tb';
-import { useProfilePhoto } from 'store/openai';
+import { useProfilePhoto, useUserData } from 'store/user';
+import { shallow } from 'zustand/shallow';
 
-export interface ProfilePhotoProps extends BoxProps {
-  allowChangePhoto?: boolean;
-}
+export interface ProfilePhotoProps extends BoxProps {}
 
-export const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
-  allowChangePhoto,
-  ...props
-}) => {
-  const { photo, setPhoto } = useProfilePhoto();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleTriggerUpload = () => {
-    if (allowChangePhoto) {
-      fileInputRef.current?.click();
-    }
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    if (file.type === 'image/jpeg' || file.type === 'image/png') {
-      const reader = new FileReader();
-
-      reader.onload = function (event) {
-        if (typeof event.target?.result !== 'string') {
-          return;
-        }
-        setPhoto(event.target?.result);
-      };
-
-      reader.readAsDataURL(file);
-    }
-  };
+export const ProfilePhoto: React.FC<ProfilePhotoProps> = (props) => {
+  const user = useUserData((state) => state.user, shallow);
+  const { photo } = useProfilePhoto();
 
   return (
     <>
-      {typeof photo === 'string' ? (
-        <Avatar
+      {photo ? (
+        <Image
+          alt={user?.name}
           src={photo}
           w="2.188rem"
+          maxW="2.188rem"
           h="2.188rem"
-          role={allowChangePhoto ? 'button' : 'none'}
-          onClick={handleTriggerUpload}
-          {...(props as AvatarProps)}
+          borderRadius="full"
+          objectFit="cover"
+          {...(props as ImageProps)}
         />
       ) : (
-        <Tooltip label="Upload your own photo" openDelay={500}>
-          <Flex
-            p={4}
-            bgColor="gray.500"
-            w="2.188rem"
-            h="2.188rem"
-            align="center"
-            justify="center"
-            borderRadius="full"
-            role={allowChangePhoto ? 'button' : 'none'}
-            onClick={handleTriggerUpload}
-            _light={{ bgColor: 'gray.300' }}
-            {...props}
-          >
-            <Icon as={TbUser} fontSize="2xl" color="gray.400" />
-          </Flex>
-        </Tooltip>
+        <Flex
+          p={4}
+          bgColor="gray.500"
+          w="2.188rem"
+          h="2.188rem"
+          align="center"
+          justify="center"
+          borderRadius="full"
+          _light={{ bgColor: 'gray.300' }}
+          {...props}
+        >
+          <Icon as={TbUser} fontSize="2xl" color="gray.400" />
+        </Flex>
       )}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileInputChange}
-        accept="image/jpeg, image/png"
-        hidden
-      />
     </>
   );
 };

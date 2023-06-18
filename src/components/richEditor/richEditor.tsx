@@ -12,7 +12,8 @@ import {
   RichUtils,
   SelectionState,
 } from 'draft-js';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
+import { shallow } from 'zustand/shallow';
 
 export interface RichEditorProps {
   addon?: React.ReactElement;
@@ -36,7 +37,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   const [editorState, setEditorState] = useState(initialEditorState);
   const isEmpty = !editorState.getCurrentContent().hasText();
   const richEditorRef = useRef<Editor>(null);
-  const setRichEditorRef = useChat((state) => state.setRichEditorRef);
+  const setRichEditorRef = useChat((state) => state.setRichEditorRef, shallow);
 
   useLayoutEffect(() => {
     if (richEditorRef.current) {

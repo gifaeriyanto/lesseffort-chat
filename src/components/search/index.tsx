@@ -7,11 +7,10 @@ import {
   InputRightElement,
 } from '@chakra-ui/react';
 import { TbSearch, TbX } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';
 
 export interface SearchProps extends InputProps {
-  onSearch: (keyword: string) => void;
+  onSearch?: (keyword: string) => void;
 }
 
 export const Search: React.FC<SearchProps> = ({ onSearch, ...props }) => {
@@ -19,7 +18,7 @@ export const Search: React.FC<SearchProps> = ({ onSearch, ...props }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useLayoutEffect(() => {
-    onSearch(search);
+    onSearch?.(search);
   }, [search]);
 
   const debounceOnChange = debounce(

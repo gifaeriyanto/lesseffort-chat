@@ -1,4 +1,10 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Box,
   Button,
@@ -6,8 +12,8 @@ import {
   Icon,
   IconButton,
   LightMode,
-  Link,
   Tag,
+  Text,
   Tooltip,
   useBoolean,
   useDisclosure,
@@ -15,9 +21,12 @@ import {
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
 import { Chat, Message } from 'api/chat';
+import { saveMessage } from 'api/supabase/chat';
+import { PromptData, usePrompt } from 'api/supabase/prompts';
 import { ChatMessage, ChatMessageAction } from 'components/chat/message';
 import { ChatRules, defaultRules, Rules } from 'components/chat/rules';
 import { SelectedMessage } from 'components/chat/selectedMessage';
+import { Empty } from 'components/empty';
 import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';
@@ -36,10 +45,10 @@ import {
   TbTemplate,
 } from 'react-icons/tb';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChat, useProfilePhoto } from 'store/openai';
-import { Prompt } from 'store/supabase';
-import { CustomColor } from 'theme/foundations/colors';
+import { useChat } from 'store/chat';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
+import { shallow } from 'zustand/shallow';
 
 export const ChatMessagesContainer: React.FC = () => {
   const {
@@ -53,13 +62,33 @@ export const ChatMessagesContainer: React.FC = () => {
     resendLastMessage,
     richEditorRef,
     selectedChatId,
+    getSavedMessages,
     setEditingMessage,
     stopStream,
     streamChatCompletion,
     updateMessage,
     updateMessageTemplate,
-  } = useChat();
-  const { getPhoto } = useProfilePhoto();
+  } = useChat(
+    (state) => ({
+      chatHistory: state.chatHistory,
+      editingMessage: state.editingMessage,
+      generatingMessage: state.generatingMessage,
+      isTyping: state.isTyping,
+      messages: state.messages,
+      newChat: state.newChat,
+      regenerateResponse: state.regenerateResponse,
+      resendLastMessage: state.resendLastMessage,
+      richEditorRef: state.richEditorRef,
+      selectedChatId: state.selectedChatId,
+      getSavedMessages: state.getSavedMessages,
+      setEditingMessage: state.setEditingMessage,
+      stopStream: state.stopStream,
+      streamChatCompletion: state.streamChatCompletion,
+      updateMessage: state.updateMessage,
+      updateMessageTemplate: state.updateMessageTemplate,
+    }),
+    shallow,
+  );
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const dbMessages = useIndexedDB('messages');
   const [
@@ -70,7 +99,7 @@ export const ChatMessagesContainer: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
   const [readyToUse, setReadyToUse] = useState(false);
   const [watchGeneratingMessage, setWatchGeneratingMessage] = useState(false);
-  const [template, setTemplate] = useState<Prompt | undefined>(undefined);
+  const [template, setTemplate] = useState<PromptData | undefined>(undefined);
   const [chatRulesCount, setChatRulesCount] = useState(0);
   const [chatRules, setChatRules] = useState<Rules>(defaultRules);
   const {
@@ -79,10 +108,10 @@ export const ChatMessagesContainer: React.FC = () => {
     onToggle: toggleShowRuleOptions,
     onClose: hideRuleOptions,
   } = useDisclosure();
-
-  useLayoutEffect(() => {
-    getPhoto();
-  }, []);
+  const isSavedMessages = useMemo(
+    () => selectedChatId === -1,
+    [selectedChatId],
+  );
 
   useLayoutEffect(() => {
     if (messages.length && !readyToUse) {
@@ -188,11 +217,20 @@ export const ChatMessagesContainer: React.FC = () => {
     };
   }, [isLessThanMd]);
 
-  const handleSubmitChat = async (message: string) => {
+  const handleSendMessage = async (message: string) => {
+    if (isSavedMessages) {
+      await saveMessage({
+        content: message,
+        role: 'user',
+      });
+      await getSavedMessages();
+      return;
+    }
+
     handleJumpToBottom();
 
     if (editingMessage) {
-      updateMessage(message);
+      updateMessage(message, chatRules);
       return;
     }
 
@@ -202,7 +240,7 @@ export const ChatMessagesContainer: React.FC = () => {
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
       content: message,
-      template: template?.Prompt || '',
+      template: template?.prompt || '',
       rules: chatRules,
     };
 
@@ -210,13 +248,18 @@ export const ChatMessagesContainer: React.FC = () => {
       if (selectedChatId) {
         await dbMessages.add<Message>(userMessage);
       } else {
+        const title =
+          message.length > 150 ? `${message.slice(0, 150)}...` : message;
         await newChat(
           {
-            last_message: message,
-            title: message,
+            last_message: title,
+            title,
           },
           userMessage,
         );
+        if (template) {
+          await usePrompt(template.id);
+        }
       }
     } catch (error) {
       captureException(error);
@@ -242,12 +285,10 @@ export const ChatMessagesContainer: React.FC = () => {
     return (
       <RichEditor
         defaultValue={editingMessage?.content}
-        onSubmit={isTyping ? undefined : handleSubmitChat}
+        onSubmit={isTyping ? undefined : handleSendMessage}
         key={editingMessage?.id}
         placeholder={
-          template?.PromptHint
-            ? sanitizeString(template?.PromptHint)
-            : undefined
+          template?.hint ? sanitizeString(template?.hint) : undefined
         }
       />
     );
@@ -275,7 +316,7 @@ export const ChatMessagesContainer: React.FC = () => {
           <IconButton
             icon={<MdSend />}
             borderRadius="full"
-            colorScheme="blue"
+            colorScheme={accentColor()}
             fontSize="lg"
             aria-label="Send message"
             onClick={() => {
@@ -284,7 +325,7 @@ export const ChatMessagesContainer: React.FC = () => {
                   .getCurrentContent()
                   .getPlainText();
                 if (message) {
-                  handleSubmitChat(message);
+                  handleSendMessage(message);
                 }
               }
             }}
@@ -307,6 +348,15 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const renderMessages = useCallback(() => {
     if (!messages.length) {
+      if (isSavedMessages) {
+        return (
+          <Empty
+            message="You don't have any saved messages yet"
+            alignSelf="center"
+            h={{ base: 'calc(100vh - 400px)', md: 'full' }}
+          />
+        );
+      }
       return <StarterContainer onSelectPrompt={setTemplate} />;
     }
 
@@ -353,7 +403,6 @@ export const ChatMessagesContainer: React.FC = () => {
         overflow={{ base: 'initial', md: 'auto' }}
         direction={messages.length ? 'column-reverse' : 'column'}
         ref={chatAreaRef}
-        px={{ base: 4, md: 0 }}
         pt={{ base: '5rem', md: 0 }}
         pb={{ base: '6rem', md: '2rem' }}
         sx={{
@@ -402,7 +451,7 @@ export const ChatMessagesContainer: React.FC = () => {
                     aria-label="Edit info"
                     variant="link"
                     fontSize="xl"
-                    color="blue.500"
+                    color={accentColor('500')}
                     mt="-2px"
                   />
                 </Tooltip>
@@ -417,18 +466,13 @@ export const ChatMessagesContainer: React.FC = () => {
           <SelectedMessage
             icon={TbTemplate}
             onClose={() => setTemplate(undefined)}
-            title={template.Title}
+            title={template.title}
             info={
               <>
                 By{' '}
-                <Link
-                  href={template.AuthorURL}
-                  target="_blank"
-                  ml={1}
-                  isTruncated
-                >
-                  {template.AuthorName}
-                </Link>
+                <Text as="span" ml={1} isTruncated>
+                  {template.author_name}
+                </Text>
               </>
             }
           />
@@ -442,13 +486,14 @@ export const ChatMessagesContainer: React.FC = () => {
           pointerEvents="none"
           className="rules"
           pos="absolute"
-          hidden={isTyping || isLessThanMd}
+          hidden={isTyping || isLessThanMd || selectedChatId === -1}
         >
           <Button
             leftIcon={<MdOutlineChecklist />}
             aria-label="Show rule options"
             size="sm"
             pointerEvents="initial"
+            borderTopRadius="lg"
             borderBottomRadius="0"
             bgColor="gray.500"
             onClick={toggleShowRuleOptions}
@@ -510,7 +555,7 @@ export const ChatMessagesContainer: React.FC = () => {
           border="1px solid"
           borderColor={{
             base: 'transparent',
-            md: isTyping ? 'blue.500' : CustomColor.border,
+            md: isTyping ? accentColor('500') : CustomColor.border,
           }}
           align="center"
           justify="center"
@@ -519,7 +564,7 @@ export const ChatMessagesContainer: React.FC = () => {
             bgColor: isTyping ? 'gray.100' : CustomColor.lightCard,
             borderColor: {
               base: 'transparent',
-              md: isTyping ? 'blue.500' : CustomColor.lightBorder,
+              md: isTyping ? accentColor('500') : CustomColor.lightBorder,
             },
           }}
         >
@@ -532,8 +577,10 @@ export const ChatMessagesContainer: React.FC = () => {
                 pos="absolute"
                 right="1rem"
                 top="-4rem"
+                backdropFilter="blur(6px)"
+                border="1px solid"
+                borderColor="whiteAlpha.200"
                 _light={{
-                  border: '1px solid',
                   borderColor: CustomColor.lightBorder,
                 }}
               />

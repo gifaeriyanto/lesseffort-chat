@@ -6,6 +6,26 @@ export enum CustomColor {
   lightBorder = '#c6d2d3',
 }
 
+export const accentColor = (
+  density?:
+    | '50'
+    | '100'
+    | '200'
+    | '300'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900',
+) => {
+  const color = localStorage.getItem('accentColor') || 'blue';
+  if (density) {
+    return `${color}.${density}`;
+  }
+  return color;
+};
+
 export const colors = {
   blue: {
     100: '#CCF1FF',

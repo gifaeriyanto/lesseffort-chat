@@ -9,6 +9,7 @@ import {
   FormControl,
   Icon,
   IconButton,
+  LightMode,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -22,7 +23,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { IconType } from 'react-icons';
 import { TbTemplate, TbX } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface SelectedMessageProps {
   title: string;
@@ -66,19 +67,19 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
         }}
       >
         <Box w="4rem" textAlign="center" flexGrow="0" flexShrink="0">
-          <Icon as={icon} fontSize="2xl" color="blue.500" />
+          <Icon as={icon} fontSize="2xl" color={accentColor('500')} />
         </Box>
         <Box
           w="full"
           maxW="calc(100% - 8.25rem)"
           pl={4}
           borderLeft="1px solid"
-          borderColor="blue.500"
+          borderColor={accentColor('500')}
           flexGrow="0"
           flexShrink="1"
         >
           {!!info && (
-            <Flex align="center" color="blue.500">
+            <Flex align="center" color={accentColor('500')}>
               {info}
             </Flex>
           )}
@@ -93,7 +94,7 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
               aria-label="Edit template"
               variant="ghost"
               fontSize="xl"
-              color="blue.500"
+              color={accentColor('500')}
               onClick={onOpen}
             />
           )}
@@ -144,9 +145,11 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
               <Button mr={3} variant="ghost" onClick={onCloseModal}>
                 Cancel
               </Button>
-              <Button colorScheme="blue" type="submit">
-                Save
-              </Button>
+              <LightMode>
+                <Button colorScheme={accentColor()} type="submit">
+                  Save
+                </Button>
+              </LightMode>
             </ModalFooter>
           </form>
         </ModalContent>

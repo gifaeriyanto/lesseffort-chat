@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Flex,
@@ -7,24 +7,76 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { OpenAIModel } from 'api/constants';
 import { HistoryActions } from 'components/chat/historyActions';
-import { TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
-import { useChat } from 'store/openai';
+import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
+import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { shallow } from 'zustand/shallow';
 
 export const ChatHeader: React.FC = () => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { messagesLength, selectedChat } = useChat((state) => {
-    const selectedChat = state.chatHistory.find(
-      (item) => item.id === state.selectedChatId,
+  const { messagesLength, selectedChat, selectedChatId, model } = useChat(
+    (state) => {
+      const selectedChat = state.chatHistory.find(
+        (item) => item.id === state.selectedChatId,
+      );
+      return {
+        messagesLength: state.messages.length,
+        selectedChat,
+        selectedChatId: state.selectedChatId,
+        model: state.model,
+      };
+    },
+    shallow,
+  );
+  const onOpen = useSidebar((state) => state.onOpen, shallow);
+  const isSavedMessages = useMemo(
+    () => selectedChatId === -1,
+    [selectedChatId],
+  );
+
+  const renderTitle = () => {
+    if (isSavedMessages) {
+      return 'Saved Messages';
+    }
+
+    return selectedChat?.title || 'New Chat';
+  };
+
+  const renderIcon = () => {
+    let bgColor = '#74AA9C';
+    let icon = TbBrandOpenai;
+
+    if (isSavedMessages) {
+      bgColor = accentColor('500');
+      icon = TbBookmark;
+    }
+
+    if (model === OpenAIModel.GPT_4) {
+      bgColor = 'pink.500';
+    }
+
+    return (
+      <>
+        {!isLessThanMd && (
+          <Flex
+            p={4}
+            bgColor={bgColor}
+            w="2.188rem"
+            h="2.188rem"
+            align="center"
+            justify="center"
+            borderRadius="full"
+            color="white"
+          >
+            <Icon as={icon} fontSize="2xl" />
+          </Flex>
+        )}
+      </>
     );
-    return {
-      messagesLength: state.messages.length,
-      selectedChat,
-    };
-  });
-  const { onOpen } = useSidebar();
+  };
 
   return (
     <Flex
@@ -60,20 +112,7 @@ export const ChatHeader: React.FC = () => {
         gap={4}
         minW="0"
       >
-        {!isLessThanMd && (
-          <Flex
-            p={4}
-            bgColor="#74AA9C"
-            w="2.188rem"
-            h="2.188rem"
-            align="center"
-            justify="center"
-            borderRadius="full"
-            color="white"
-          >
-            <Icon as={TbBrandOpenai} fontSize="2xl" />
-          </Flex>
-        )}
+        {renderIcon()}
         <Box
           w={{ base: '60vw', md: '90%' }}
           maxW={{ base: 'full', md: 'calc(100% - 3.188rem)' }}
@@ -85,7 +124,7 @@ export const ChatHeader: React.FC = () => {
             isTruncated
             textAlign={{ base: 'center', md: 'initial' }}
           >
-            {selectedChat?.title || 'New Chat'}
+            {renderTitle()}
           </Text>
           <Text
             fontSize="sm"
@@ -96,10 +135,11 @@ export const ChatHeader: React.FC = () => {
           </Text>
         </Box>
       </Flex>
-      {!!messagesLength ? (
+      {!!messagesLength && !isSavedMessages ? (
         <HistoryActions
           id={selectedChat?.id}
           bgColor="transparent !important"
+          isHeader
         />
       ) : (
         // to keep chat title centered

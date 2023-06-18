@@ -13,51 +13,73 @@ import {
   InputLeftElement,
   InputRightElement,
   LightMode,
+  Text,
+  useBoolean,
   VStack,
 } from '@chakra-ui/react';
+import {
+  signInWithEmail,
+  signInWithGoogle,
+  SignWithEmailParams,
+} from 'api/supabase/auth';
+import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
 import { TbLock, TbMail } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { signInWithGoogle } from 'store/supabase/auth';
-import { CustomColor } from 'theme/foundations/colors';
-
-interface FormInputs {
-  email: string;
-  password: string;
-}
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const LoginContainer: React.FC = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<FormInputs>();
+  } = useForm<SignWithEmailParams>();
   const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
+  const [isLoading, { on, off }] = useBoolean();
 
-  const handleLogin = ({}: FormInputs) => {};
+  const toggleShow = () => setShow(!show);
+
+  const handleSubmitLogin = (params: SignWithEmailParams) => {
+    on();
+    signInWithEmail(params)
+      .then((res) => {
+        if (res.error?.message) {
+          standaloneToast({
+            title: 'Error login',
+            description: res.error.message,
+            position: 'top',
+            status: 'error',
+          });
+        }
+      })
+      .finally(off);
+  };
 
   return (
     <Flex minH="100vh" justify="center" align="center">
       <Box
-        bgColor="gray.600"
+        bgColor={{ md: 'gray.600' }}
         w="full"
         maxW="30rem"
         p="3rem"
         borderRadius="xl"
-        _light={{ bgColor: 'gray.50' }}
+        _light={{ bgColor: { md: 'gray.50' } }}
       >
-        <Heading mb={8} textAlign="center">
-          Login
+        <Heading mb={2} textAlign="center">
+          Sign In
         </Heading>
 
-        <form onSubmit={handleSubmit(handleLogin)}>
+        <Text mb={8} color="gray.400" textAlign="center">
+          Enter your credentials to access your account
+        </Text>
+
+        <form onSubmit={handleSubmit(handleSubmitLogin)}>
           <VStack spacing={4}>
             <FormControl isInvalid={!!errors['email']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbMail} color="blue.500" />
+                  <Icon as={TbMail} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -80,7 +102,7 @@ export const LoginContainer: React.FC = () => {
             <FormControl isInvalid={!!errors['password']}>
               <InputGroup size="lg">
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={TbLock} color="blue.500" />
+                  <Icon as={TbLock} color={accentColor('500')} />
                 </InputLeftElement>
                 <Input
                   fontSize="md"
@@ -98,7 +120,7 @@ export const LoginContainer: React.FC = () => {
                   <Button
                     h="1.75rem"
                     size="sm"
-                    onClick={handleClick}
+                    onClick={toggleShow}
                     variant="link"
                   >
                     {show ? 'Hide' : 'Show'}
@@ -115,7 +137,7 @@ export const LoginContainer: React.FC = () => {
 
           <Button
             as={Link}
-            to="/forgot-password"
+            to="/forgot"
             mt={8}
             display="inline-block"
             fontSize="sm"
@@ -126,15 +148,16 @@ export const LoginContainer: React.FC = () => {
 
           <LightMode>
             <Button
-              colorScheme="blue"
+              colorScheme={accentColor()}
               type="submit"
               w="full"
               mt={8}
               borderRadius="xl"
               size="lg"
               fontSize="md"
+              isLoading={isLoading}
             >
-              Save
+              Sign in
             </Button>
           </LightMode>
         </form>
@@ -168,6 +191,13 @@ export const LoginContainer: React.FC = () => {
             Sign in with Google
           </Button>
         </HStack>
+
+        <Text mt={8} color="gray.400" textAlign="center">
+          Don't have an account?{' '}
+          <Button variant="link" as={Link} to="/signup">
+            Sign up
+          </Button>
+        </Text>
       </Box>
     </Flex>
   );

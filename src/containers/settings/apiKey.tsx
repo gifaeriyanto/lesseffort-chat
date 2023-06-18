@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   Box,
-  Button,
   FormControl,
   FormErrorMessage,
   FormHelperText,
   FormLabel,
-  HStack,
   Input,
-  LightMode,
   Link,
   Text,
+  useBoolean,
   VStack,
 } from '@chakra-ui/react';
+import { TypingDots } from 'components/typingDots';
+import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
+import { accentColor } from 'theme/foundations/colors';
+import { debounce } from 'utils/common';
 
 interface FormInputs {
   openaiKey: string;
@@ -24,18 +26,26 @@ export const APIKeySettings: React.FC = () => {
     register,
     formState: { errors },
     handleSubmit,
-    setValue,
-    watch,
   } = useForm<FormInputs>();
+  const [isSaving, { on, off }] = useBoolean();
+  const [showSavingState, setShowSavingState] = useState(false);
+
+  const debounceOnChange = debounce(
+    (setter: Function, value: unknown) => setter(value),
+    2000,
+  );
 
   const handleSaveSettings = ({ openaiKey }: FormInputs) => {
     localStorage.setItem('OPENAI_KEY', openaiKey);
+
+    off();
+    setShowSavingState(true);
   };
 
   return (
     <>
       <Box fontSize="xl" fontWeight="bold">
-        <Text color="blue.500" as="span">
+        <Text color={accentColor('500')} as="span">
           API Key
         </Text>{' '}
         Settings
@@ -44,9 +54,33 @@ export const APIKeySettings: React.FC = () => {
       <Box color="gray.400" fontSize="sm" mb={4}>
         Your API Key is stored locally on your browser and never sent anywhere
         else.
+        <Text
+          as="span"
+          color={accentColor('500')}
+          ml={2}
+          hidden={!showSavingState || !!Object.keys(errors).length}
+        >
+          {isSaving ? (
+            <>
+              Saving
+              <TypingDots />
+            </>
+          ) : (
+            'Saved'
+          )}
+        </Text>
       </Box>
 
-      <form onSubmit={handleSubmit(handleSaveSettings)}>
+      <form
+        onSubmit={handleSubmit(handleSaveSettings)}
+        onChange={(e) => {
+          if (!showSavingState) {
+            setShowSavingState(true);
+          }
+          on();
+          debounceOnChange(handleSubmit(handleSaveSettings), e);
+        }}
+      >
         <VStack spacing={8}>
           <FormControl isInvalid={!!errors['openaiKey']}>
             <FormLabel>OpenAI Key</FormLabel>
@@ -56,6 +90,10 @@ export const APIKeySettings: React.FC = () => {
                 required: {
                   message: 'OpenAI Key is required',
                   value: true,
+                },
+                minLength: {
+                  message: 'Please input a valid OpenAI key',
+                  value: 50,
                 },
               })}
             />
@@ -67,7 +105,7 @@ export const APIKeySettings: React.FC = () => {
             <FormHelperText>
               Get your OpenAI API key{' '}
               <Link
-                color="blue.500"
+                color={accentColor('500')}
                 href="https://platform.openai.com/account/api-keys"
                 target="_blank"
               >
@@ -75,14 +113,6 @@ export const APIKeySettings: React.FC = () => {
               </Link>
             </FormHelperText>
           </FormControl>
-
-          <HStack>
-            <LightMode>
-              <Button colorScheme="blue" type="submit">
-                Save
-              </Button>
-            </LightMode>
-          </HStack>
         </VStack>
       </form>
     </>

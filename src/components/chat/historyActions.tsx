@@ -5,11 +5,14 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Icon,
   IconButton,
   IconButtonProps,
   Input,
+  LightMode,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Modal,
@@ -20,17 +23,25 @@ import {
   ModalHeader,
   ModalOverlay,
   Portal,
+  Text,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { shareConversation, SharedConversation } from 'api/supabase/chat';
+import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
-import { TbChevronDown } from 'react-icons/tb';
-import { useChat } from 'store/openai';
+import { TbBookmark, TbChevronDown, TbShare } from 'react-icons/tb';
+import { useChat } from 'store/chat';
+import { useUserData } from 'store/user';
+import { accentColor } from 'theme/foundations/colors';
 import { formatDateFromTimestamp } from 'utils/common';
+import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export interface HistoryActionsProps
   extends Partial<Omit<IconButtonProps, 'id'>> {
   id?: number;
+  isHeader?: boolean;
 }
 
 interface FormInputs {
@@ -39,6 +50,7 @@ interface FormInputs {
 
 export const HistoryActions: React.FC<HistoryActionsProps> = ({
   id,
+  isHeader,
   ...props
 }) => {
   const {
@@ -52,19 +64,29 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     onClose: onCloseRenameModal,
   } = useDisclosure();
   const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
+  const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<FormInputs>();
-  const { selectedChat, deleteChat, renameChat } = useChat((state) => {
-    const selectedChat = state.chatHistory.find((item) => item.id === id);
-    return {
-      renameChat: state.renameChat,
-      chatHistoryCount: state.chatHistory.length,
-      selectedChat,
-      deleteChat: state.deleteChat,
-    };
-  });
+  const { selectedChat, messages, deleteChat, renameChat } = useChat(
+    (state) => {
+      const selectedChat = state.chatHistory.find((item) => item.id === id);
+      return {
+        chatHistoryCount: state.chatHistory.length,
+        messages: state.messages,
+        selectedChat,
+        deleteChat: state.deleteChat,
+        renameChat: state.renameChat,
+      };
+    },
+    shallow,
+  );
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
 
   const handleRename = ({ title: newTitle = '' }) => {
     if (id) {
@@ -73,13 +95,68 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
     onCloseRenameModal();
   };
 
+  const handleDelete = () => {
+    id && deleteChat(id);
+    localStorage.removeItem('lastOpenChatId');
+  };
+
+  const handleShareMessage =
+    (status: SharedConversation['status']) => async () => {
+      if (isFreeUser) {
+        toastForFreeUser('share_conversation_limit');
+      } else {
+        const res = await shareConversation(
+          selectedChat?.title || '',
+          messages,
+          status,
+        );
+        if (res && status === 'published') {
+          window.open(`/shared/${res.uid}`, '_blank');
+        } else {
+          standaloneToast({
+            title: 'Successfully saved the conversation',
+            status: 'success',
+          });
+        }
+      }
+    };
+
+  const actions = [
+    {
+      hidden: !isHeader,
+      icon: TbBookmark,
+      action: handleShareMessage('pending'),
+      text: 'Save conversation',
+    },
+    {
+      hidden: !isHeader,
+      icon: TbShare,
+      action: handleShareMessage('published'),
+      text: 'Save and Share conversation',
+      divider: true,
+    },
+    {
+      action: onOpenInfoModal,
+      text: 'Get Info',
+    },
+    {
+      action: onOpenRenameModal,
+      text: 'Rename',
+    },
+    {
+      action: onOpenDeleteModal,
+      text: 'Delete',
+      color: 'red.400',
+    },
+  ];
+
   if (!id) {
     return null;
   }
 
   return (
     <>
-      <Menu>
+      <Menu autoSelect={false}>
         <MenuButton
           as={IconButton}
           icon={<TbChevronDown />}
@@ -101,16 +178,19 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
         />
         <Portal>
           <MenuList>
-            <MenuItem onClick={onOpenInfoModal}>Get Info</MenuItem>
-            <MenuItem onClick={onOpenRenameModal}>Rename</MenuItem>
-            <MenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteChat(id);
-              }}
-            >
-              Delete
-            </MenuItem>
+            {actions.map((item) => (
+              <React.Fragment key={item.text}>
+                {!item.hidden && (
+                  <>
+                    <MenuItem color={item.color} onClick={item.action}>
+                      {!!item.icon && <Icon as={item.icon} mr={3} />}
+                      <Text>{item.text}</Text>
+                    </MenuItem>
+                    {item.divider && <MenuDivider />}
+                  </>
+                )}
+              </React.Fragment>
+            ))}
           </MenuList>
         </Portal>
       </Menu>
@@ -140,10 +220,14 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
             </ModalBody>
 
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} type="submit">
-                Save
+              <Button onClick={onCloseRenameModal} mr={3}>
+                Cancel
               </Button>
-              <Button onClick={onCloseRenameModal}>Cancel</Button>
+              <LightMode>
+                <Button colorScheme={accentColor()} type="submit">
+                  Save
+                </Button>
+              </LightMode>
             </ModalFooter>
           </form>
         </ModalContent>
@@ -187,6 +271,28 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
               )}
             </VStack>
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete chat</ModalHeader>
+          <ModalBody>
+            This action can't be undone. Are you sure you want to delete the
+            selected chat?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onCloseDeleteModal} mr={4}>
+              Cancel
+            </Button>
+            <LightMode>
+              <Button colorScheme="red" onClick={handleDelete}>
+                Delete
+              </Button>
+            </LightMode>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

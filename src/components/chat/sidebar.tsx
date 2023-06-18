@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -19,6 +19,7 @@ import {
   LightMode,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Text,
@@ -26,38 +27,100 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { captureException } from '@sentry/react';
 import { getUsages } from 'api/openai';
+import { signOut } from 'api/supabase/auth';
 import { ChatHistory } from 'components/chat/history';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { Search } from 'components/search';
 import ReactGA from 'react-ga4';
 import {
+  TbBookmark,
+  TbBookmarks,
+  TbDiamond,
+  TbDiscountCheck,
   TbLogout,
+  TbMoon,
   TbMoonFilled,
   TbPlus,
   TbSearch,
   TbSettings,
   TbSun,
 } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
-import { useChat } from 'store/openai';
+import { useQuery } from 'react-query';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
-import { CustomColor } from 'theme/foundations/colors';
+import { useUserData } from 'store/user';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export const ChatSidebar: React.FC = () => {
-  const { isOpen: isOpenSidebar, onClose: onCloseSidebar } = useSidebar();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const { isOpenSidebar, onCloseSidebar } = useSidebar(
+    (state) => ({
+      isOpenSidebar: state.isOpen,
+      onCloseSidebar: state.onClose,
+    }),
+    shallow,
+  );
   const { isOpen: isShowSearch, onToggle } = useDisclosure();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { richEditorRef, getChatHistory, reset, resetChatSettings } = useChat();
+  const {
+    richEditorRef,
+    getChatHistory,
+    reset,
+    resetChatSettings,
+    setSelectedChatId,
+  } = useChat(
+    (state) => ({
+      richEditorRef: state.richEditorRef,
+      getChatHistory: state.getChatHistory,
+      reset: state.reset,
+      resetChatSettings: state.resetChatSettings,
+      setSelectedChatId: state.setSelectedChatId,
+    }),
+    shallow,
+  );
   const [search, setSearch] = useState('');
-  const [usages, setUsages] = useState({
-    total: 0,
-    today: 0,
-  });
   const { toggleColorMode, colorMode } = useColorMode();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { data } = useQuery('usages', getUsages, {
+    refetchInterval: 60000 * 5, // 5 min
+  });
+
+  const usages = useMemo(() => {
+    if (!data) {
+      return {
+        total: 0,
+        today: 0,
+      };
+    }
+    return data;
+  }, [data]);
+
+  const handleToggleShowSearch = () => {
+    if (isFreeUser) {
+      toastForFreeUser(
+        'search_history_limit',
+        'Upgrade your plan to access search chat history!',
+      );
+      return;
+    }
+
+    onToggle();
+  };
 
   const handleToggleColorMode = () => {
+    if (isFreeUser) {
+      toastForFreeUser(
+        'dark_mode_limit',
+        'Upgrade your plan to use dark mode!',
+      );
+      return;
+    }
+
     toggleColorMode();
     ReactGA.event({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
@@ -66,67 +129,87 @@ export const ChatSidebar: React.FC = () => {
     });
   };
 
-  const fetchUsages = () => {
-    getUsages()
-      .then((res) => {
-        const todayItemIndex = res.data.daily_costs.findIndex((item) => {
-          return (
-            new Date(item.timestamp * 1000).getDate() ===
-            new Date().getUTCDate()
-          );
-        });
-
-        const todayUsageItems = res.data.daily_costs[
-          todayItemIndex
-        ].line_items.reduce((prev, curr) => {
-          return prev + curr.cost;
-        }, 0);
-
-        setUsages({
-          total: res.data.total_usage * 0.01,
-          today: todayUsageItems * 0.01,
-        });
-      })
-      .catch(captureException);
-  };
-
   useLayoutEffect(() => {
     getChatHistory();
-    fetchUsages();
-
-    const intervalId = setInterval(fetchUsages, 60000); // 1 minute
-
-    return () => clearInterval(intervalId);
   }, []);
 
   const handleNewChat = () => {
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+    localStorage.removeItem('lastOpenChatId');
     reset();
     resetChatSettings();
     onCloseSidebar();
     richEditorRef?.current?.focus();
-    localStorage.removeItem('lastOpenChatId');
+  };
+
+  const openSavedMessages = () => {
+    if (isFreeUser) {
+      toastForFreeUser('saved_messages_limit');
+      return;
+    }
+    localStorage.setItem('lastOpenChatId', '-1');
+    setSelectedChatId(-1);
+    navigate('/');
+  };
+
+  const handleGoToSharedConversationList = () => {
+    if (isFreeUser) {
+      toastForFreeUser('share_conversation_limit');
+    } else {
+      navigate('/shared');
+    }
   };
 
   const renderUserSettings = () => {
     return (
       <Menu autoSelect={false}>
         <MenuButton>
-          <ProfilePhoto />
+          <ProfilePhoto
+            border="3px solid"
+            color={accentColor('500')}
+            _light={{ bgColor: 'gray.200' }}
+          />
         </MenuButton>
-        <MenuList>
+        <MenuList fontWeight="normal">
+          <MenuItem onClick={openSavedMessages}>
+            <Icon as={TbBookmark} />
+            <Text ml={4}>Saved messages</Text>
+          </MenuItem>
+          <MenuItem onClick={handleGoToSharedConversationList}>
+            <Icon as={TbBookmarks} />
+            <Text ml={4}>Saved conversations</Text>
+          </MenuItem>
+          <MenuDivider />
           <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
             <Text ml={4}>Settings</Text>
           </MenuItem>
-          {!isLessThanMd && (
-            <MenuItem onClick={toggleColorMode}>
-              {colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+          {isFreeUser ? (
+            <MenuItem as={Link} to="/plans" color={accentColor('500')}>
+              <Icon as={TbDiscountCheck} />
+              <Text ml={4}>Upgrade to premium</Text>
+            </MenuItem>
+          ) : (
+            <MenuItem as={Link} to="/manage-subs">
+              <Icon as={TbDiamond} />
+              <Text ml={4}>Manage Subscription</Text>
+            </MenuItem>
+          )}
+          {!isLessThanMd && !isFreeUser && (
+            <MenuItem onClick={handleToggleColorMode}>
+              {colorMode === 'light' ? (
+                <Icon as={TbMoon} />
+              ) : (
+                <Icon as={TbSun} />
+              )}
               <Text ml={4}>
                 Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
               </Text>
             </MenuItem>
           )}
-          <MenuItem hidden>
+          <MenuItem onClick={signOut}>
             <Icon as={TbLogout} />
             <Text ml={4}>Log out</Text>
           </MenuItem>
@@ -144,7 +227,7 @@ export const ChatSidebar: React.FC = () => {
             <Flex align="center" justify="space-between">
               <Flex gap={4}>
                 <Box as="img" src="/favicon-32x32.png" />
-                <Text color="blue.500" as="span" fontWeight="bold">
+                <Text color={accentColor('500')} as="span" fontWeight="bold">
                   Less Effort
                 </Text>
               </Flex>
@@ -152,7 +235,7 @@ export const ChatSidebar: React.FC = () => {
                 <IconButton
                   icon={<TbPlus />}
                   aria-label="New chat"
-                  colorScheme="blue"
+                  colorScheme={accentColor()}
                   fontSize="xl"
                   onClick={handleNewChat}
                   size="sm"
@@ -163,8 +246,17 @@ export const ChatSidebar: React.FC = () => {
           </DrawerHeader>
 
           <DrawerBody p={0}>
-            <Box p={2} h="3.571rem" flexShrink={0}>
-              <Search onSearch={setSearch} borderRadius="lg" />
+            <Box
+              p={2}
+              h="3.571rem"
+              flexShrink={0}
+              onClick={handleToggleShowSearch}
+            >
+              <Search
+                onSearch={isFreeUser ? undefined : setSearch}
+                borderRadius="lg"
+                isDisabled={isFreeUser}
+              />
             </Box>
             <Box
               overflowY="auto"
@@ -183,7 +275,7 @@ export const ChatSidebar: React.FC = () => {
               }}
             >
               <Flex justify="space-between" w="full">
-                <HStack spacing={4}>
+                <Flex gap={4}>
                   {renderUserSettings()}
                   <Box>
                     <Text fontWeight="bold">Usages</Text>
@@ -193,20 +285,22 @@ export const ChatSidebar: React.FC = () => {
                       _light={{ color: 'gray.400' }}
                     >
                       This month:{' '}
-                      <Box as="b" color="blue.500">
+                      <Box as="b" color={accentColor('500')}>
                         ${usages.total.toFixed(2)}
                       </Box>
                     </Text>
                   </Box>
-                </HStack>
+                </Flex>
 
-                <IconButton
-                  variant="ghost"
-                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-                  aria-label="Toggle color mode"
-                  onClick={handleToggleColorMode}
-                  color="gray.400"
-                />
+                {!isFreeUser && (
+                  <IconButton
+                    variant="ghost"
+                    icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+                    aria-label="Toggle color mode"
+                    onClick={handleToggleColorMode}
+                    color="gray.400"
+                  />
+                )}
               </Flex>
             </Flex>
           </DrawerBody>
@@ -220,7 +314,7 @@ export const ChatSidebar: React.FC = () => {
       <LightMode>
         <Box>
           <Button
-            colorScheme="blue"
+            colorScheme={accentColor()}
             w="full"
             borderRadius="2xl"
             onClick={handleNewChat}
@@ -257,7 +351,7 @@ export const ChatSidebar: React.FC = () => {
             <Search
               borderRadius="lg"
               autoFocus
-              onBlur={onToggle}
+              onBlur={handleToggleShowSearch}
               onSearch={setSearch}
               _light={{
                 bgColor: 'gray.200',
@@ -276,7 +370,7 @@ export const ChatSidebar: React.FC = () => {
             w="full"
             justify="space-between"
             align="center"
-            onClick={onToggle}
+            onClick={handleToggleShowSearch}
             cursor="text"
             _light={{
               borderColor: CustomColor.lightBorder,
@@ -313,7 +407,7 @@ export const ChatSidebar: React.FC = () => {
         >
           <Flex gap={4}>
             <Flex justify="space-between" align="center" w="full">
-              <HStack spacing={4}>
+              <Flex gap={4}>
                 {renderUserSettings()}
                 <Box>
                   <Text fontWeight="bold">Usages</Text>
@@ -323,12 +417,12 @@ export const ChatSidebar: React.FC = () => {
                     _light={{ color: 'gray.400' }}
                   >
                     This month:{' '}
-                    <Box as="b" color="blue.500">
+                    <Box as="b" color={accentColor('500')}>
                       ${usages.total.toFixed(2)}
                     </Box>
                   </Text>
                 </Box>
-              </HStack>
+              </Flex>
               <HStack>
                 <AccordionButton
                   w="auto"
@@ -353,7 +447,7 @@ export const ChatSidebar: React.FC = () => {
               }}
             >
               Today usage is{' '}
-              <Box as="b" color="blue.500">
+              <Box as="b" color={accentColor('500')}>
                 ${usages.today.toFixed(4)}
               </Box>
             </Box>

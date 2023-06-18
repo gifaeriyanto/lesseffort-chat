@@ -1,7 +1,6 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { HStack, IconButton, Select, SelectProps } from '@chakra-ui/react';
-import { TbX } from 'react-icons/tb';
-import { CustomColor } from 'theme/foundations/colors';
+import { Button, HStack, Select, SelectProps } from '@chakra-ui/react';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface Rules {
   outputLanguage: string;
@@ -18,8 +17,10 @@ export interface ChatRulesProps {
   hidden?: Array<keyof Rules>;
 }
 
-export const chatRulesPrompt = (rules: Rules) => {
+export const chatRulesPrompt = (rules: Rules, noEnter = false) => {
   const prompts = [];
+
+  const enterPrefix = noEnter ? '' : '\n\n';
 
   if (rules.outputLanguage) {
     prompts.push(`${rules.outputLanguage} language`);
@@ -37,7 +38,7 @@ export const chatRulesPrompt = (rules: Rules) => {
     prompt += rules.format;
   }
 
-  return prompt ? `\n\n${prompt}` : '';
+  return prompt ? `${enterPrefix}${prompt}` : '';
 };
 
 export const defaultRules: Rules = {
@@ -102,10 +103,10 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
       value: rules[name],
       onChange: handleChange(name),
       isDisabled: hidden?.includes(name),
-      borderColor: rules[name] ? 'blue.500' : CustomColor.border,
-      focusBorderColor: 'blue.300',
+      borderColor: rules[name] ? accentColor('500') : CustomColor.border,
+      focusBorderColor: accentColor('300'),
       _light: {
-        borderColor: rules[name] ? 'blue.500' : CustomColor.lightBorder,
+        borderColor: rules[name] ? accentColor('500') : CustomColor.lightBorder,
         bgColor: rules[name] ? 'white' : 'inherit',
       },
     };
@@ -315,13 +316,9 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
         <option value="Answer in Q&amp;A format">Q&amp;A</option>
       </Select>
       {!!activeRulesCount && (
-        <IconButton
-          icon={<TbX />}
-          aria-label="Clear rules"
-          size="sm"
-          borderRadius="xl"
-          onClick={handleClear}
-        />
+        <Button size="sm" borderRadius="xl" onClick={handleClear}>
+          Clear
+        </Button>
       )}
     </HStack>
   );

@@ -1,14 +1,12 @@
 import { RefObject } from 'react';
 import { captureException } from '@sentry/react';
-import {
-  Chat,
-  defaultBotInstruction,
-  generateResponse,
-  Message,
-  OpenAIModel,
-} from 'api/chat';
-import { getUsages } from 'api/openai';
-import { Rules } from 'components/chat/rules';
+import { Chat, generateResponse, Message } from 'api/chat';
+import { defaultBotInstruction, OpenAIModel } from 'api/constants';
+import { getUser } from 'api/supabase/auth';
+import { getSavedMessages } from 'api/supabase/chat';
+import { supabase } from 'api/supabase/prompts';
+import { chatRulesPrompt, Rules } from 'components/chat/rules';
+import { Plan } from 'components/pricingPlans';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
 import { standaloneToast } from 'index';
@@ -22,56 +20,18 @@ export const modifyTemplate = (
   template: string,
   rules?: Rules,
 ) => {
+  let rulesText = '';
+
+  if (rules) {
+    rulesText = ' ' + chatRulesPrompt(rules, true);
+  }
+
   return (
-    template
-      .replaceAll('[PROMPT]', prompt)
-      .replaceAll('[TARGETLANGUAGE]', rules?.outputLanguage || '')
-      .replaceAll('[TONE]', rules?.tone || '') +
-    '\n\nAlways use markdown format.'
+    template.replaceAll('[PROMPT]', prompt) +
+    '\n\nNote:\n\nPlease respond always with markdown format.' +
+    rulesText
   );
 };
-
-export const useUsage = create<{
-  usage: number;
-  getUsages: () => Promise<number | void>;
-}>((set) => ({
-  usage: 0,
-  getUsages: async () => {
-    try {
-      const res = await getUsages();
-      if (!res) {
-        return;
-      }
-      const { total_usage } = res.data;
-      set({ usage: total_usage });
-      return total_usage;
-    } catch (error) {
-      captureException(error);
-    }
-  },
-}));
-
-export const useProfilePhoto = create<{
-  photo: string | null;
-  setPhoto: (image: string) => void;
-  getPhoto: () => string | null;
-}>((set, get) => ({
-  photo: null,
-  setPhoto: (image: string) => {
-    localStorage.setItem('photoProfile', image);
-    set({ photo: image });
-  },
-  getPhoto: () => {
-    const { photo } = get();
-
-    const localImage = localStorage.getItem('photoProfile');
-    if (localImage && !photo) {
-      set({ photo: localImage });
-    }
-
-    return photo;
-  },
-}));
 
 export const useChat = create<{
   botInstruction: string;
@@ -81,26 +41,29 @@ export const useChat = create<{
   isTyping: boolean;
   messages: Message[];
   model: OpenAIModel;
+  // note: -1 is saved messages
   selectedChatId: number | undefined;
   xhr?: XMLHttpRequest;
   richEditorRef: RefObject<Editor> | null;
   setBotInstruction: (instruction: string) => Promise<void>;
   setModel: (model: OpenAIModel) => void;
-  deleteChat: (chatId: number) => void;
+  deleteChat: (chatId: number) => Promise<void>;
+  deleteMessage: (messageId: number) => Promise<void>;
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
-  updateMessage: (message: string) => void;
+  updateMessage: (message: string, rules: Rules) => void;
   updateMessageTemplate: (template: string) => void;
   selectGeneratedMessage: (message: Message, selectedIndex: number) => void;
   getMessages: (chatId: number) => Promise<Message[]>;
+  getSavedMessages: () => Promise<Message[]>;
   getChatHistory: () => Promise<void>;
   newChat: (
     data: Omit<Chat, 'bot_instruction' | 'model'>,
     userMessage: Message,
   ) => Promise<void>;
   regenerateResponse: (messageId: number) => void;
-  renameChat: (chatId: number, newTitle: string) => void;
+  renameChat: (chatId: number, newTitle: string) => Promise<void>;
   resendLastMessage: () => Promise<void>;
-  reset: () => void;
+  reset: () => Promise<void>;
   resetChatSettings: () => void;
   setEditingMessage: (message?: Message) => void;
   setRichEditorRef: (ref: RefObject<Editor>) => void;
@@ -295,8 +258,8 @@ export const useChat = create<{
 
         case 429:
           standaloneToast({
-            title: 'Oops! Something went wrong. 😕',
-            description: `${error.message}\nError status: ${status}`,
+            title: 'Too many requests. Rate limit exceeded 😓',
+            description: `We're sorry, but the OpenAI API, the provider of GPT model, has received too many requests from you in a short period of time. Please wait a few moments and try again later.`,
             status: 'error',
           });
           break;
@@ -332,13 +295,20 @@ export const useChat = create<{
   },
   xhr: undefined,
   chatHistory: [],
-  deleteChat: (chatId) => {
-    const db = useIndexedDB('chatHistory');
-    db.deleteRecord(chatId);
+  deleteChat: async (chatId) => {
+    const dbChatHistory = useIndexedDB('chatHistory');
+    await dbChatHistory.deleteRecord(chatId);
     const { getChatHistory, reset } = get();
-    getChatHistory();
-    reset();
-    localStorage.removeItem('lastOpenChatId');
+    await getChatHistory();
+    await reset();
+  },
+  deleteMessage: async (messageId) => {
+    const dbMessages = useIndexedDB('messages');
+    await dbMessages.deleteRecord(messageId);
+    const { getMessages, selectedChatId } = get();
+    if (selectedChatId) {
+      await getMessages(selectedChatId);
+    }
   },
   getMessages: async (chatId) => {
     localStorage.setItem('lastOpenChatId', String(chatId));
@@ -350,25 +320,54 @@ export const useChat = create<{
       captureException(error);
     }
   },
+  getSavedMessages: async () => {
+    const res = await getSavedMessages();
+    const messages = res
+      .map(
+        (item) =>
+          ({
+            id: item.id,
+            content: item.content,
+            role: item.role,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+            chatId: -1,
+          } as Message),
+      )
+      .reverse();
+    set({
+      messages,
+    });
+    return messages;
+  },
   getChatHistory: async () => {
-    const db = useIndexedDB('chatHistory');
+    const dbChatHistory = useIndexedDB('chatHistory');
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
     try {
-      const chatHistory = await db.getAll<Chat>();
-      set({ chatHistory: reverse(chatHistory) });
+      const chatHistory = await dbChatHistory.getAll<Chat>();
+      set({
+        chatHistory: reverse(
+          chatHistory.filter((item) => item.userId === userId),
+        ),
+      });
     } catch (error) {
       captureException(error);
     }
   },
   newChat: async (data, userMessage) => {
     const { reset, getChatHistory } = get();
-    reset();
+    await reset();
     const dbChatHistory = useIndexedDB('chatHistory');
     const dbMessages = useIndexedDB('messages');
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
     dbChatHistory.add<Chat>({
       ...data,
       createdAt: getUnixTime(new Date()),
       bot_instruction: get().botInstruction,
       model: get().model,
+      userId,
     });
 
     try {
@@ -386,19 +385,38 @@ export const useChat = create<{
   selectedChatId: undefined,
   setSelectedChatId: async (chatId) => {
     const { getMessages, setEditingMessage, stopStream } = get();
+    const userData = await getUser();
+
+    if (userData?.plan === Plan.free && chatId === -1) {
+      localStorage.removeItem('lastOpenChatId');
+      set({ selectedChatId: undefined });
+      return;
+    }
+
     const dbChatHistory = useIndexedDB('chatHistory');
 
     try {
       await stopStream();
       setEditingMessage(undefined);
       set({ selectedChatId: chatId });
-      if (chatId) {
+      if (!chatId) {
+        return;
+      }
+      if (chatId > 0) {
         const res = await dbChatHistory.getByID(chatId);
+        if (!res) {
+          localStorage.removeItem('lastOpenChatId');
+          set({ selectedChatId: undefined });
+          return;
+        }
         set({
           botInstruction: res?.bot_instruction || defaultBotInstruction,
           model: res?.model || OpenAIModel.GPT_3_5,
         });
         await getMessages(chatId);
+      } else {
+        localStorage.setItem('lastOpenChatId', '-1');
+        await get().getSavedMessages();
       }
     } catch (error) {
       captureException(error);
@@ -427,8 +445,8 @@ export const useChat = create<{
       captureException(error);
     }
   },
-  reset: () => {
-    get().stopStream();
+  reset: async () => {
+    await get().stopStream();
     set({
       editingMessage: undefined,
       selectedChatId: undefined,
@@ -461,7 +479,7 @@ export const useChat = create<{
       captureException(error);
     }
   },
-  updateMessage: async (message) => {
+  updateMessage: async (message, rules) => {
     const { update } = useIndexedDB('messages');
     const {
       editingMessage,
@@ -477,6 +495,7 @@ export const useChat = create<{
     try {
       await update({
         ...editingMessage,
+        rules,
         content: message,
         updatedAt: getUnixTime(new Date()),
       });

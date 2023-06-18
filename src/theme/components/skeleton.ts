@@ -5,8 +5,8 @@ const $endColor = cssVar('skeleton-end-color');
 
 const gray = defineStyle({
   _light: {
-    [$startColor.variable]: 'colors.gray.300',
-    [$endColor.variable]: 'colors.gray.400',
+    [$startColor.variable]: 'colors.blackAlpha.300',
+    [$endColor.variable]: 'colors.blackAlpha.400',
   },
   _dark: {
     [$startColor.variable]: 'colors.gray.500',

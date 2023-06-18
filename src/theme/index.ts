@@ -1,23 +1,29 @@
 import { extendTheme, ThemeOverride } from '@chakra-ui/react';
+import { buttonTheme } from 'theme/components/button';
 import { inputTheme } from 'theme/components/input';
+import { menuTheme } from 'theme/components/menu';
+import { modalTheme } from 'theme/components/modal';
 import { popoverTheme } from 'theme/components/popover';
 import { selectTheme } from 'theme/components/select';
 import { skeletonTheme } from 'theme/components/skeleton';
 import { textareaTheme } from 'theme/components/textarea';
-import { colors, CustomColor } from 'theme/foundations/colors';
+import { accentColor, colors, CustomColor } from 'theme/foundations/colors';
 
 const config: ThemeOverride = {
   colors,
   components: {
+    Button: buttonTheme,
     Input: inputTheme,
+    Menu: menuTheme,
+    Modal: modalTheme,
     Popover: popoverTheme,
     Select: selectTheme,
     Skeleton: skeletonTheme,
     Textarea: textareaTheme,
   },
   config: {
-    initialColorMode: 'dark',
-    useSystemColorMode: false,
+    initialColorMode: 'system',
+    useSystemColorMode: true,
   },
   fonts: {
     body: '"Inter", sans-serif',
@@ -34,12 +40,15 @@ const config: ThemeOverride = {
     sm: '0.143rem',
   },
   styles: {
-    global: ({ colorMode }) => ({
+    global: () => ({
       'html, body': {
-        fontSize: '16px',
+        fontSize: localStorage.getItem('fontSize') || '16px',
         fontWeight: 500,
         lineHeight: 'tall',
-        bgColor: colorMode === 'dark' ? CustomColor.background : 'gray.200',
+        bgColor:
+          localStorage.getItem('chakra-ui-color-mode') === 'dark'
+            ? CustomColor.background
+            : 'gray.200',
       },
       html: {
         h: '100%',
@@ -58,6 +67,14 @@ const config: ThemeOverride = {
         bgColor: 'gray.400',
         borderRadius: 'full',
       },
+      _selection: {
+        bgColor: accentColor('600'),
+        color: 'white',
+      },
+      'button:focus-visible, button[data-focus-visible], a:focus-visible, a[data-focus-visible]':
+        {
+          boxShadow: 'none !important',
+        },
     }),
   },
 };

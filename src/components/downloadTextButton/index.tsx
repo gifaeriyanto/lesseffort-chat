@@ -17,6 +17,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { accentColor } from 'theme/foundations/colors';
 
 interface DownloadTextButtonProps extends IconButtonProps {
   text: string;
@@ -37,13 +38,19 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
     register,
     formState: { errors },
     handleSubmit,
-    reset,
+    reset: resetForm,
   } = useForm<FormInputs>();
 
   const langParser = () => {
     switch (lang) {
       case 'javascript':
         return 'js';
+
+      case 'typescript':
+        return 'ts';
+
+      case 'yaml':
+        return 'yml';
 
       case 'python':
         return 'py';
@@ -68,7 +75,7 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
   const handleDownload = ({ filename }: FormInputs) => {
     downloadFile(filename);
     onClose();
-    reset();
+    resetForm();
   };
 
   return (
@@ -102,7 +109,7 @@ export const DownloadTextButton: React.FC<DownloadTextButtonProps> = ({
             </ModalBody>
 
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} type="submit">
+              <Button colorScheme={accentColor()} mr={3} type="submit">
                 Download
               </Button>
               <Button onClick={onClose}>Cancel</Button>

@@ -23,6 +23,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Portal,
@@ -33,15 +34,17 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Message } from 'api/chat';
+import { deleteSavedMessage, saveMessage } from 'api/supabase/chat';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { CodeBlock } from 'components/codeBlock';
+import { ResponsiveTableMd } from 'components/table';
 import ReactGA from 'react-ga4';
 import {
   TbArrowLeft,
   TbArrowRight,
   TbBookmark,
   TbBrandOpenai,
-  TbDotsVertical,
+  TbDots,
   TbTrash,
 } from 'react-icons/tb';
 import ReactMarkdown from 'react-markdown';
@@ -49,10 +52,14 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
+import { useUserData } from 'store/user';
+import { accentColor } from 'theme/foundations/colors';
+import { copyToClipboard } from 'utils/copy';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
-import { comingSoon } from 'utils/common';
+import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 // import 'katex/dist/katex.min.css';
 
@@ -100,6 +107,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   onEdit,
   onRegenerateResponse,
 }) => {
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -107,8 +115,19 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     onOpen: onOpenAllMessages,
     onClose: onCloseAllMessages,
   } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
   const [to, setTo] = useState<NodeJS.Timeout>();
-  const { isLastMessageFailed, selectGeneratedMessage } = useChat((state) => {
+  const {
+    isLastMessageFailed,
+    selectGeneratedMessage,
+    selectedChatId,
+    getSavedMessages,
+    deleteMessage,
+  } = useChat((state) => {
     const lastMessage = state.messages[0];
     return {
       isLastMessageFailed:
@@ -116,8 +135,11 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         lastMessage.role === 'user' &&
         !state.isTyping,
       selectGeneratedMessage: state.selectGeneratedMessage,
+      selectedChatId: state.selectedChatId,
+      getSavedMessages: state.getSavedMessages,
+      deleteMessage: state.deleteMessage,
     };
-  });
+  }, shallow);
   const { isMe, rulesCount, oldGeneratedMessages } = useMemo(() => {
     return {
       isMe: message.role === 'user',
@@ -129,6 +151,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   }, [message]);
   const [selectedGeneratedMessage, setSelectedGeneratedMessage] = useState(
     oldGeneratedMessages.findIndex((item) => item === message.content),
+  );
+  const isSavedMessages = useMemo(
+    () => selectedChatId === -1,
+    [selectedChatId],
   );
 
   const handleSelectPrevMessage = () => {
@@ -157,14 +183,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     onCloseAllMessages();
   };
 
-  const handleCopy = () => {
-    ReactGA.event({
-      action: 'Copy message',
-      category: 'Action',
-    });
-    navigator.clipboard.writeText(message.content);
-  };
-
   const handleShowMobileActions = () => {
     const holdTimeout = setTimeout(() => {
       onOpen();
@@ -187,15 +205,83 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     };
   }, [to, isOpen]);
 
+  const handleSaveMessage = () => {
+    saveMessage(message);
+  };
+
+  const handleDeleteMessage = async () => {
+    if (isSavedMessages) {
+      message.id && (await deleteSavedMessage(message.id));
+      await getSavedMessages();
+    } else {
+      message.id && deleteMessage(message.id);
+    }
+  };
+
+  const handleClose = (action?: Function) => () => {
+    onCloseDeleteModal();
+    action?.();
+    if (isLessThanMd) {
+      onClose();
+    }
+  };
+
+  const handleCopy = () => {
+    copyToClipboard(message.content);
+  };
+
   const renderActions = useCallback(() => {
     if (noActions) {
       return null;
     }
 
-    const handleClose = (action?: Function) => () => {
-      action?.();
-      onClose();
-    };
+    const actions = [
+      {
+        hidden: !isLastMessageFailed || isSavedMessages,
+        action: handleClose(onResend),
+        text: 'Resend',
+        color: 'red.400',
+      },
+      {
+        hidden: !message.id || !isMe || isSavedMessages,
+        action: handleClose(onEdit),
+        text: 'Edit',
+      },
+      {
+        hidden: !message.id || isMe || isSavedMessages,
+        action: handleClose(onRegenerateResponse),
+        text: 'Regenerate response',
+      },
+      {
+        hidden: false,
+        action: handleClose(handleCopy),
+        text: 'Copy text',
+      },
+      {
+        hidden: isSavedMessages,
+        action: isFreeUser
+          ? () => toastForFreeUser('save_message_limit')
+          : handleClose(handleSaveMessage),
+        text: 'Save message',
+        inMenu: true,
+        icon: <TbBookmark />,
+      },
+      {
+        hidden: !message.id,
+        action: onOpenDeleteModal,
+        text: 'Delete message',
+        color: 'red.400',
+        inMenu: true,
+        icon: <TbTrash />,
+      },
+    ];
+
+    const primaryActions = actions.filter(
+      (item) => !item.inMenu && !item.hidden,
+    );
+    const secondaryActions = actions.filter(
+      (item) => item.inMenu && !item.hidden,
+    );
 
     if (isLessThanMd) {
       return (
@@ -204,30 +290,18 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ModalContent userSelect="none">
             <ModalBody py={4}>
               <VStack spacing={4}>
-                {isLastMessageFailed && (
-                  <Box onClick={onResend} role="button" color="red.400">
-                    Resend
-                  </Box>
+                {actions.map((item) =>
+                  item.hidden ? null : (
+                    <Box
+                      key={item.text}
+                      onClick={item.action}
+                      role="button"
+                      color={item.color}
+                    >
+                      {item.text}
+                    </Box>
+                  ),
                 )}
-                {!!message.id && (
-                  <>
-                    {isMe ? (
-                      <Box role="button" onClick={handleClose(onEdit)}>
-                        Edit
-                      </Box>
-                    ) : (
-                      <Box
-                        role="button"
-                        onClick={handleClose(onRegenerateResponse)}
-                      >
-                        Regenerate Response
-                      </Box>
-                    )}
-                  </>
-                )}
-                <Box role="button" onClick={handleClose(handleCopy)}>
-                  Copy text
-                </Box>
               </VStack>
             </ModalBody>
           </ModalContent>
@@ -241,72 +315,46 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         bgColor="gray.700"
         className="message-actions"
         opacity={0}
-        ml="1rem"
+        ml="0.5rem"
         _light={{ bgColor: 'gray.200' }}
       >
-        {isLastMessageFailed && (
-          <Button
-            onClick={onResend}
-            variant="ghost"
-            borderRadius="lg"
-            size="xs"
-            color="red.400"
-          >
-            Resend
-          </Button>
+        {primaryActions.map((item) =>
+          item.hidden ? null : (
+            <Button
+              key={item.text}
+              onClick={item.action}
+              variant="ghost"
+              borderRadius="lg"
+              size="xs"
+              color={item.color || 'gray.400'}
+            >
+              {item.text}
+            </Button>
+          ),
         )}
-        {!!message.id && (
-          <>
-            {isMe ? (
-              <Button
-                onClick={onEdit}
-                variant="ghost"
-                borderRadius="lg"
-                size="xs"
-                color="gray.400"
-              >
-                Edit
-              </Button>
-            ) : (
-              <Button
-                onClick={onRegenerateResponse}
-                variant="ghost"
-                borderRadius="lg"
-                size="xs"
-                color="gray.400"
-              >
-                Regenerate response
-              </Button>
-            )}
-          </>
-        )}
-        <Button
-          onClick={handleCopy}
-          variant="ghost"
-          borderRadius="lg"
-          size="xs"
-          color="gray.400"
-        >
-          Copy text
-        </Button>
-        {/* Coming soon feature */}
-        {false && (
-          <Menu>
+        {!!secondaryActions.length && (
+          <Menu autoSelect={false}>
             <MenuButton
               as={ChatMessageAction}
-              icon={<TbDotsVertical />}
-              title="More actions"
+              icon={<TbDots />}
+              borderRadius="lg"
+              size="xs"
+              color="gray.400"
             />
             <Portal>
               <MenuList>
-                <MenuItem onClick={comingSoon}>
-                  <TbBookmark />
-                  <Text ml={2}>Save message</Text>
-                </MenuItem>
-                <MenuItem onClick={comingSoon}>
-                  <TbTrash />
-                  <Text ml={2}>Delete message</Text>
-                </MenuItem>
+                {secondaryActions.map((item) =>
+                  item.hidden ? null : (
+                    <MenuItem
+                      key={item.text}
+                      onClick={item.action}
+                      color={item.color}
+                    >
+                      {item.icon}
+                      <Text ml={2}>{item.text}</Text>
+                    </MenuItem>
+                  ),
+                )}
               </MenuList>
             </Portal>
           </Menu>
@@ -333,9 +381,9 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         }}
         id={`message-${message.id || 0}`}
       >
-        <Box>
+        <Box display={{ base: 'none', md: 'block' }}>
           {isMe ? (
-            <ProfilePhoto mt="0.5rem" allowChangePhoto />
+            <ProfilePhoto mt="0.5rem" />
           ) : (
             <Flex
               p={4}
@@ -359,7 +407,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           _light={{
             color: 'gray.600',
           }}
-          maxW={{ base: 'calc(100vw - 6rem)', md: 'calc(100% - 4.375rem)' }}
+          maxW={{ base: 'calc(100vw - 2rem)', md: 'calc(100% - 4.375rem)' }}
           w="full"
           onTouchStart={handleShowMobileActions}
           onTouchEnd={handleClearTimeout}
@@ -377,7 +425,6 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               p: 4,
             },
             table: {
-              marginBottom: '1rem',
               w: 'full',
             },
             ['td, th']: {
@@ -386,10 +433,10 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               borderColor: 'gray.400',
             },
             a: {
-              color: 'blue.300',
+              color: isMe ? accentColor('200') : accentColor('300'),
               textDecor: 'underline',
               _light: {
-                color: 'blue.600',
+                color: isMe ? accentColor('200') : accentColor('600'),
               },
             },
             ['.hljs']: {
@@ -431,25 +478,43 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
             },
             blockquote: {
               borderLeft: '2px solid',
-              borderColor: isMe ? 'blue.200' : 'gray.400',
+              borderColor: isMe ? accentColor('200') : 'gray.400',
               pl: 4,
             },
             '.md-wrapper': {
               w: oldGeneratedMessages.length ? 'full' : 'auto',
               maxW: 'full',
-              color: isMe ? 'white' : 'inherit',
-              bgColor: isMe ? 'blue.500' : 'gray.500',
+              color: isMe
+                ? ['cyan', 'yellow'].includes(accentColor())
+                  ? 'gray.700'
+                  : 'white'
+                : 'inherit',
+              bgColor: isMe ? accentColor('500') : 'gray.500',
               display: 'inline-block',
               py: 2,
               px: 4,
-              mb: oldGeneratedMessages.length ? 0 : '1rem',
+              mb: oldGeneratedMessages.length ? 0 : '0.25rem',
+              mr: {
+                base: 0,
+                md: '0.5rem',
+              },
               borderRadius: 'xl',
               borderBottomRadius: oldGeneratedMessages.length ? 0 : 'xl',
               '& > *:last-child': {
                 mb: 0,
               },
+              '& > pre': {
+                borderRadius: 'lg',
+                minW: '16rem',
+              },
+              '& > pre:first-of-type': {
+                mt: 2,
+              },
+              '& > pre:last-child': {
+                mb: 2,
+              },
               _light: {
-                bgColor: isMe ? 'blue.500' : 'gray.100',
+                bgColor: isMe ? accentColor('500') : 'gray.100',
               },
               _after: rulesCount
                 ? {
@@ -457,7 +522,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                       rulesCount > 1 ? 'rules' : 'rule'
                     } applied"`,
                     display: 'block',
-                    color: 'blue.300',
+                    color: accentColor('300'),
                     fontSize: 'sm',
                   }
                 : undefined,
@@ -467,6 +532,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
           <ReactMarkdown
             components={{
               code: CodeBlock,
+              table: ResponsiveTableMd,
             }}
             remarkPlugins={[remarkGfm, remarkBreaks]}
             // Math support conflicting with using usd symbol ($)
@@ -495,7 +561,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               bgColor="gray.600"
               p="0.5rem 1rem"
               borderBottomRadius="xl"
-              mb={4}
+              mb="0.25rem"
               justify="space-between"
               _light={{ bgColor: 'gray.50' }}
             >
@@ -548,15 +614,16 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                   bgColor="gray.500"
                   p={4}
                   borderRadius="xl"
+                  w="full"
                   _light={{ bgColor: 'gray.100' }}
                 >
-                  <Box>{item}</Box>
+                  <Box mb={4}>{item}</Box>
                   <Flex justify="flex-end">
                     <LightMode>
                       <Button
                         size="sm"
                         onClick={() => handleSelectMessage(index)}
-                        colorScheme="blue"
+                        colorScheme={accentColor()}
                       >
                         Use this
                       </Button>
@@ -566,6 +633,31 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               ))}
             </VStack>
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete message</ModalHeader>
+          <ModalBody>
+            This action can't be undone. Are you sure you want to delete the
+            selected message?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onCloseDeleteModal} mr={4}>
+              Cancel
+            </Button>
+            <LightMode>
+              <Button
+                colorScheme="red"
+                onClick={handleClose(handleDeleteMessage)}
+              >
+                Delete
+              </Button>
+            </LightMode>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

@@ -1,6 +1,6 @@
 import { Message } from 'api/chat';
 import { chatRulesPrompt } from 'components/chat/rules';
-import { modifyTemplate } from 'store/openai';
+import { modifyTemplate } from 'store/chat';
 
 export const mapMessage = (message: Message) => {
   let content = message.content;

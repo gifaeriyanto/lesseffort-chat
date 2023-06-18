@@ -14,14 +14,14 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { PromptData } from 'api/supabase/prompts';
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { StarterPrompts } from 'containers/chat/starterPrompts';
 import { TbSettings, TbTemplate } from 'react-icons/tb';
-import { Prompt } from 'store/supabase';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface StarterContainerProps {
-  onSelectPrompt: (prompt: Prompt) => void;
+  onSelectPrompt: (prompt: PromptData) => void;
 }
 
 export const StarterContainer: React.FC<StarterContainerProps> = ({
@@ -33,11 +33,12 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
   const tabProps = (index: number): TabProps => ({
     borderWidth: { base: '0 0 2px 0', md: '0 2px 0 0' },
     borderStyle: 'solid',
-    borderColor: tabIndex === index ? 'blue.500' : 'gray.500',
-    color: tabIndex === index ? 'blue.500' : 'gray.400',
+    borderColor: tabIndex === index ? accentColor('500') : 'gray.500',
+    color: tabIndex === index ? accentColor('500') : 'gray.400',
     py: 4,
     _light: {
-      borderColor: tabIndex === index ? 'blue.500' : CustomColor.lightBorder,
+      borderColor:
+        tabIndex === index ? accentColor('500') : CustomColor.lightBorder,
     },
     _focus: {
       boxShadow: 'none',

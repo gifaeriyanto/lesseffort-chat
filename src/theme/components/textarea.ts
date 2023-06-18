@@ -28,4 +28,9 @@ const outline = defineStyle({
 
 export const textareaTheme = defineStyleConfig({
   variants: { outline },
+  sizes: {
+    md: {
+      borderRadius: 'lg',
+    },
+  },
 });

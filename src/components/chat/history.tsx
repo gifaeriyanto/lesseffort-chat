@@ -11,11 +11,17 @@ import {
 import { Chat } from 'api/chat';
 import { HistoryActions } from 'components/chat/historyActions';
 import { sort } from 'ramda';
-import { TbAlertCircle } from 'react-icons/tb';
+import { RiWifiOffLine } from 'react-icons/ri';
+import { TbAlertCircle, TbLock } from 'react-icons/tb';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import LazyLoad from 'react-lazyload';
-import { useChat } from 'store/openai';
+import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
-import { CustomColor } from 'theme/foundations/colors';
+import { useUserData } from 'store/user';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { useOnlineStatus } from 'utils/hooks/useOnlineStatus';
+import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export interface ChatHistoryItemProps {
   id?: number;
@@ -23,7 +29,7 @@ export interface ChatHistoryItemProps {
   title: string;
   description: string;
   isLimited?: boolean;
-  onDelete: (id: number) => void;
+  isLocked?: boolean;
   onSelect: (id: number) => void;
 }
 
@@ -33,14 +39,30 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   title,
   description,
   isLimited,
+  isLocked,
   onSelect,
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
 
+  const handleSelect = () => {
+    if (isLocked) {
+      toastForFreeUser(
+        'chat_history_limit',
+        'Upgrade your plan to view more chat history!',
+        `You're currently on the free plan, which only allows you to view up to 5 chat histories. To view more, please upgrade to our premium plan.`,
+      );
+      return;
+    }
+
+    if (id) {
+      onSelect(id);
+    }
+  };
+
   return (
     <Box
       borderLeft={isActive ? '1px solid' : undefined}
-      borderColor="blue.500"
+      borderColor={accentColor('500')}
       borderBottom={`1px solid ${CustomColor.border}`}
       bgColor={isActive ? 'gray.700' : 'transparent'}
       w="full"
@@ -48,7 +70,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       p={4}
       pl={isActive ? 'calc(1rem - 1px)' : 4}
       role="button"
-      onClick={() => id && onSelect(id)}
+      onClick={handleSelect}
       pos="relative"
       _light={{
         bgColor: isActive ? 'gray.200' : 'transparent',
@@ -65,8 +87,13 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
       >
         <Box flexGrow={0} overflow="hidden">
           <Text isTruncated fontWeight={isActive ? '600' : '500'}>
+            {isLocked && (
+              <Box as="span">
+                <Icon as={TbLock} color="gray.400" mr={2} />
+              </Box>
+            )}
             {isLimited && (
-              <Tooltip label="Context length exceeded">
+              <Tooltip label="Context length exceeded" hidden={isLocked}>
                 <Box as="span">
                   <Icon as={TbAlertCircle} color="gray.400" mr={2} />
                 </Box>
@@ -98,9 +125,19 @@ export interface ChatHistoryProps {
 }
 
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
-  const { chatHistory, deleteChat, selectedChatId, setSelectedChatId } =
-    useChat();
-  const { onClose: onCloseSidebar } = useSidebar();
+  const { chatHistory, selectedChatId, setSelectedChatId } = useChat(
+    (state) => ({
+      chatHistory: state.chatHistory,
+      selectedChatId: state.selectedChatId,
+      setSelectedChatId: state.setSelectedChatId,
+    }),
+    shallow,
+  );
+  const onCloseSidebar = useSidebar((state) => state.onClose, shallow);
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isOnline = useOnlineStatus();
 
   const filteredChatHistory = useMemo(() => {
     return sort(
@@ -114,6 +151,15 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
       chatHistory.filter((item) => item.title?.match(new RegExp(search, 'i'))),
     ) as Chat[];
   }, [chatHistory, search]);
+
+  const handleSelect = (id: number) => {
+    localStorage.setItem('lastOpenChatId', String(id));
+    setSelectedChatId(id);
+    onCloseSidebar();
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+  };
 
   if (!filteredChatHistory.length) {
     return (
@@ -137,6 +183,31 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
       className="history-scroll-container"
       mb="-1px"
     >
+      {!isOnline && (
+        <Box
+          p={4}
+          borderBottom="1px solid"
+          borderColor={CustomColor.border}
+          bgColor="gray.700"
+          _light={{
+            borderColor: CustomColor.lightBorder,
+            bgColor: 'antiquewhite',
+          }}
+        >
+          <Flex
+            align="center"
+            gap={2}
+            color="yellow.500"
+            _light={{ color: 'yellow.600' }}
+          >
+            <Icon as={RiWifiOffLine} />
+            <Text>Computer not connected</Text>
+          </Flex>
+          <Text fontSize="sm" color="gray.400">
+            Make sure your computer has an active internet connection.
+          </Text>
+        </Box>
+      )}
       {filteredChatHistory.map((item, index) => (
         // <LazyLoad
         //   key={item.id || index}
@@ -149,13 +220,10 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           id={item.id}
           title={item.title}
           description={item.last_message}
-          onDelete={deleteChat}
-          onSelect={(id) => {
-            setSelectedChatId(id);
-            onCloseSidebar();
-          }}
+          onSelect={handleSelect}
           isActive={selectedChatId === item.id}
           isLimited={item.limited}
+          isLocked={isFreeUser && index > 4}
         />
         // </LazyLoad>
       ))}

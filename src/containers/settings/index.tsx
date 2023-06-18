@@ -1,80 +1,68 @@
 import React from 'react';
 import {
-  Box,
-  Button,
   Container,
-  Flex,
   Heading,
-  IconButton,
+  LightMode,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   useColorMode,
-  useMediaQuery,
 } from '@chakra-ui/react';
+import { SimpleNavbar } from 'components/navbar/simple';
 import { ChatSettings } from 'containers/chat/chatSettings';
+import { AccountSettings } from 'containers/settings/account';
 import { APIKeySettings } from 'containers/settings/apiKey';
-import ReactGA from 'react-ga4';
-import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
-import { CustomColor } from 'theme/foundations/colors';
+import { GeneralSettings } from 'containers/settings/general';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const SettingsContainer: React.FC = () => {
-  const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const { toggleColorMode, colorMode } = useColorMode();
-
-  const handleToggleColorMode = () => {
-    toggleColorMode();
-    ReactGA.event({
-      action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
-      category: 'UX',
-      label: isLessThanMd ? 'mobile' : 'desktop',
-    });
-  };
+  const { colorMode } = useColorMode();
 
   return (
     <Container maxW="container.lg">
-      <Flex
-        pt={8}
-        pb={2}
-        borderBottom="1px solid"
-        borderColor={CustomColor.border}
-        justify="space-between"
-        _light={{
-          borderColor: CustomColor.lightBorder,
-        }}
-      >
-        <Button
-          leftIcon={<TbArrowLeft />}
-          variant="link"
-          colorScheme="blue"
-          as={Link}
-          to="/"
-        >
-          Back
-        </Button>
-
-        <IconButton
-          variant="ghost"
-          icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-          aria-label="Toggle color mode"
-          onClick={handleToggleColorMode}
-          color="gray.400"
-        />
-      </Flex>
+      <SimpleNavbar />
       <Heading pt={8} pb={4}>
         Settings
       </Heading>
 
-      <Tabs>
-        <TabList _light={{ borderColor: CustomColor.lightBorder }}>
-          <Tab>Chat</Tab>
-          <Tab>API Key</Tab>
-        </TabList>
+      <Tabs colorScheme={accentColor()}>
+        <LightMode>
+          <TabList
+            borderColor={
+              colorMode === 'light' ? CustomColor.lightBorder : 'inherit'
+            }
+            _active={{
+              button: {
+                bgColor: 'transparent',
+              },
+            }}
+            sx={{
+              button: {
+                color: 'gray.400',
+                _selected: {
+                  fontWeight: 'bold',
+                  color: colorMode === 'light' ? 'gray.500' : 'gray.200',
+                  borderColor: accentColor('500'),
+                },
+              },
+            }}
+          >
+            <Tab>General</Tab>
+            <Tab>Account</Tab>
+            <Tab>Chat</Tab>
+            <Tab>API Key</Tab>
+          </TabList>
+        </LightMode>
 
         <TabPanels>
+          <TabPanel px={0}>
+            <GeneralSettings />
+          </TabPanel>
+          <TabPanel px={0}>
+            <AccountSettings />
+          </TabPanel>
           <TabPanel px={0}>
             <ChatSettings isGlobalSetting />
           </TabPanel>
