@@ -124,7 +124,7 @@ export const ChatContainer: React.FC = () => {
           </ModalHeader>
           <form onSubmit={handleSubmit(handleSaveOpenaiKey)}>
             <ModalBody>
-              <Text mb={4} fontSize="sm" color="gray.500">
+              <Text mb={4} fontSize="sm">
                 Your API Key is stored locally on your browser and never sent
                 anywhere else.
               </Text>

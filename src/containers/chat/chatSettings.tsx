@@ -139,11 +139,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   const handleResetToDefault = () => {
     setValue('title', 'New Chat');
     setValue('botInstruction', defaultBotInstruction);
-    setValue('model', OpenAIModel.GPT_3_5);
+    setValue('model', OpenAIModel.GPT_3_5_16K);
     handleSaveSettings({
       title: 'New Chat',
       botInstruction: defaultBotInstruction,
-      model: OpenAIModel.GPT_3_5,
+      model: OpenAIModel.GPT_3_5_16K,
     });
   };
 
