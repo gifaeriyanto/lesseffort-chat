@@ -81,7 +81,7 @@ export const useChat = create<{
   generatingMessage: '',
   isTyping: false,
   messages: [],
-  model: OpenAIModel.GPT_3_5,
+  model: OpenAIModel.GPT_3_5_16K,
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
   setBotInstruction: async (botInstruction) => {
@@ -411,7 +411,7 @@ export const useChat = create<{
         }
         set({
           botInstruction: res?.bot_instruction || defaultBotInstruction,
-          model: res?.model || OpenAIModel.GPT_3_5,
+          model: res?.model || OpenAIModel.GPT_3_5_16K,
         });
         await getMessages(chatId);
       } else {
@@ -458,7 +458,7 @@ export const useChat = create<{
   resetChatSettings: () => {
     set({
       botInstruction: defaultBotInstruction,
-      model: OpenAIModel.GPT_3_5,
+      model: OpenAIModel.GPT_3_5_16K,
     });
   },
   setEditingMessage: (message) => {
