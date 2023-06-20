@@ -36,6 +36,7 @@ import ReactGA from 'react-ga4';
 import {
   TbBookmark,
   TbBookmarks,
+  TbChecklist,
   TbDiamond,
   TbDiscountCheck,
   TbLogout,
@@ -44,6 +45,7 @@ import {
   TbPlus,
   TbSearch,
   TbSettings,
+  TbShieldCheck,
   TbSun,
 } from 'react-icons/tb';
 import { useQuery } from 'react-query';
@@ -209,6 +211,14 @@ export const ChatSidebar: React.FC = () => {
               </Text>
             </MenuItem>
           )}
+          <MenuItem as="a" href="https://lesseffort.io/privacy" target="_blank">
+            <Icon as={TbShieldCheck} />
+            <Text ml={4}>Privacy Policy</Text>
+          </MenuItem>
+          <MenuItem as="a" href="https://lesseffort.io/terms" target="_blank">
+            <Icon as={TbChecklist} />
+            <Text ml={4}>Terms of Service</Text>
+          </MenuItem>
           <MenuItem onClick={signOut}>
             <Icon as={TbLogout} />
             <Text ml={4}>Log out</Text>
