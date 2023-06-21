@@ -49,7 +49,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
       <PricingCard
         isRecommended
         data={{
-          price: '$9',
+          price: '$9.99',
           name: Plan.premium,
           time: 'month',
           features: [
