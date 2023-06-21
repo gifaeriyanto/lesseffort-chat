@@ -71,7 +71,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
       },
       {
         label: 'Pricing',
-        value: '$9 / month',
+        value: '$9.99 / month',
       },
     ];
   }, [user]);
