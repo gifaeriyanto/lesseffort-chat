@@ -223,9 +223,15 @@ export const useChat = create<{
       }
     };
 
-    const onError = async (error: Error, status: number) => {
+    const onError = async (
+      error: Error,
+      status: number,
+      xhr: XMLHttpRequest,
+    ) => {
+      const response = JSON.parse(xhr.response);
       captureException(error);
       set({
+        generatingMessage: '',
         isTyping: false,
       });
       switch (status) {
@@ -256,23 +262,13 @@ export const useChat = create<{
           window.location.reload();
           break;
 
-        case 429:
-          standaloneToast({
-            title: 'Too many requests. Rate limit exceeded 😓',
-            description: `We're sorry, but the OpenAI API, the provider of GPT model, has received too many requests from you in a short period of time. Please wait a few moments and try again later.`,
-            status: 'error',
-          });
-          break;
-
         default:
           standaloneToast({
             title: 'Oops! Something went wrong. 😕',
-            description: `We're sorry about that. Please try again later.\nError status: ${status}`,
+            description:
+              response?.error?.message ||
+              `We're sorry about that. Please try again later.\nError status: ${status}`,
             status: 'error',
-          });
-          set({
-            generatingMessage: '',
-            isTyping: false,
           });
           break;
       }
