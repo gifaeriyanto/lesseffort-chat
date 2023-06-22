@@ -1,5 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import {
+  Alert,
+  AlertDescription,
   Box,
   Button,
   Flex,
@@ -128,6 +130,19 @@ export const ChatContainer: React.FC = () => {
                 Your API Key is stored locally on your browser and never sent
                 anywhere else.
               </Text>
+              <Alert mb={4} borderRadius="lg">
+                <AlertDescription fontSize="sm">
+                  Make sure your OpenAI account is already a paid user. If not,
+                  click here:{' '}
+                  <Link
+                    href="https://platform.openai.com/account/billing/payment-methods"
+                    target="_blank"
+                    color={accentColor('500')}
+                  >
+                    Upgrade now!
+                  </Link>
+                </AlertDescription>
+              </Alert>
               <FormControl isInvalid={!!errors['openaiKey']}>
                 <FormLabel>OpenAI Key</FormLabel>
                 <Input

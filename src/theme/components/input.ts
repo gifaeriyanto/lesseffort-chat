@@ -35,8 +35,23 @@ const outline = definePartsStyle({
 export const inputTheme = defineMultiStyleConfig({
   variants: {
     outline,
+    filled: {
+      field: {
+        _focus: {
+          borderColor: 'transparent',
+        },
+        _focusVisible: {
+          borderColor: 'transparent',
+        },
+      },
+    },
   },
   sizes: {
+    sm: {
+      field: {
+        borderRadius: 'lg',
+      },
+    },
     md: {
       field: {
         borderRadius: 'lg',
