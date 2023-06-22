@@ -31,6 +31,7 @@ export interface PromptFilters {
   keyword?: string;
   order?: string;
   category?: string;
+  visibility?: string;
 }
 
 export const defaultOrder = 'usages';
@@ -50,6 +51,7 @@ export const getPrompts = async ({
   keyword = '',
   order = defaultOrder,
   category = '',
+  visibility = '',
 }: PromptFilters) => {
   const { from, to } = getPage(page, pageSize);
 
@@ -58,6 +60,7 @@ export const getPrompts = async ({
     .select()
     .ilike('title', `%${keyword}%`)
     .ilike('category', `%${category}%`)
+    .ilike('status', `%${visibility}%`)
     .order(order, { ascending: false })
     .range(from, to);
 
@@ -71,12 +74,14 @@ export const getPrompts = async ({
 export const getPromptsCount = async ({
   keyword = '',
   category = '',
+  visibility = '',
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
   const { count, error } = await supabase
     .from('chat_prompts_view')
     .select('*', { count: 'exact', head: true })
     .ilike('title', `%${keyword}%`)
-    .ilike('category', `%${category}%`);
+    .ilike('category', `%${category}%`)
+    .ilike('status', `%${visibility}%`);
 
   if (error) {
     captureException(error);
