@@ -1,5 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react';
 import {
+  Alert,
+  AlertDescription,
   Box,
   FormControl,
   FormErrorMessage,
@@ -70,6 +72,20 @@ export const APIKeySettings: React.FC = () => {
           )}
         </Text>
       </Box>
+
+      <Alert mb={4} borderRadius="lg">
+        <AlertDescription fontSize="sm">
+          Make sure your OpenAI account is already a paid user. If not, click
+          here:{' '}
+          <Link
+            href="https://platform.openai.com/account/billing/payment-methods"
+            target="_blank"
+            color={accentColor('500')}
+          >
+            Upgrade now!
+          </Link>
+        </AlertDescription>
+      </Alert>
 
       <form
         onSubmit={handleSubmit(handleSaveSettings)}
