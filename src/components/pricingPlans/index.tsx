@@ -41,7 +41,11 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
           ],
         }}
         button={
-          <ActionButton onClick={() => onSelect?.(Plan.free)} variant="outline">
+          <ActionButton
+            onClick={() => onSelect?.(Plan.free)}
+            variant="outline"
+            mt={10}
+          >
             Continue free
           </ActionButton>
         }
@@ -57,18 +61,23 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
             'Unlimited starter prompts usage',
             'Save prompts',
             'Save messages',
-            'Share conversations',
+            'Save & Share conversations',
             'Light & Dark mode',
             'And more...',
           ],
         }}
         button={
-          <ActionButton
-            onClick={() => onSelect?.(Plan.premium)}
-            isLoading={isLoading}
-          >
-            Buy now
-          </ActionButton>
+          <>
+            <Box mb={4} textAlign="center">
+              Trial for 3 days, cancel anytime
+            </Box>
+            <ActionButton
+              onClick={() => onSelect?.(Plan.premium)}
+              isLoading={isLoading}
+            >
+              Buy now
+            </ActionButton>
+          </>
         }
       />
     </SimpleGrid>
