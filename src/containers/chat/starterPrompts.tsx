@@ -87,6 +87,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
   const [category, setCategory] = useState('');
+  const [visibility, setVisibility] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [editingPrompt, setEditingPrompt] = useState<PromptData | undefined>(
@@ -104,12 +105,12 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
   const fetchPrompts = () =>
     Promise.all([
-      getPrompts({ page, pageSize, keyword, order, category }),
-      getPromptsCount({ keyword, category }),
+      getPrompts({ page, pageSize, keyword, order, category, visibility }),
+      getPromptsCount({ keyword, category, visibility }),
     ]);
 
   const { data, isLoading, error, refetch } = useQuery(
-    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}`,
+    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}`,
     fetchPrompts,
   );
 
@@ -123,7 +124,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
   useLayoutEffect(() => {
     setPage(1);
-  }, [keyword, order, category]);
+  }, [keyword, order, category, visibility]);
 
   const [prompts, count] = useMemo(() => {
     if (!data) {
@@ -150,8 +151,6 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       captureException(error);
     }
   }, [error]);
-
-  const handleEdit = () => {};
 
   const handleDelete = () => {
     if (!deletingPrompt) {
@@ -303,6 +302,16 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                           {value}
                         </option>
                       ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="sm">Visibility</FormLabel>
+                    <Select
+                      onChange={(e) => setVisibility(e.currentTarget.value)}
+                    >
+                      <option value="">All</option>
+                      <option value="public">Public</option>
+                      <option value="private">Private</option>
                     </Select>
                   </FormControl>
                 </VStack>
