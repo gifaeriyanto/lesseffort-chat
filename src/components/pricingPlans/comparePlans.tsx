@@ -43,7 +43,6 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
       fontSize="xl"
     />,
   ],
-  ['Starter prompts', '6 uses per-day', 'Unlimited'],
   [
     'Save prompts',
     <Icon key="save_prompts_free" as={TbX} color="gray.400" fontSize="xl" />,
@@ -64,7 +63,21 @@ const features: [string, string | JSX.Element, string | JSX.Element][] = [
       fontSize="xl"
     />,
   ],
-  ['Color mode', 'Light mode only', 'Light and Dark mode'],
+  [
+    'Dark mode',
+    <Icon
+      key="create_prompts_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
+    <Icon
+      key="create_prompts_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
+  ],
   ['Accent color', 'Blue only', '9 color options'],
   [
     'Save messages',

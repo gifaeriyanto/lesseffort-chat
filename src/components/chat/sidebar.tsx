@@ -191,7 +191,7 @@ export const ChatSidebar: React.FC = () => {
               <Text ml={4}>Manage Subscription</Text>
             </MenuItem>
           )}
-          {!isLessThanMd && !isFreeUser && (
+          {!isLessThanMd && (
             <MenuItem onClick={handleToggleColorMode}>
               {colorMode === 'light' ? (
                 <Icon as={TbMoon} />
