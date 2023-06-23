@@ -115,14 +115,6 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const handleToggleColorMode = () => {
-    if (isFreeUser) {
-      toastForFreeUser(
-        'dark_mode_limit',
-        'Upgrade your plan to use dark mode!',
-      );
-      return;
-    }
-
     toggleColorMode();
     ReactGA.event({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,

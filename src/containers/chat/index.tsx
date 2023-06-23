@@ -96,9 +96,6 @@ export const ChatContainer: React.FC = () => {
 
   useLayoutEffect(() => {
     if (isFreeUser) {
-      if (localStorage.getItem('chakra-ui-color-mode') === 'dark') {
-        toggleColorMode();
-      }
       localStorage.setItem('accentColor', 'blue');
     }
   }, [toggleColorMode, isFreeUser]);

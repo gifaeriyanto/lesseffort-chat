@@ -82,7 +82,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/plans',
-    // loader: freeUser,
+    loader: freeUser,
     element: <PlansContainer />,
   },
   {
