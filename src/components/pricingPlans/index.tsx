@@ -36,7 +36,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
             'Max 5 chat history',
             ['Chat rules', '170+ language, tone, writing style and format'],
             ['Starter prompts', '6 uses per-day'],
-            'Light mode',
+            'Light mode & dark mode',
             'Change font size',
           ],
         }}
@@ -62,7 +62,6 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
             'Save prompts',
             'Save messages',
             'Save & Share conversations',
-            'Light & Dark mode',
             'And more...',
           ],
         }}
