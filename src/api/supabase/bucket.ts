@@ -1,4 +1,4 @@
-import { supabase } from 'api/supabase/prompts';
+import { supabase } from 'api/supabase';
 import { standaloneToast } from 'index';
 import FileResizer from 'react-image-file-resizer';
 

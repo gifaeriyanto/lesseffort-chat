@@ -1,9 +1,6 @@
 import { captureException } from '@sentry/react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from 'api/supabase';
 import { standaloneToast } from 'index';
-import { env } from 'utils/env';
-
-export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
 export interface PromptData {
   author_name: string;
@@ -12,6 +9,7 @@ export interface PromptData {
   description: string;
   hint: string;
   id: number;
+  link: string;
   prompt: string;
   status: 'public' | 'private' | 'pending';
   title: string;

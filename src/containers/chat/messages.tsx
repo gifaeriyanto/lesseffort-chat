@@ -12,6 +12,7 @@ import {
   Icon,
   IconButton,
   LightMode,
+  Link,
   Tag,
   Text,
   Tooltip,
@@ -470,9 +471,11 @@ export const ChatMessagesContainer: React.FC = () => {
             info={
               <>
                 By{' '}
-                <Text as="span" ml={1} isTruncated>
-                  {template.author_name}
-                </Text>
+                <Link href={template.link} target="_blank">
+                  <Text as="span" ml={1} isTruncated>
+                    {template.author_name}
+                  </Text>
+                </Link>
               </>
             }
           />

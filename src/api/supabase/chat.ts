@@ -1,8 +1,8 @@
 import { captureException } from '@sentry/react';
 import { Message } from 'api/chat';
+import { supabase } from 'api/supabase';
 import { getUser } from 'api/supabase/auth';
 import { getLongLifeFileUrl } from 'api/supabase/bucket';
-import { supabase } from 'api/supabase/prompts';
 import { standaloneToast } from 'index';
 import { accentColor } from 'theme/foundations/colors';
 

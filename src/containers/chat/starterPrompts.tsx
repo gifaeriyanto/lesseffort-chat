@@ -15,6 +15,7 @@ import {
   Icon,
   IconButton,
   LightMode,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -67,6 +68,7 @@ import {
   formatNumber,
   uppercaseFirstLetter,
 } from 'utils/common';
+import { shallow } from 'zustand/shallow';
 
 export enum PromptCategory {
   'copywriting' = 'Copywriting',
@@ -96,7 +98,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [deletingPrompt, setDeletingPrompt] = useState<PromptData | undefined>(
     undefined,
   );
-  const user = useUserData((state) => state.user);
+  const user = useUserData((state) => state.user, shallow);
   const {
     isOpen: isOpenDeleteModal,
     onOpen: onOpenDeleteModal,
@@ -398,7 +400,14 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       {renderActions(item)}
                     </Flex>
                     <Box fontSize="sm" color="gray.400" mb={4}>
-                      {item.category} . by {item.author_name}
+                      {item.category} . by{' '}
+                      {item.link ? (
+                        <Link href={item.link} target="_blank">
+                          {item.author_name}
+                        </Link>
+                      ) : (
+                        item.author_name
+                      )}
                     </Box>
                     <Box
                       fontSize="sm"

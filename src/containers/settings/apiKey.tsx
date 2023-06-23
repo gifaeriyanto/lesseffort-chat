@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   AlertDescription,
@@ -14,7 +14,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { TypingDots } from 'components/typingDots';
-import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { accentColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';

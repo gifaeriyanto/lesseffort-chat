@@ -1,5 +1,5 @@
 import { captureException } from '@sentry/react';
-import { supabase } from 'api/supabase/prompts';
+import { supabase } from 'api/supabase';
 import { Plan } from 'components/pricingPlans';
 import { standaloneToast } from 'index';
 
@@ -132,6 +132,7 @@ export interface UserData {
   expired_plan: string | null;
   id: string;
   last_sign_in_at: string;
+  link: string | null;
   name: string;
   plan: Plan;
   provider: string;
