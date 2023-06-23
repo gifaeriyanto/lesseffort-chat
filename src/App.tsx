@@ -3,7 +3,12 @@ import { ChakraProvider } from '@chakra-ui/react';
 import * as Sentry from '@sentry/react';
 import { captureException } from '@sentry/react';
 import { getUser } from 'api/supabase/auth';
-import { freeUser, noAuth, withAuth } from 'components/protectedRoute';
+import {
+  freeUser,
+  noAuth,
+  premiumUser,
+  withAuth,
+} from 'components/protectedRoute';
 import { EmailConfirmationContainer } from 'containers/auth/emailConfirmation';
 import { ForgotContainer } from 'containers/auth/forgot';
 import { LoginContainer } from 'containers/auth/login';
@@ -101,7 +106,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/manage-subs',
-    loader: withAuth,
+    loader: premiumUser,
     element: <ManageSubscriptionContainer />,
   },
 ]);

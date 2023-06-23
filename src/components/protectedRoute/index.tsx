@@ -26,3 +26,11 @@ export const freeUser = async () => {
   }
   return null;
 };
+
+export const premiumUser = async () => {
+  const res = await getUser();
+  if (res?.plan !== Plan.premium) {
+    return redirect('/');
+  }
+  return null;
+};
