@@ -187,7 +187,9 @@ export const LoginContainer: React.FC = () => {
             borderRadius="xl"
             size="lg"
             fontSize="md"
-            bgColor="gray.50"
+            _light={{
+              bgColor: 'gray.50',
+            }}
           >
             Sign in with Google
           </Button>
