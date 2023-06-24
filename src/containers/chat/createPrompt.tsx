@@ -237,8 +237,8 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
                         value: true,
                       },
                       maxLength: {
-                        message: 'Hint cannot more than 50 characters',
-                        value: 50,
+                        message: 'Hint cannot more than 100 characters',
+                        value: 100,
                       },
                     })}
                   />
@@ -292,7 +292,11 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
                   <Checkbox
                     defaultChecked={defaultValue?.status !== 'private'}
                     {...register('status')}
-                    value="pending"
+                    value={
+                      process.env.NODE_ENV === 'development'
+                        ? 'public'
+                        : 'pending'
+                    }
                   >
                     Set as public
                   </Checkbox>

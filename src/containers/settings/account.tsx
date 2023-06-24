@@ -6,12 +6,10 @@ import {
   FormHelperText,
   FormLabel,
   Input,
-  Link,
   Text,
   useBoolean,
   VStack,
 } from '@chakra-ui/react';
-import { getUser } from 'api/supabase/auth';
 import { uploadFile } from 'api/supabase/bucket';
 import { saveProfile } from 'api/supabase/profile';
 import { TypingDots } from 'components/typingDots';

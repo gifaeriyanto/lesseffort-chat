@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -36,6 +37,7 @@ import {
   Skeleton,
   Tag,
   Text,
+  useBoolean,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -71,6 +73,7 @@ import {
 import { shallow } from 'zustand/shallow';
 
 export enum PromptCategory {
+  'consultant' = 'Consultant',
   'copywriting' = 'Copywriting',
   'generativeAI' = 'Generative AI',
   'marketing' = 'Marketing',
@@ -90,6 +93,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [order, setOrder] = useState(defaultOrder);
   const [category, setCategory] = useState('');
   const [visibility, setVisibility] = useState('');
+  const [showOwn, { toggle: toggleShowOwn }] = useBoolean();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [editingPrompt, setEditingPrompt] = useState<PromptData | undefined>(
@@ -107,12 +111,20 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
   const fetchPrompts = () =>
     Promise.all([
-      getPrompts({ page, pageSize, keyword, order, category, visibility }),
-      getPromptsCount({ keyword, category, visibility }),
+      getPrompts({
+        page,
+        pageSize,
+        keyword,
+        order,
+        category,
+        visibility,
+        showOwn,
+      }),
+      getPromptsCount({ keyword, category, visibility, showOwn }),
     ]);
 
   const { data, isLoading, error, refetch } = useQuery(
-    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}`,
+    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}-${showOwn.toString()}`,
     fetchPrompts,
   );
 
@@ -126,7 +138,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
   useLayoutEffect(() => {
     setPage(1);
-  }, [keyword, order, category, visibility]);
+  }, [keyword, order, category, visibility, showOwn]);
 
   const [prompts, count] = useMemo(() => {
     if (!data) {
@@ -253,6 +265,8 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                 </Box>{' '}
                 {keyword ? 'prompts match your filter' : 'available prompts'}
               </>
+            ) : isLoading ? (
+              'Fetching data...'
             ) : (
               'No prompts match with your filter'
             )}
@@ -313,8 +327,14 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                     >
                       <option value="">All</option>
                       <option value="public">Public</option>
+                      <option value="pending">Pending</option>
                       <option value="private">Private</option>
                     </Select>
+                  </FormControl>
+                  <FormControl>
+                    <Checkbox onChange={toggleShowOwn}>
+                      Only show your own.
+                    </Checkbox>
                   </FormControl>
                 </VStack>
               </PopoverBody>

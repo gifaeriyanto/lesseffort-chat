@@ -1,5 +1,6 @@
 import { captureException } from '@sentry/react';
 import { supabase } from 'api/supabase';
+import { getUser } from 'api/supabase/auth';
 import { standaloneToast } from 'index';
 
 export interface PromptData {
@@ -30,6 +31,7 @@ export interface PromptFilters {
   order?: string;
   category?: string;
   visibility?: string;
+  showOwn?: boolean;
 }
 
 export const defaultOrder = 'usages';
@@ -50,17 +52,28 @@ export const getPrompts = async ({
   order = defaultOrder,
   category = '',
   visibility = '',
+  showOwn = false,
 }: PromptFilters) => {
+  const userData = await getUser();
+  if (!userData?.id) {
+    return [];
+  }
+
   const { from, to } = getPage(page, pageSize);
 
-  const { data, error } = await supabase
+  const baseQuery = supabase
     .from('chat_prompts_view')
     .select()
     .ilike('title', `%${keyword}%`)
     .ilike('category', `%${category}%`)
-    .ilike('status', `%${visibility}%`)
-    .order(order, { ascending: false })
-    .range(from, to);
+    .ilike('status', `%${visibility}%`);
+
+  const { data, error } = showOwn
+    ? await baseQuery
+        .eq('user_id', userData.id)
+        .order(order, { ascending: false })
+        .range(from, to)
+    : await baseQuery.order(order, { ascending: false }).range(from, to);
 
   if (error) {
     captureException(error);
@@ -73,13 +86,23 @@ export const getPromptsCount = async ({
   keyword = '',
   category = '',
   visibility = '',
+  showOwn = false,
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
-  const { count, error } = await supabase
+  const userData = await getUser();
+  if (!userData?.id) {
+    return 0;
+  }
+
+  const baseQuery = supabase
     .from('chat_prompts_view')
     .select('*', { count: 'exact', head: true })
     .ilike('title', `%${keyword}%`)
     .ilike('category', `%${category}%`)
     .ilike('status', `%${visibility}%`);
+
+  const { count, error } = showOwn
+    ? await baseQuery.eq('user_id', userData.id)
+    : await baseQuery;
 
   if (error) {
     captureException(error);
