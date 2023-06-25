@@ -147,7 +147,7 @@ export const SharedConversationContainer: React.FC = () => {
             <ChatMessagePreview
               key={item.id}
               message={item}
-              photo={conversation.user_avatar || ''}
+              userId={conversation.user_id}
               accentColor={accentColor}
             />
           ))}

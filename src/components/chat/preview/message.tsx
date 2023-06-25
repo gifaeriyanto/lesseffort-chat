@@ -29,13 +29,13 @@ import remarkGfm from 'remark-gfm';
 
 export interface ChatMessagePreviewProps {
   message: Message;
-  photo: string;
+  userId: string;
   accentColor: string;
 }
 
 export const ChatMessagePreview: React.FC<
   PropsWithChildren<ChatMessagePreviewProps>
-> = ({ message, photo, accentColor = 'blue' }) => {
+> = ({ message, userId, accentColor = 'blue' }) => {
   const {
     isOpen: isOpenAllMessages,
     onOpen: onOpenAllMessages,
@@ -70,7 +70,7 @@ export const ChatMessagePreview: React.FC<
       >
         <Box>
           {isMe ? (
-            <ProfilePhotoPreview mt="0.5rem" photo={photo} />
+            <ProfilePhotoPreview mt="0.5rem" userId={userId} />
           ) : (
             <Flex
               p={4}

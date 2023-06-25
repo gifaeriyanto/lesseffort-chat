@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { BoxProps, Flex, Icon, Image, ImageProps } from '@chakra-ui/react';
+import { getFileUrl } from 'api/supabase/bucket';
 import { TbUser } from 'react-icons/tb';
 
 export interface ProfilePhotoProps extends BoxProps {
   name?: string;
-  photo?: string | null;
+  userId: string;
 }
 
 export const ProfilePhotoPreview: React.FC<ProfilePhotoProps> = ({
   name,
-  photo,
+  userId,
   ...props
 }) => {
+  const [photo, setPhoto] = useState('');
+
+  useLayoutEffect(() => {
+    getFileUrl(userId).then((imageUrl) => imageUrl && setPhoto(imageUrl));
+  }, []);
+
   return (
     <>
       {photo ? (
