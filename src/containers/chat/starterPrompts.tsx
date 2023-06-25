@@ -75,7 +75,7 @@ import { shallow } from 'zustand/shallow';
 export enum PromptCategory {
   'consultant' = 'Consultant',
   'copywriting' = 'Copywriting',
-  'generativeAI' = 'Generative AI',
+  'generator' = 'Generator',
   'marketing' = 'Marketing',
   'productivity' = 'Productivity',
   'softwareEngineering' = 'Software Engineering',
