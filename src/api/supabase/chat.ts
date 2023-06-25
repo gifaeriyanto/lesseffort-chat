@@ -23,9 +23,9 @@ export interface SharedConversation {
   status: 'pending' | 'published';
   title: string;
   uid: string;
-  user_avatar: string | null;
   user_id: string;
   user_name: string;
+  user_link?: string;
   created_at?: string;
 }
 
@@ -78,10 +78,14 @@ export const shareConversation = async (
   if (!userData?.id) {
     return;
   }
-  const avatar = await getLongLifeFileUrl(userData.id);
   const { data, error } = await supabase
     .from('shared_conversations')
-    .insert<Omit<SharedConversation, 'id' | 'uid' | 'user_id'>>({
+    .insert<
+      Omit<
+        SharedConversation,
+        'id' | 'uid' | 'user_id' | 'user_name' | 'user_link'
+      >
+    >({
       title,
       content: messages.map((message) => ({
         id: message.id,
@@ -89,8 +93,6 @@ export const shareConversation = async (
         content: message.content,
         createdAt: message.createdAt,
       })),
-      user_name: userData.name,
-      user_avatar: avatar,
       color_scheme: accentColor(),
       status,
     })
@@ -106,7 +108,7 @@ export const shareConversation = async (
 
 export const getSharedConversation = async (conversationUid: string) => {
   const { data, error } = await supabase
-    .from('shared_conversations')
+    .from('saved_conversations_view')
     .select()
     .eq('uid', conversationUid)
     .single();

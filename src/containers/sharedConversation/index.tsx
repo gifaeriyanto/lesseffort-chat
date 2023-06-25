@@ -117,7 +117,13 @@ export const SharedConversationContainer: React.FC = () => {
             <Box color="gray.400" fontSize="sm">
               Author
             </Box>
-            <Box>{conversation.user_name}</Box>
+            {conversation.user_link ? (
+              <Link href={conversation.user_link} target="_blank">
+                <Box>{conversation.user_name}</Box>
+              </Link>
+            ) : (
+              <Box>{conversation.user_name}</Box>
+            )}
           </Box>
 
           <HStack spacing={4}>
