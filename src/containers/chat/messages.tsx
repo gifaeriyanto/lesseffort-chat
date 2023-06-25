@@ -538,7 +538,6 @@ export const ChatMessagesContainer: React.FC = () => {
           <ChatRules
             value={chatRules}
             onChange={setChatRules}
-            hidden={template ? ['format', 'writingStyle'] : []}
             onClose={handleClearRules}
             getActiveRules={(count) => {
               setChatRulesCount(count);
