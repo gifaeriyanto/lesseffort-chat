@@ -49,15 +49,13 @@ export const toastForCopy = (id: string, options: UseToastOptions = {}) => {
       duration: 1000,
       render: () => (
         <Box
-          color="black"
           p={3}
-          bgColor="gray.100"
+          bgColor="gray.900"
           borderRadius="2xl"
           textAlign="center"
           w="12rem"
           _light={{
             color: 'white',
-            bgColor: 'gray.900',
           }}
         >
           Copied to clipboard
