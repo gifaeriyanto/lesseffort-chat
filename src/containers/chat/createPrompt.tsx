@@ -298,7 +298,30 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
                         : 'pending'
                     }
                   >
-                    Set as public
+                    <Flex align="center" gap={2}>
+                      <Box>Set as public</Box>
+                      <Tooltip
+                        label={
+                          <>
+                            <Box>
+                              If you choose to make this prompt public, you are
+                              giving your consent to share it with our
+                              community. Please remember to update your profile
+                              link so they can visit your site.
+                            </Box>
+                            <Box mt={4}>
+                              On the other hand, if you do not select the public
+                              option, the prompt will be saved as private and
+                              will not be visible to anyone.
+                            </Box>
+                          </>
+                        }
+                      >
+                        <Flex align="center">
+                          <Icon as={TbInfoCircle} />
+                        </Flex>
+                      </Tooltip>
+                    </Flex>
                   </Checkbox>
                   {errors.status && (
                     <FormErrorMessage>

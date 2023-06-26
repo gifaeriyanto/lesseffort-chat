@@ -7,6 +7,7 @@ import { popoverTheme } from 'theme/components/popover';
 import { selectTheme } from 'theme/components/select';
 import { skeletonTheme } from 'theme/components/skeleton';
 import { textareaTheme } from 'theme/components/textarea';
+import { tooltipTheme } from 'theme/components/tooltip';
 import { accentColor, colors, CustomColor } from 'theme/foundations/colors';
 
 const config: ThemeOverride = {
@@ -20,6 +21,7 @@ const config: ThemeOverride = {
     Select: selectTheme,
     Skeleton: skeletonTheme,
     Textarea: textareaTheme,
+    Tooltip: tooltipTheme,
   },
   config: {
     initialColorMode: 'system',
