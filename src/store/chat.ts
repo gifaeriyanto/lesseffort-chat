@@ -236,7 +236,12 @@ export const useChat = create<{
       status: number,
       xhr: XMLHttpRequest,
     ) => {
-      const response = JSON.parse(xhr.response);
+      let response;
+      try {
+        response = JSON.parse(xhr.response);
+      } catch (error) {
+        console.error(error);
+      }
       captureException(error);
       set({
         generatingMessage: '',
