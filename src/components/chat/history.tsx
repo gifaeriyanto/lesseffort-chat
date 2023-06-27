@@ -219,7 +219,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ search }) => {
           key={item.id || index}
           id={item.id}
           title={item.title}
-          description={item.last_message}
+          description={item.last_message.replace(/[^\w\s]/g, '')}
           onSelect={handleSelect}
           isActive={selectedChatId === item.id}
           isLimited={item.limited}
