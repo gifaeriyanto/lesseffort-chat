@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -49,10 +48,12 @@ import { captureException } from '@sentry/react';
 import {
   defaultOrder,
   deletePrompt,
+  favoritePrompt,
   getPage,
   getPrompts,
   getPromptsCount,
   PromptData,
+  PromptGroup,
 } from 'api/supabase/prompts';
 import { ChatMessageAction } from 'components/chat/message';
 import { Empty } from 'components/empty';
@@ -62,6 +63,8 @@ import {
   TbChevronDown,
   TbFilter,
   TbPencil,
+  TbStar,
+  TbStarFilled,
   TbTemplate,
   TbTrash,
 } from 'react-icons/tb';
@@ -70,11 +73,13 @@ import { usePrompts } from 'store/prompt';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
+  capitalizeWords,
   createIncrementArray,
   formatLocaleNumber,
   formatNumber,
   uppercaseFirstLetter,
 } from 'utils/common';
+import { compareObjects } from 'utils/object';
 import { shallow } from 'zustand/shallow';
 
 export enum PromptCategory {
@@ -92,6 +97,8 @@ export interface StarterPromptsProps {
   onManagePrompt?: (value: boolean) => void;
 }
 
+const listOfTabs: PromptGroup[] = ['all', 'yours', 'favorites'];
+
 export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   onSelectPrompt,
 }) => {
@@ -100,7 +107,9 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [order, setOrder] = useState(defaultOrder);
   const [category, setCategory] = useState('');
   const [visibility, setVisibility] = useState('');
-  const [showOwn, { on: onShowOwn, off: hideOwn }] = useBoolean();
+  const [showOwnOnly, { on: enableOwnOnly, off: disableOwnOnly }] =
+    useBoolean();
+  const [activeTab, setActiveTab] = useState<PromptGroup>('all');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [editingPrompt, setEditingPrompt] = useState<PromptData | undefined>(
@@ -117,6 +126,36 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   } = useDisclosure();
   const { setIsManagingPrompt } = usePrompts();
 
+  const defaultFilter = {
+    order: defaultOrder,
+    category: '',
+    visibility: '',
+  };
+
+  const filterCount = useMemo(() => {
+    return compareObjects(defaultFilter, {
+      order,
+      category,
+      visibility,
+    });
+  }, [order, category, visibility]);
+
+  const clearFilter = () => {
+    setOrder(defaultFilter.order);
+    setCategory(defaultFilter.category);
+    setVisibility(defaultFilter.visibility);
+  };
+
+  useLayoutEffect(() => {
+    const lastActiveTab = localStorage.getItem(
+      'activePromptTab',
+    ) as PromptGroup;
+    // to avoid user change the value
+    if (listOfTabs.includes(lastActiveTab)) {
+      setActiveTab(lastActiveTab);
+    }
+  }, []);
+
   useLayoutEffect(() => {
     setIsManagingPrompt(!!(deletingPrompt || editingPrompt));
   }, [deletingPrompt, editingPrompt]);
@@ -130,13 +169,18 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         order,
         category,
         visibility,
-        showOwn,
+        group: activeTab,
       }),
-      getPromptsCount({ keyword, category, visibility, showOwn }),
+      getPromptsCount({
+        keyword,
+        category,
+        visibility,
+        group: activeTab,
+      }),
     ]);
 
   const { data, isLoading, error, refetch } = useQuery(
-    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}-${showOwn.toString()}`,
+    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}-${activeTab}`,
     fetchPrompts,
   );
 
@@ -150,7 +194,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
   useLayoutEffect(() => {
     setPage(1);
-  }, [keyword, order, category, visibility, showOwn]);
+  }, [keyword, order, category, visibility, activeTab]);
 
   const [prompts, count] = useMemo(() => {
     if (!data) {
@@ -185,51 +229,76 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
     deletePromptMutate(deletingPrompt.id);
   };
 
+  const handleFavorite = (id: number, isFavorite: boolean) => {
+    favoritePrompt(id, isFavorite);
+    refetch();
+  };
+
+  const handleSwitchTab = (tab: PromptGroup) => {
+    setActiveTab(tab);
+    localStorage.setItem('activePromptTab', tab);
+  };
+
   const renderActions = (prompt: PromptData) => {
-    if (prompt.user_id !== user?.id) {
-      return null;
-    }
+    const isYours = prompt.user_id === user?.id;
 
     return (
-      <>
-        <Menu autoSelect={false}>
-          <MenuButton
-            as={IconButton}
-            icon={<TbChevronDown />}
-            aria-label="Action menu"
-            variant="ghost"
-            color="gray.400"
-            fontSize="lg"
-            size="xs"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <Portal>
-            <MenuList fontWeight="normal" onClick={(e) => e.stopPropagation()}>
-              <MenuItem isDisabled>
-                <Text fontSize="sm">Only you can take this action</Text>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  setEditingPrompt(prompt);
-                }}
+      <HStack>
+        <IconButton
+          icon={prompt.is_favorite ? <TbStarFilled /> : <TbStar />}
+          aria-label="Favorite"
+          variant="ghost"
+          color={prompt.is_favorite ? 'yellow.500' : 'gray.400'}
+          fontSize="md"
+          size="xs"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleFavorite(prompt.id, prompt.is_favorite);
+          }}
+        />
+        {isYours && (
+          <Menu autoSelect={false}>
+            <MenuButton
+              as={IconButton}
+              icon={<TbChevronDown />}
+              aria-label="Action menu"
+              variant="ghost"
+              color="gray.400"
+              fontSize="lg"
+              size="xs"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <Portal>
+              <MenuList
+                fontWeight="normal"
+                onClick={(e) => e.stopPropagation()}
               >
-                <Icon as={TbPencil} />
-                <Text ml={4}>Edit prompt</Text>
-              </MenuItem>
-              <MenuItem
-                color="red.400"
-                onClick={() => {
-                  setDeletingPrompt(prompt);
-                  onOpenDeleteModal();
-                }}
-              >
-                <Icon as={TbTrash} />
-                <Text ml={4}>Delete prompt</Text>
-              </MenuItem>
-            </MenuList>
-          </Portal>
-        </Menu>
-      </>
+                <MenuItem isDisabled>
+                  <Text fontSize="sm">Only you can take this action</Text>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setEditingPrompt(prompt);
+                  }}
+                >
+                  <Icon as={TbPencil} />
+                  <Text ml={4}>Edit prompt</Text>
+                </MenuItem>
+                <MenuItem
+                  color="red.400"
+                  onClick={() => {
+                    setDeletingPrompt(prompt);
+                    onOpenDeleteModal();
+                  }}
+                >
+                  <Icon as={TbTrash} />
+                  <Text ml={4}>Delete prompt</Text>
+                </MenuItem>
+              </MenuList>
+            </Portal>
+          </Menu>
+        )}
+      </HStack>
     );
   };
 
@@ -290,10 +359,22 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
             defaultValue={editingPrompt}
             onCloseModal={() => setEditingPrompt(undefined)}
           />
-          <Popover>
+          <Popover closeOnBlur>
             <PopoverTrigger>
               <ChatMessageAction
-                icon={<TbFilter />}
+                icon={
+                  filterCount ? (
+                    <>
+                      <TbFilter />
+                      <Tag ml={2} borderRadius="0.4rem">
+                        {filterCount}
+                      </Tag>
+                    </>
+                  ) : (
+                    <TbFilter />
+                  )
+                }
+                w={filterCount ? '4rem' : 'auto'}
                 title="Filter"
                 size="md"
                 borderRadius="xl"
@@ -307,11 +388,14 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
             </PopoverTrigger>
             <PopoverContent borderRadius="xl">
               <PopoverArrow />
-              <PopoverBody>
-                <VStack spacing={4}>
+              <PopoverBody pb={4}>
+                <VStack spacing={4} align="flex-end">
                   <FormControl>
                     <FormLabel fontSize="sm">Sort by</FormLabel>
-                    <Select onChange={(e) => setOrder(e.currentTarget.value)}>
+                    <Select
+                      onChange={(e) => setOrder(e.currentTarget.value)}
+                      value={order}
+                    >
                       <option value="usages">Top usage</option>
                       <option value="usages_last_week">
                         Top usage (weekly)
@@ -323,6 +407,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                     <FormLabel fontSize="sm">Category</FormLabel>
                     <Select
                       onChange={(e) => setCategory(e.currentTarget.value)}
+                      value={category}
                     >
                       <option value="">All</option>
                       {Object.values(PromptCategory).map((value) => (
@@ -336,6 +421,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                     <FormLabel fontSize="sm">Visibility</FormLabel>
                     <Select
                       onChange={(e) => setVisibility(e.currentTarget.value)}
+                      value={visibility}
                     >
                       <option value="">All</option>
                       <option value="public">Public</option>
@@ -343,6 +429,9 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       <option value="private">Private</option>
                     </Select>
                   </FormControl>
+                  <Button size="sm" onClick={clearFilter} hidden={!filterCount}>
+                    Clear filter
+                  </Button>
                 </VStack>
               </PopoverBody>
             </PopoverContent>
@@ -353,17 +442,12 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         </Flex>
       </Flex>
 
-      <Empty
-        hidden={
-          isLoading ||
-          !!prompts.filter((item) => item.title.match(new RegExp(keyword, 'i')))
-            .length
-        }
-        message="No prompts match your filter"
-        h={{ base: 'calc(100vh - 470px)', md: 'calc(100vh - 350px)' }}
-      />
-
-      <Tabs mt={4} align="center" colorScheme={accentColor()}>
+      <Tabs
+        mt={4}
+        align="center"
+        colorScheme={accentColor()}
+        index={listOfTabs.findIndex((item) => item === activeTab)}
+      >
         <LightMode>
           <TabList
             borderColor={
@@ -385,22 +469,29 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
               },
             }}
           >
-            <Tab
-              fontSize="sm"
-              onClick={() => {
-                setVisibility('');
-                hideOwn();
-              }}
-            >
-              All
-            </Tab>
-            <Tab fontSize="sm" onClick={onShowOwn}>
-              Yours
-            </Tab>
-            {/* <Tab fontSize="sm" onClick={() => setVisibility('')}>Favorites</Tab> */}
+            {listOfTabs.map((item) => (
+              <Tab
+                key={item}
+                fontSize="sm"
+                onClick={() => handleSwitchTab(item)}
+              >
+                {capitalizeWords(item)}
+              </Tab>
+            ))}
           </TabList>
         </LightMode>
       </Tabs>
+
+      <Empty
+        hidden={
+          isLoading ||
+          !!prompts.filter((item) => item.title.match(new RegExp(keyword, 'i')))
+            .length
+        }
+        message="No prompts match your filter"
+        h={{ base: 'calc(100vh - 470px)', md: 'calc(100vh - 350px)' }}
+      />
+
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4} mt={4}>
         {isLoading ? (
           <>
@@ -458,7 +549,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       borderColor: CustomColor.lightBorder,
                     }}
                   >
-                    <Flex justify="space-between">
+                    <Flex justify="space-between" align="baseline">
                       <Box fontWeight="bold" fontSize="lg">
                         {item.title}
                       </Box>

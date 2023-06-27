@@ -1,4 +1,5 @@
 import { captureException } from '@sentry/react';
+import { PostgrestError } from '@supabase/postgrest-js';
 import { supabase } from 'api/supabase';
 import { getUser } from 'api/supabase/auth';
 import { standaloneToast } from 'index';
@@ -10,6 +11,7 @@ export interface PromptData {
   description: string;
   hint: string;
   id: number;
+  is_favorite: boolean;
   link: string;
   prompt: string;
   status: 'public' | 'private' | 'pending';
@@ -24,6 +26,8 @@ export type PromptParams = Pick<
   'title' | 'category' | 'prompt' | 'status' | 'description' | 'hint'
 >;
 
+export type PromptGroup = 'all' | 'yours' | 'favorites';
+
 export interface PromptFilters {
   page?: number;
   pageSize?: number;
@@ -31,7 +35,8 @@ export interface PromptFilters {
   order?: string;
   category?: string;
   visibility?: string;
-  showOwn?: boolean;
+  showOwnOnly?: boolean;
+  group: PromptGroup;
 }
 
 export const defaultOrder = 'usages';
@@ -52,7 +57,8 @@ export const getPrompts = async ({
   order = defaultOrder,
   category = '',
   visibility = '',
-  showOwn = false,
+  showOwnOnly = false,
+  group = 'all',
 }: PromptFilters) => {
   const userData = await getUser();
   if (!userData?.id) {
@@ -68,12 +74,43 @@ export const getPrompts = async ({
     .ilike('category', `%${category}%`)
     .ilike('status', `%${visibility}%`);
 
-  const { data, error } = showOwn
-    ? await baseQuery
-        .eq('user_id', userData.id)
-        .order(order, { ascending: false })
-        .range(from, to)
-    : await baseQuery.order(order, { ascending: false }).range(from, to);
+  let data: any | null = null;
+  let error: PostgrestError | null = null;
+
+  const getData = async (query: any) => {
+    const { data: _data, error: _error } = await query;
+    data = _data;
+    error = _error;
+  };
+
+  switch (group) {
+    case 'all':
+      await getData(
+        baseQuery.order(order, { ascending: false }).range(from, to),
+      );
+      break;
+
+    case 'yours':
+      await getData(
+        baseQuery
+          .eq('user_id', userData.id)
+          .order(order, { ascending: false })
+          .range(from, to),
+      );
+      break;
+
+    case 'favorites':
+      await getData(
+        baseQuery
+          .eq('is_favorite', true)
+          .order(order, { ascending: false })
+          .range(from, to),
+      );
+      break;
+
+    default:
+      break;
+  }
 
   if (error) {
     captureException(error);
@@ -86,7 +123,7 @@ export const getPromptsCount = async ({
   keyword = '',
   category = '',
   visibility = '',
-  showOwn = false,
+  group = 'all',
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
   const userData = await getUser();
   if (!userData?.id) {
@@ -100,9 +137,31 @@ export const getPromptsCount = async ({
     .ilike('category', `%${category}%`)
     .ilike('status', `%${visibility}%`);
 
-  const { count, error } = showOwn
-    ? await baseQuery.eq('user_id', userData.id)
-    : await baseQuery;
+  let count: number | null = null;
+  let error: PostgrestError | null = null;
+
+  const getCount = async (query: any) => {
+    const { count: _count, error: _error } = await query;
+    count = _count;
+    error = _error;
+  };
+
+  switch (group) {
+    case 'all':
+      await getCount(baseQuery);
+      break;
+
+    case 'yours':
+      await getCount(baseQuery.eq('user_id', userData.id));
+      break;
+
+    case 'favorites':
+      await getCount(baseQuery.eq('is_favorite', true));
+      break;
+
+    default:
+      break;
+  }
 
   if (error) {
     captureException(error);
@@ -165,5 +224,29 @@ export const usePrompt = async (promptId: number) => {
 
   if (error) {
     captureException(error);
+  }
+};
+
+export const favoritePrompt = async (
+  promptId: number,
+  isFavorited: boolean,
+) => {
+  if (isFavorited) {
+    const { error } = await supabase
+      .from('favorite_prompts')
+      .delete()
+      .eq('prompt_id', promptId);
+
+    if (error) {
+      captureException(error);
+    }
+  } else {
+    const { error } = await supabase.from('favorite_prompts').insert({
+      prompt_id: promptId,
+    });
+
+    if (error) {
+      captureException(error);
+    }
   }
 };
