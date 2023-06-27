@@ -4,7 +4,7 @@ import ReactGA from 'react-ga4';
 
 export const toastForFreeUser = (
   id: string,
-  title: string = 'Upgrade your plan to access saved messages!',
+  title: string = 'Upgrade your plan to access this feature!',
   description?: string,
 ) => {
   if (!standaloneToast.isActive(id)) {
@@ -22,7 +22,9 @@ export const toastForFreeUser = (
             as={Link}
             size="sm"
             mt={2}
-            colorScheme="blackAlpha"
+            variant="solid"
+            bgColor="gray.800"
+            color="gray.50"
             href="/plans"
             _hover={{
               textDecor: 'none',

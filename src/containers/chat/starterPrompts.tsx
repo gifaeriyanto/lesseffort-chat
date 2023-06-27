@@ -80,6 +80,7 @@ import {
   uppercaseFirstLetter,
 } from 'utils/common';
 import { compareObjects } from 'utils/object';
+import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export enum PromptCategory {
@@ -118,7 +119,10 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   const [deletingPrompt, setDeletingPrompt] = useState<PromptData | undefined>(
     undefined,
   );
-  const user = useUserData((state) => state.user, shallow);
+  const { user, isFreeUser } = useUserData(
+    (state) => ({ user: state.user, isFreeUser: state.isFreeUser }),
+    shallow,
+  );
   const {
     isOpen: isOpenDeleteModal,
     onOpen: onOpenDeleteModal,
@@ -230,11 +234,19 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   };
 
   const handleFavorite = (id: number, isFavorite: boolean) => {
+    if (isFreeUser) {
+      toastForFreeUser('favorite_prompt');
+      return;
+    }
     favoritePrompt(id, isFavorite);
     refetch();
   };
 
   const handleSwitchTab = (tab: PromptGroup) => {
+    if (isFreeUser && tab === 'favorites') {
+      toastForFreeUser('favorite_prompt');
+      return;
+    }
     setActiveTab(tab);
     localStorage.setItem('activePromptTab', tab);
   };
@@ -349,7 +361,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
             ) : isLoading ? (
               'Fetching data...'
             ) : (
-              'No prompts match with your filter'
+              'No available prompts'
             )}
           </Box>
         </Box>
