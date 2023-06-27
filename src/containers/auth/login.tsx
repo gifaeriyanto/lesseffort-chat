@@ -43,10 +43,10 @@ export const LoginContainer: React.FC = () => {
   const handleSubmitLogin = (params: SignWithEmailParams) => {
     on();
     signInWithEmail(
-      state.redirect
+      state?.redirect
         ? {
             ...params,
-            redirect: state.redirect,
+            redirect: state?.redirect,
           }
         : params,
     )
@@ -190,9 +190,9 @@ export const LoginContainer: React.FC = () => {
             leftIcon={<Icon as={FcGoogle} mr={4} fontSize="xl" />}
             onClick={() =>
               signInWithGoogle(
-                state.redirect
+                state?.redirect
                   ? {
-                      redirectTo: state.redirect,
+                      redirectTo: state?.redirect,
                     }
                   : {},
               )
