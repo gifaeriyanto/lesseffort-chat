@@ -127,6 +127,18 @@ export const ChatSidebar: React.FC = () => {
     getChatHistory();
   }, []);
 
+  useLayoutEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        getChatHistory();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const handleNewChat = () => {
     if (location.pathname !== '/') {
       navigate('/');
