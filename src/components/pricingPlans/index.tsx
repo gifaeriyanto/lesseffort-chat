@@ -1,6 +1,7 @@
 import { Box, SimpleGrid } from '@chakra-ui/react';
 
 import { ActionButton } from './actionButton';
+import { pricingData } from './data';
 import { PricingCard } from './pricingCard';
 
 export enum Plan {
@@ -32,13 +33,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
           price: '$0',
           name: Plan.free,
           time: '',
-          features: [
-            'Max 5 chat history',
-            'Unlimited starter prompts usage',
-            ['Chat rules', '170+ language, tone, writing style and format'],
-            'Light mode & dark mode',
-            'Change font size',
-          ],
+          features: pricingData.features.free,
         }}
         button={
           <ActionButton
@@ -56,14 +51,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
           price: '$9.99',
           name: Plan.premium,
           time: 'month',
-          features: [
-            'Unlimited chat history',
-            'Unlimited starter prompts usage',
-            'Save messages',
-            'Save & share conversations',
-            'Accent color',
-            'And more...',
-          ],
+          features: pricingData.features.premium,
         }}
         button={
           <>

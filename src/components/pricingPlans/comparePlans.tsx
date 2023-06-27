@@ -16,105 +16,7 @@ import { ResponsiveTable } from 'components/table';
 import { TbCheck, TbX } from 'react-icons/tb';
 import { accentColor } from 'theme/foundations/colors';
 
-const features: [string, string | JSX.Element, string | JSX.Element][] = [
-  ['Chat history', '5', 'Unlimited'],
-  [
-    'Search history',
-    <Icon key="search_history_free" as={TbX} color="gray.400" fontSize="xl" />,
-    <Icon
-      key="search_history_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
-    'Chat rules',
-    <Icon
-      key="chat_rules_free"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-    <Icon
-      key="chat_rules_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
-    'Save prompts',
-    <Icon key="save_prompts_free" as={TbX} color="gray.400" fontSize="xl" />,
-    <Icon
-      key="save_prompts_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
-    'Create your own prompts',
-    <Icon key="create_prompts_free" as={TbX} color="gray.400" fontSize="xl" />,
-    <Icon
-      key="create_prompts_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
-    'Dark mode',
-    <Icon
-      key="create_prompts_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-    <Icon
-      key="create_prompts_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  ['Accent color', 'Blue only', '9 color options'],
-  [
-    'Save messages',
-    <Icon key="save_messages_free" as={TbX} color="gray.400" fontSize="xl" />,
-    <Icon
-      key="save_messages_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
-    'Share conversations',
-    <Icon
-      key="share_conversations_free"
-      as={TbX}
-      color="gray.400"
-      fontSize="xl"
-    />,
-    <Icon
-      key="share_conversations_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-  [
-    'Export & import data',
-    <Icon key="export_free" as={TbX} color="gray.400" fontSize="xl" />,
-    <Icon
-      key="export_premium"
-      as={TbCheck}
-      color={accentColor('500')}
-      fontSize="xl"
-    />,
-  ],
-];
+import { featuresData } from './data';
 
 export interface ComparePlansProps {
   onSelect?: (plan: Plan) => void;
@@ -141,7 +43,7 @@ export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
               $9.99
             </Td>
           </Tr>
-          {features.map(([feature, free, premium]) => (
+          {featuresData.map(([feature, free, premium]) => (
             <Tr key={feature}>
               <Td color="gray.400">{feature}</Td>
               <Td fontWeight="bold">{free}</Td>
