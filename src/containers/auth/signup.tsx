@@ -189,7 +189,7 @@ export const SignUpContainer: React.FC = () => {
         <HStack w="full">
           <Button
             leftIcon={<Icon as={FcGoogle} mr={4} fontSize="xl" />}
-            onClick={signInWithGoogle}
+            onClick={() => signInWithGoogle()}
             w="full"
             variant="outline"
             borderRadius="xl"

@@ -64,6 +64,10 @@ export const useChat = create<{
     data: Omit<Chat, 'bot_instruction' | 'model'>,
     userMessage: Message,
   ) => Promise<void>;
+  continueChat: (
+    data: Omit<Chat, 'bot_instruction' | 'model'>,
+    messages: Message[],
+  ) => Promise<void>;
   regenerateResponse: (messageId: number) => void;
   renameChat: (chatId: number, newTitle: string) => Promise<void>;
   resendLastMessage: () => Promise<void>;
@@ -378,6 +382,44 @@ export const useChat = create<{
       set({
         selectedChatId: chatId,
       });
+    } catch (error) {
+      captureException(error);
+    }
+  },
+  continueChat: async (data, messages) => {
+    const { reset, getChatHistory } = get();
+    await reset();
+    const dbChatHistory = useIndexedDB('chatHistory');
+    const dbMessages = useIndexedDB('messages');
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    dbChatHistory.add<Chat>({
+      ...data,
+      createdAt: getUnixTime(new Date()),
+      bot_instruction: get().botInstruction,
+      model: get().model,
+      userId,
+    });
+
+    try {
+      await getChatHistory();
+
+      const chatId = get().chatHistory[0]?.id;
+
+      const defaultMessage: Partial<Message> = {
+        chatId,
+        createdAt: getUnixTime(new Date()),
+        updatedAt: getUnixTime(new Date()),
+      };
+
+      for await (const message of messages) {
+        await dbMessages.add<Message>({
+          ...message,
+          ...defaultMessage,
+        });
+      }
+
+      localStorage.setItem('lastOpenChatId', String(chatId));
     } catch (error) {
       captureException(error);
     }

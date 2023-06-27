@@ -1,11 +1,13 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
   Box,
+  Button,
   Container,
   Flex,
   Heading,
   HStack,
   IconButton,
+  LightMode,
   Link,
   Text,
   useBoolean,
@@ -17,7 +19,8 @@ import { AccentColorRadio } from 'components/radios/accentColor';
 import { reverse } from 'ramda';
 import { TbCopy, TbMoon, TbSun } from 'react-icons/tb';
 import MetaTags from 'react-meta-tags';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useChat } from 'store/chat';
 import { useUserData } from 'store/user';
 import { copyToClipboard } from 'utils/copy';
 import { shallow } from 'zustand/shallow';
@@ -27,10 +30,12 @@ export const SharedConversationContainer: React.FC = () => {
     SharedConversation | undefined
   >(undefined);
   const [showControl, setShowControl] = useState(false);
+  const navigate = useNavigate();
   const params = useParams<{ sharedId: string }>();
   const [isLoading, { on, off }] = useBoolean();
   const { toggleColorMode, colorMode } = useColorMode();
   const user = useUserData((state) => state.user, shallow);
+  const continueChat = useChat((state) => state.continueChat, shallow);
 
   const accentColor = useMemo(() => {
     if (conversation) {
@@ -58,6 +63,27 @@ export const SharedConversationContainer: React.FC = () => {
 
   const handleCopy = () => {
     copyToClipboard(window.location.href);
+  };
+
+  const handleContinueChat = async () => {
+    if (!user) {
+      navigate('/login', {
+        state: {
+          redirect: window.location.href,
+        },
+      });
+      return;
+    }
+
+    if (!conversation) {
+      return;
+    }
+    const last_message = conversation.content[0].content.slice(0, 150);
+    await continueChat(
+      { title: conversation.title, last_message },
+      reverse(conversation.content),
+    );
+    navigate('/');
   };
 
   if (conversation === undefined) {
@@ -157,6 +183,13 @@ export const SharedConversationContainer: React.FC = () => {
               accentColor={accentColor}
             />
           ))}
+          <Flex justify="center">
+            <LightMode>
+              <Button colorScheme={accentColor} onClick={handleContinueChat}>
+                Continue this conversation
+              </Button>
+            </LightMode>
+          </Flex>
         </Box>
 
         <Flex justify="center" mt={12} pt={4}>

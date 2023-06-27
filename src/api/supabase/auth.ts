@@ -1,4 +1,8 @@
 import { captureException } from '@sentry/react';
+import {
+  SignInWithOAuthCredentials,
+  SignInWithPasswordCredentials,
+} from '@supabase/gotrue-js';
 import { supabase } from 'api/supabase';
 import { Plan } from 'components/pricingPlans';
 import { standaloneToast } from 'index';
@@ -6,6 +10,7 @@ import { standaloneToast } from 'index';
 export interface SignWithEmailParams {
   email: string;
   password: string;
+  redirect?: string;
 }
 
 export interface SignUpParams extends SignWithEmailParams {
@@ -35,6 +40,7 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
 export const signInWithEmail = async ({
   email,
   password,
+  redirect,
 }: SignWithEmailParams) => {
   const res = await supabase.auth.signInWithPassword({
     email,
@@ -42,15 +48,22 @@ export const signInWithEmail = async ({
   });
 
   if (res.data.session?.access_token) {
-    window.location.reload();
+    if (redirect) {
+      window.location.href = redirect;
+    } else {
+      window.location.reload();
+    }
   }
 
   return res;
 };
 
-export const signInWithGoogle = () => {
+export const signInWithGoogle = (
+  options?: SignInWithOAuthCredentials['options'],
+) => {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
+    options,
   });
 };
 

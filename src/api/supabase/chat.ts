@@ -88,10 +88,11 @@ export const shareConversation = async (
     >({
       title,
       content: messages.map((message) => ({
-        id: message.id,
         role: message.role,
         content: message.content,
         createdAt: message.createdAt,
+        template: message.template,
+        rules: message.rules,
       })),
       color_scheme: accentColor(),
       status,

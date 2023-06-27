@@ -26,7 +26,7 @@ import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
 import { TbLock, TbMail } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const LoginContainer: React.FC = () => {
@@ -37,12 +37,19 @@ export const LoginContainer: React.FC = () => {
   } = useForm<SignWithEmailParams>();
   const [show, setShow] = React.useState(false);
   const [isLoading, { on, off }] = useBoolean();
-
   const toggleShow = () => setShow(!show);
+  const { state } = useLocation();
 
   const handleSubmitLogin = (params: SignWithEmailParams) => {
     on();
-    signInWithEmail(params)
+    signInWithEmail(
+      state.redirect
+        ? {
+            ...params,
+            redirect: state.redirect,
+          }
+        : params,
+    )
       .then((res) => {
         if (res.error?.message) {
           standaloneToast({
@@ -181,7 +188,15 @@ export const LoginContainer: React.FC = () => {
         <HStack w="full">
           <Button
             leftIcon={<Icon as={FcGoogle} mr={4} fontSize="xl" />}
-            onClick={signInWithGoogle}
+            onClick={() =>
+              signInWithGoogle(
+                state.redirect
+                  ? {
+                      redirectTo: state.redirect,
+                    }
+                  : {},
+              )
+            }
             w="full"
             variant="outline"
             borderRadius="xl"

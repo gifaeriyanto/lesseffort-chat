@@ -41,12 +41,9 @@ export const ChatMessagePreview: React.FC<
     onOpen: onOpenAllMessages,
     onClose: onCloseAllMessages,
   } = useDisclosure();
-  const { isMe, rulesCount, oldGeneratedMessages } = useMemo(() => {
+  const { isMe, oldGeneratedMessages } = useMemo(() => {
     return {
       isMe: message.role === 'user',
-      rulesCount: message.rules
-        ? Object.values(message.rules).filter(Boolean).length
-        : 0,
       oldGeneratedMessages: message.allContents || [],
     };
   }, [message]);
@@ -197,16 +194,6 @@ export const ChatMessagePreview: React.FC<
               _light: {
                 bgColor: isMe ? `${accentColor}.500` : 'gray.100',
               },
-              _after: rulesCount
-                ? {
-                    content: `"${rulesCount} ${
-                      rulesCount > 1 ? 'rules' : 'rule'
-                    } applied"`,
-                    display: 'block',
-                    color: `${accentColor}.300`,
-                    fontSize: 'sm',
-                  }
-                : undefined,
             },
           }}
         >
