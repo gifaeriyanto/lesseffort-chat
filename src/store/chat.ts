@@ -240,6 +240,7 @@ export const useChat = create<{
       try {
         response = JSON.parse(xhr.response);
       } catch (error) {
+        response = undefined;
         console.error(error);
       }
       captureException(error);
