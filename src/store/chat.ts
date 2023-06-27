@@ -1,7 +1,11 @@
 import { RefObject } from 'react';
 import { captureException } from '@sentry/react';
 import { Chat, generateResponse, Message } from 'api/chat';
-import { defaultBotInstruction, OpenAIModel } from 'api/constants';
+import {
+  defaultBotInstruction,
+  defaultModel,
+  OpenAIModel,
+} from 'api/constants';
 import { supabase } from 'api/supabase';
 import { getUser } from 'api/supabase/auth';
 import { getSavedMessages } from 'api/supabase/chat';
@@ -81,7 +85,7 @@ export const useChat = create<{
   generatingMessage: '',
   isTyping: false,
   messages: [],
-  model: OpenAIModel.GPT_3_5_16K,
+  model: defaultModel,
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
   setBotInstruction: async (botInstruction) => {
@@ -407,7 +411,7 @@ export const useChat = create<{
         }
         set({
           botInstruction: res?.bot_instruction || defaultBotInstruction,
-          model: res?.model || OpenAIModel.GPT_3_5_16K,
+          model: res?.model || defaultModel,
         });
         await getMessages(chatId);
       } else {
@@ -454,7 +458,7 @@ export const useChat = create<{
   resetChatSettings: () => {
     set({
       botInstruction: defaultBotInstruction,
-      model: OpenAIModel.GPT_3_5_16K,
+      model: defaultModel,
     });
   },
   setEditingMessage: (message) => {

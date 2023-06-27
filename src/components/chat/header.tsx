@@ -54,7 +54,13 @@ export const ChatHeader: React.FC = () => {
       icon = TbBookmark;
     }
 
-    if (model === OpenAIModel.GPT_4) {
+    if (
+      [
+        OpenAIModel['gpt-4'],
+        OpenAIModel['gpt-4-0314'],
+        OpenAIModel['gpt-4-0613'],
+      ].includes(model)
+    ) {
       bgColor = 'pink.500';
     }
 

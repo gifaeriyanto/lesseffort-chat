@@ -15,7 +15,11 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { defaultBotInstruction, OpenAIModel } from 'api/constants';
+import {
+  defaultBotInstruction,
+  defaultModel,
+  OpenAIModel,
+} from 'api/constants';
 import { TypingDots } from 'components/typingDots';
 import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -139,11 +143,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   const handleResetToDefault = () => {
     setValue('title', 'New Chat');
     setValue('botInstruction', defaultBotInstruction);
-    setValue('model', OpenAIModel.GPT_3_5_16K);
+    setValue('model', defaultModel);
     handleSaveSettings({
       title: 'New Chat',
       botInstruction: defaultBotInstruction,
-      model: OpenAIModel.GPT_3_5_16K,
+      model: defaultModel,
     });
   };
 
@@ -236,19 +240,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
           <FormControl>
             <FormLabel>Model</FormLabel>
             <Select defaultValue={model} {...register('model')}>
-              <option value={OpenAIModel.GPT_4_32K}>
-                GPT 4 32k by OpenAI (Only for ChatGPT plus users)
-              </option>
-              <option value={OpenAIModel.GPT_4}>
-                GPT 4 by Open AI (Only for ChatGPT plus users)
-              </option>
-              <option value={OpenAIModel.GPT_3_5_16K}>
-                GPT 3.5 16k by Open AI
-              </option>
-              <option value={OpenAIModel.GPT_3_5}>GPT 3.5 by Open AI</option>
-              <option value={OpenAIModel.GPT_3_5_LEGACY}>
-                GPT 3.5 (Legacy) by Open AI
-              </option>
+              {Object.keys(OpenAIModel).map((item) => (
+                <option value={item} key={item}>
+                  {item}
+                </option>
+              ))}
             </Select>
           </FormControl>
 
