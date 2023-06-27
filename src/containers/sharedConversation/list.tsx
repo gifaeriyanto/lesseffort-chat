@@ -172,12 +172,11 @@ export const SharedConversationsContainer: React.FC = () => {
         color: 'red.400',
       },
       {
-        hidden: content.status === 'published',
         action: () => {
           setSelectedId(content.id);
           onOpenDeleteModal();
         },
-        text: 'Delete',
+        text: content.status === 'published' ? 'Delete & unpublish' : 'Delete',
         color: 'red.400',
       },
     ];
@@ -265,7 +264,7 @@ export const SharedConversationsContainer: React.FC = () => {
                 bgColor: 'gray.100',
               }}
             >
-              <Box>
+              <Box minW={0} maxW={{ base: 'auto', md: 'calc(100% - 240px)' }}>
                 <Flex align="center">
                   {item.status === 'published' && (
                     <Tooltip label="Published">
@@ -275,10 +274,13 @@ export const SharedConversationsContainer: React.FC = () => {
                         w="10px"
                         h="10px"
                         borderRadius="full"
+                        flexShrink={0}
                       />
                     </Tooltip>
                   )}
-                  <Text {...titleTruncate()}>{item.title}</Text>
+                  <Text {...titleTruncate()} isTruncated>
+                    {item.title}
+                  </Text>
                 </Flex>
                 <Box color="gray.400">{item.content.length} messages</Box>
               </Box>
@@ -287,6 +289,7 @@ export const SharedConversationsContainer: React.FC = () => {
                   color="gray.400"
                   display={{ base: 'none', md: 'block' }}
                   fontSize="sm"
+                  flexShrink={0}
                 >
                   {formatDate(new Date(item.created_at as string))}
                 </Box>

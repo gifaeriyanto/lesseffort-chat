@@ -60,7 +60,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
             'Unlimited chat history',
             'Unlimited starter prompts usage',
             'Save messages',
-            'Save & Share conversations',
+            'Save & share conversations',
             'Accent color',
             'And more...',
           ],

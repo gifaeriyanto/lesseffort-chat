@@ -132,12 +132,12 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
       hidden: !isHeader,
       icon: TbShare,
       action: handleShareMessage('published'),
-      text: 'Save and Share conversation',
+      text: 'Save and share conversation',
       divider: true,
     },
     {
       action: onOpenInfoModal,
-      text: 'Get Info',
+      text: 'Get info',
     },
     {
       action: onOpenRenameModal,

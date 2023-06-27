@@ -18,6 +18,7 @@ import { PromptData } from 'api/supabase/prompts';
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { StarterPrompts } from 'containers/chat/starterPrompts';
 import { TbSettings, TbTemplate } from 'react-icons/tb';
+import { usePrompts } from 'store/prompt';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface StarterContainerProps {
@@ -29,6 +30,7 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+  const { isManagingPrompt } = usePrompts();
 
   const tabProps = (index: number): TabProps => ({
     borderWidth: { base: '0 0 2px 0', md: '0 2px 0 0' },
@@ -47,7 +49,7 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
 
   const wrapperPadding = { base: '1rem', md: '0 2rem 2rem 2rem' };
 
-  if (localStorage.getItem('lastOpenChatId')) {
+  if (localStorage.getItem('lastOpenChatId') && !isManagingPrompt) {
     return null;
   }
 

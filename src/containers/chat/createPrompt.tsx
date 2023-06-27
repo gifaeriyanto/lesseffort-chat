@@ -39,6 +39,7 @@ import {
 import { PromptCategory } from 'containers/chat/starterPrompts';
 import { useForm } from 'react-hook-form';
 import { TbInfoCircle, TbPlus } from 'react-icons/tb';
+import { usePrompts } from 'store/prompt';
 import { accentColor } from 'theme/foundations/colors';
 
 type FormInputs = PromptParams & Pick<PromptData, 'id'>;
@@ -69,6 +70,11 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
       resetForm();
     },
   });
+  const { setIsManagingPrompt } = usePrompts();
+
+  useLayoutEffect(() => {
+    setIsManagingPrompt(isOpen);
+  }, [isOpen]);
 
   useLayoutEffect(() => {
     if (defaultValue) {

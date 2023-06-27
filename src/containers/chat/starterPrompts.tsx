@@ -62,6 +62,7 @@ import {
   TbTrash,
 } from 'react-icons/tb';
 import { useMutation, useQuery } from 'react-query';
+import { usePrompts } from 'store/prompt';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
@@ -83,7 +84,8 @@ export enum PromptCategory {
 }
 
 export interface StarterPromptsProps {
-  onSelectPrompt: (prompt: PromptData) => void;
+  onSelectPrompt?: (prompt: PromptData) => void;
+  onManagePrompt?: (value: boolean) => void;
 }
 
 export const StarterPrompts: React.FC<StarterPromptsProps> = ({
@@ -108,6 +110,11 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
     onOpen: onOpenDeleteModal,
     onClose: onCloseDeleteModal,
   } = useDisclosure();
+  const { setIsManagingPrompt } = usePrompts();
+
+  useLayoutEffect(() => {
+    setIsManagingPrompt(!!(deletingPrompt || editingPrompt));
+  }, [deletingPrompt, editingPrompt]);
 
   const fetchPrompts = () =>
     Promise.all([
@@ -407,7 +414,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                         bgColor: 'gray.100',
                       },
                     }}
-                    onClick={() => onSelectPrompt(item)}
+                    onClick={() => onSelectPrompt?.(item)}
                     _light={{
                       bgColor: 'gray.100',
                       borderColor: CustomColor.lightBorder,
