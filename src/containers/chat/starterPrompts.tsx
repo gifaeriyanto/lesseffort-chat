@@ -35,9 +35,13 @@ import {
   Portal,
   Select,
   Skeleton,
+  Tab,
+  TabList,
+  Tabs,
   Tag,
   Text,
   useBoolean,
+  useColorMode,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -91,11 +95,12 @@ export interface StarterPromptsProps {
 export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   onSelectPrompt,
 }) => {
+  const { colorMode } = useColorMode();
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
   const [category, setCategory] = useState('');
   const [visibility, setVisibility] = useState('');
-  const [showOwn, { toggle: toggleShowOwn }] = useBoolean();
+  const [showOwn, { on: onShowOwn, off: hideOwn }] = useBoolean();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [editingPrompt, setEditingPrompt] = useState<PromptData | undefined>(
@@ -338,11 +343,6 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       <option value="private">Private</option>
                     </Select>
                   </FormControl>
-                  <FormControl>
-                    <Checkbox onChange={toggleShowOwn}>
-                      Only show your own.
-                    </Checkbox>
-                  </FormControl>
                 </VStack>
               </PopoverBody>
             </PopoverContent>
@@ -363,6 +363,44 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         h={{ base: 'calc(100vh - 470px)', md: 'calc(100vh - 350px)' }}
       />
 
+      <Tabs mt={4} align="center" colorScheme={accentColor()}>
+        <LightMode>
+          <TabList
+            borderColor={
+              colorMode === 'light' ? CustomColor.lightBorder : 'inherit'
+            }
+            _active={{
+              button: {
+                bgColor: 'transparent',
+              },
+            }}
+            sx={{
+              button: {
+                color: 'gray.400',
+                _selected: {
+                  fontWeight: 'bold',
+                  color: colorMode === 'light' ? 'gray.500' : 'gray.200',
+                  borderColor: accentColor('500'),
+                },
+              },
+            }}
+          >
+            <Tab
+              fontSize="sm"
+              onClick={() => {
+                setVisibility('');
+                hideOwn();
+              }}
+            >
+              All
+            </Tab>
+            <Tab fontSize="sm" onClick={onShowOwn}>
+              Yours
+            </Tab>
+            {/* <Tab fontSize="sm" onClick={() => setVisibility('')}>Favorites</Tab> */}
+          </TabList>
+        </LightMode>
+      </Tabs>
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4} mt={4}>
         {isLoading ? (
           <>
