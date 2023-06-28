@@ -18,7 +18,7 @@ export const pricingData = {
       'Unlimited prompts library',
       'Save messages',
       'Save & Share conversations',
-      'Accent color',
+      'Custom accent color',
       'Lifetime updates!',
       'And more...',
     ],
