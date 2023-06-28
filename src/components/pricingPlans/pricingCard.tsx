@@ -57,7 +57,7 @@ export const PricingCard = (props: PricingCardProps) => {
           </Text>
         )}
       </Flex>
-      <List spacing="4" mb="8" maxW="28ch" mx="auto" h="18rem">
+      <List spacing="4" mb="8" maxW="28ch" mx="auto" h="21rem">
         {features.map((feature, index) => (
           <ListItem key={index} display="flex" alignItems="flex-start" gap={4}>
             <Icon
