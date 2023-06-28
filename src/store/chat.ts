@@ -374,6 +374,8 @@ export const useChat = create<{
     const userId = userData.user?.id;
     dbChatHistory.add<Chat>({
       ...data,
+      title: data.title.replace(/[^\w\s]/g, ''),
+      last_message: data.last_message.replace(/[^\w\s]/g, ''),
       createdAt: getUnixTime(new Date()),
       bot_instruction: get().botInstruction,
       model: get().model,

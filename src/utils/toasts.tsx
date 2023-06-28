@@ -42,7 +42,7 @@ export const toastForFreeUser = (
 export const toastForCopy = (id: string, options: UseToastOptions = {}) => {
   if (!standaloneToast.isActive(id)) {
     ReactGA.event({
-      action: `Limit ${id}`,
+      action: 'Copied',
       category: 'Action',
     });
     standaloneToast({

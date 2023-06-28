@@ -57,7 +57,6 @@ export const getPrompts = async ({
   order = defaultOrder,
   category = '',
   visibility = '',
-  showOwnOnly = false,
   group = 'all',
 }: PromptFilters) => {
   const userData = await getUser();

@@ -13,7 +13,6 @@ import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
-import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export interface SimpleNavbarProps {
@@ -27,14 +26,6 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
   const { pathname } = useLocation();
 
   const handleToggleColorMode = () => {
-    if (isFreeUser) {
-      toastForFreeUser(
-        'dark_mode_limit',
-        'Upgrade your plan to use dark mode!',
-      );
-      return;
-    }
-
     toggleColorMode();
     ReactGA.event({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
