@@ -561,7 +561,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       borderColor: CustomColor.lightBorder,
                     }}
                   >
-                    <Flex justify="space-between" align="baseline">
+                    <Flex justify="space-between" align="baseline" gap={4}>
                       <Box fontWeight="bold" fontSize="lg">
                         {item.title}
                       </Box>
