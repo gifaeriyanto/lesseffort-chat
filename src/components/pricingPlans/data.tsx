@@ -5,6 +5,7 @@ import { accentColor } from 'theme/foundations/colors';
 export const pricingData = {
   features: {
     free: [
+      'Your own OpenAI API key',
       'Max 5 chat history',
       'Unlimited starter prompts usage',
       ['Chat rules', '170+ language, tone, writing style and format'],
@@ -12,10 +13,11 @@ export const pricingData = {
       'Change font size',
     ],
     premium: [
+      'Your own OpenAI API key',
       'Unlimited chat history',
-      'Unlimited starter prompts usage',
+      'Unlimited prompts library',
       'Save messages',
-      'Save & share conversations',
+      'Save & Share conversations',
       'Accent color',
       'Lifetime updates!',
       'And more...',
@@ -28,6 +30,21 @@ export const featuresData: [
   string | JSX.Element,
   string | JSX.Element,
 ][] = [
+  [
+    'Your own OpenAI API key',
+    <Icon
+      key="create_prompts_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
+    <Icon
+      key="create_prompts_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
+  ],
   [
     'Dark mode',
     <Icon
