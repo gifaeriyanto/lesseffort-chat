@@ -10,7 +10,7 @@ export const pricingData = {
       'Unlimited starter prompts usage',
       ['Chat rules', '170+ language, tone, writing style and format'],
       'Light mode & dark mode',
-      'Change font size',
+      'Custom font size',
     ],
     premium: [
       'Your own OpenAI API key',
@@ -20,7 +20,7 @@ export const pricingData = {
       'Save & Share conversations',
       'Custom accent color',
       'Lifetime updates!',
-      'And more...',
+      'And much more...',
     ],
   },
 };
