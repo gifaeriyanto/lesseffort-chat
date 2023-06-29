@@ -26,6 +26,10 @@ export interface Message {
   allContents?: string[];
   chatId?: number;
   template?: string;
+  templateData?: {
+    id: number;
+    title: string;
+  };
   rules?: Rules;
   createdAt?: number;
   updatedAt?: number;

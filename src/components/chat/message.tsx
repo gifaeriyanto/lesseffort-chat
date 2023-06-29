@@ -516,6 +516,15 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               _light: {
                 bgColor: isMe ? accentColor('500') : 'gray.100',
               },
+              _before: message.templateData?.title
+                ? {
+                    content: `"${message.templateData?.title}"`,
+                    bgColor: accentColor('600'),
+                    p: '0.2rem 0.4rem',
+                    fontSize: 'xs',
+                    borderRadius: 'md',
+                  }
+                : undefined,
               _after: rulesCount
                 ? {
                     content: `"${rulesCount} ${

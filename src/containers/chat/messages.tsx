@@ -242,6 +242,12 @@ export const ChatMessagesContainer: React.FC = () => {
       updatedAt: getUnixTime(new Date()),
       content: message,
       template: template?.prompt || '',
+      templateData: template
+        ? {
+            id: template?.id,
+            title: template?.title,
+          }
+        : undefined,
       rules: chatRules,
     };
 
