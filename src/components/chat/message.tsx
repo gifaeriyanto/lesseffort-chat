@@ -518,7 +518,11 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
               },
               _before: message.templateData?.title
                 ? {
-                    content: `"${message.templateData?.title}"`,
+                    content: `"${message.templateData?.title}${
+                      message.templateData?.author
+                        ? ` - By ${message.templateData?.author}`
+                        : ''
+                    }"`,
                     bgColor: accentColor('600'),
                     p: '0.2rem 0.4rem',
                     fontSize: 'xs',
