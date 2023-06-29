@@ -426,7 +426,7 @@ export const ChatMessagesContainer: React.FC = () => {
         direction={messages.length ? 'column-reverse' : 'column'}
         ref={chatAreaRef}
         pt={{ base: '5rem', md: 0 }}
-        pb={{ base: '6rem', md: '2rem' }}
+        pb={{ base: '8rem', md: '2rem' }}
         sx={{
           '& > div:last-child': {
             mt: 6,
@@ -581,7 +581,8 @@ export const ChatMessagesContainer: React.FC = () => {
           pr={selectedChat?.limited && isLessThanMd ? 2 : 4}
           bgColor={isTyping ? 'gray.700' : CustomColor.card}
           borderRadius={{ base: 0, md: '2xl' }}
-          border="1px solid"
+          border="solid"
+          borderWidth={{ base: '1px 0 0 0', md: '1px' }}
           borderColor={{
             base: CustomColor.border,
             md: isTyping ? accentColor('500') : CustomColor.border,
