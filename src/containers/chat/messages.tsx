@@ -246,6 +246,7 @@ export const ChatMessagesContainer: React.FC = () => {
         ? {
             id: template?.id,
             title: template?.title,
+            author: template?.author_name,
           }
         : undefined,
       rules: chatRules,
