@@ -20,6 +20,7 @@ import {
   Textarea,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Message } from 'api/chat';
 import { useForm } from 'react-hook-form';
 import { IconType } from 'react-icons';
 import { TbTemplate, TbX } from 'react-icons/tb';
@@ -31,6 +32,7 @@ export interface SelectedMessageProps {
   info?: React.ReactNode;
   onClose: () => void;
   template?: string;
+  templateData?: Message['templateData'];
   onSaveTemplate?: (template: string) => void;
 }
 
@@ -44,6 +46,7 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
   info,
   onClose,
   template,
+  templateData,
   onSaveTemplate,
 }) => {
   const { isOpen, onOpen, onClose: onCloseModal } = useDisclosure();
@@ -88,7 +91,7 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
           </Box>
         </Box>
         <Flex align="center" mx={4} gap={4}>
-          {!!template && (
+          {!!template && templateData?.type !== 'direct' && (
             <IconButton
               icon={<TbTemplate />}
               aria-label="Edit template"

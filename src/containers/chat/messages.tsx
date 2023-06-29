@@ -200,7 +200,7 @@ export const ChatMessagesContainer: React.FC = () => {
 
   const handleSetTemplate = (value: PromptData) => {
     if (value?.type === 'direct') {
-      handleSendMessage(value.title, value);
+      handleSendMessage(value.prompt, { ...value, prompt: '[PROMPT]' });
     } else {
       setTemplate(value);
     }
@@ -260,6 +260,7 @@ export const ChatMessagesContainer: React.FC = () => {
             id: _template?.id,
             title: _template?.title,
             author: _template?.author_name,
+            type: _template?.type,
           }
         : undefined,
       rules: chatRules,
@@ -479,6 +480,7 @@ export const ChatMessagesContainer: React.FC = () => {
               </>
             }
             template={editingMessage.template}
+            templateData={editingMessage.templateData}
             onSaveTemplate={updateMessageTemplate}
           />
         )}

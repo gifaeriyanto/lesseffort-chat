@@ -29,7 +29,8 @@ export interface Message {
   templateData?: {
     id: number;
     title: string;
-    author: string;
+    author?: string;
+    type?: string;
   };
   rules?: Rules;
   createdAt?: number;
