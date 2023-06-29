@@ -30,7 +30,7 @@ import { debounce } from 'utils/common';
 import { shallow } from 'zustand/shallow';
 
 export interface DBChatSettings {
-  chat_model: string;
+  chat_model: OpenAIModel;
   chat_bot_instruction: string;
 }
 

@@ -11,6 +11,7 @@ import { getUser } from 'api/supabase/auth';
 import { getSavedMessages } from 'api/supabase/chat';
 import { chatRulesPrompt, Rules } from 'components/chat/rules';
 import { Plan } from 'components/pricingPlans';
+import { DBChatSettings } from 'containers/chat/chatSettings';
 import { getUnixTime } from 'date-fns';
 import { Editor } from 'draft-js';
 import { standaloneToast } from 'index';
@@ -263,12 +264,15 @@ export const useChat = create<{
             }
           }
 
-          standaloneToast({
-            title: 'Context length exceeded',
-            description:
-              "This model's maximum context length is 4097 tokens. However, your messages resulted in 6601 tokens. Please reduce the length of the messages.",
-            status: 'error',
-          });
+          if (!standaloneToast.isActive('contextLimit')) {
+            standaloneToast({
+              id: 'contextLimit',
+              title: 'Context length exceeded',
+              description:
+                "This model's maximum context length is 4097 tokens. However, your messages resulted in 6601 tokens. Please reduce the length of the messages.",
+              status: 'error',
+            });
+          }
           break;
 
         case 401:
@@ -277,13 +281,16 @@ export const useChat = create<{
           break;
 
         default:
-          standaloneToast({
-            title: 'Oops! Something went wrong. 😕',
-            description:
-              response?.error?.message ||
-              `We're sorry about that. Please try again later.\nError status: ${status}`,
-            status: 'error',
-          });
+          if (!standaloneToast.isActive('somethingError')) {
+            standaloneToast({
+              id: 'somethingError',
+              title: 'Oops! Something went wrong. 😕',
+              description:
+                response?.error?.message ||
+                `We're sorry about that. Please try again later.\nError status: ${status}`,
+              status: 'error',
+            });
+          }
           break;
       }
     };
@@ -505,10 +512,13 @@ export const useChat = create<{
       isTyping: false,
     });
   },
-  resetChatSettings: () => {
+  resetChatSettings: async () => {
+    const dbSettings = useIndexedDB('settings');
+    const setting = await dbSettings.getByID<DBChatSettings>(1);
+
     set({
-      botInstruction: defaultBotInstruction,
-      model: defaultModel,
+      botInstruction: setting.chat_bot_instruction || defaultBotInstruction,
+      model: setting.chat_model || defaultModel,
     });
   },
   setEditingMessage: (message) => {
