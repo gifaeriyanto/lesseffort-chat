@@ -489,7 +489,7 @@ export const ChatMessagesContainer: React.FC = () => {
           pointerEvents="none"
           className="rules"
           pos="absolute"
-          hidden={isTyping || isLessThanMd || selectedChatId === -1}
+          hidden={isTyping || selectedChatId === -1}
         >
           <Button
             leftIcon={<MdOutlineChecklist />}
@@ -534,7 +534,12 @@ export const ChatMessagesContainer: React.FC = () => {
           />
         )}
 
-        <Box mb={4} hidden={!isShowRuleOptions || isTyping || isLessThanMd}>
+        <Box
+          mb={4}
+          hidden={!isShowRuleOptions || isTyping}
+          borderTop={{ base: '1px solid', md: 'none' }}
+          borderColor={CustomColor.border}
+        >
           <ChatRules
             value={chatRules}
             onChange={setChatRules}
@@ -556,7 +561,7 @@ export const ChatMessagesContainer: React.FC = () => {
           borderRadius={{ base: 0, md: '2xl' }}
           border="1px solid"
           borderColor={{
-            base: 'transparent',
+            base: CustomColor.border,
             md: isTyping ? accentColor('500') : CustomColor.border,
           }}
           align="center"
@@ -565,7 +570,7 @@ export const ChatMessagesContainer: React.FC = () => {
           _light={{
             bgColor: isTyping ? 'gray.100' : CustomColor.lightCard,
             borderColor: {
-              base: 'transparent',
+              base: CustomColor.lightBorder,
               md: isTyping ? accentColor('500') : CustomColor.lightBorder,
             },
           }}

@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Button, HStack, Select, SelectProps } from '@chakra-ui/react';
+import { Button, Flex, HStack, Select, SelectProps } from '@chakra-ui/react';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export interface Rules {
@@ -96,7 +96,7 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
   const selectProps = (name: keyof Rules, placeholder: string): SelectProps => {
     return {
       variant: 'outline',
-      maxW: '200px',
+      maxW: { base: 'full', md: '200px' },
       size: 'sm',
       borderRadius: 'xl',
       placeholder,
@@ -113,7 +113,14 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
   };
 
   return (
-    <HStack spacing={4} justify="center" align="center" w="full">
+    <Flex
+      gap={4}
+      justify="center"
+      align="center"
+      direction={{ base: 'column', md: 'row' }}
+      p={{ base: 4, md: 0 }}
+      pb={0}
+    >
       <Select {...selectProps('outputLanguage', 'Output Language')}>
         <option value="English">English</option>
         <option value="Spanish">Español</option>
@@ -320,6 +327,6 @@ export const ChatRules: React.FC<ChatRulesProps> = ({
           Clear
         </Button>
       )}
-    </HStack>
+    </Flex>
   );
 };
