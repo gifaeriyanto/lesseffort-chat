@@ -527,6 +527,14 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
                     p: '0.2rem 0.4rem',
                     fontSize: 'xs',
                     borderRadius: 'md',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    display: 'inline-block',
+                    maxW: {
+                      base: 'calc(100vw - 5.5rem)',
+                      md: 'calc(100% - 0.8rem)',
+                    },
                   }
                 : undefined,
               _after: rulesCount
