@@ -40,6 +40,7 @@ import {
   unpublishSharedConversation,
 } from 'api/supabase/chat';
 import { Empty } from 'components/empty';
+import { InputWithCounter } from 'components/inputWithCounter';
 import { MainLayout } from 'components/layout';
 import { Loading } from 'components/loading';
 import MainNavbar from 'components/navbar/main';
@@ -332,17 +333,18 @@ export const SharedConversationsContainer: React.FC = () => {
       <Modal isOpen={isOpenRenameModal} onClose={onCloseRenameModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Rename conversation title</ModalHeader>
+          <ModalHeader>Rename chat</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={handleSubmit(handleRename)}>
             <ModalBody pb={6}>
               <FormControl isInvalid={!!errors.title}>
-                <FormLabel>Conversation title</FormLabel>
-                <Input
+                <FormLabel>Chat title</FormLabel>
+                <InputWithCounter
                   defaultValue={
                     conversations.find((item) => item.id === selectedId)
                       ?.title || ''
                   }
+                  max={150}
                   {...register('title', {
                     required: {
                       message: 'Title cannot be empty',

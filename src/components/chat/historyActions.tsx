@@ -28,6 +28,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { shareConversation, SharedConversation } from 'api/supabase/chat';
+import { InputWithCounter } from 'components/inputWithCounter';
 import { standaloneToast } from 'index';
 import { useForm } from 'react-hook-form';
 import { TbBookmark, TbChevronDown, TbShare } from 'react-icons/tb';
@@ -204,12 +205,17 @@ export const HistoryActions: React.FC<HistoryActionsProps> = ({
             <ModalBody pb={6}>
               <FormControl isInvalid={!!errors.title}>
                 <FormLabel>Chat title</FormLabel>
-                <Input
+                <InputWithCounter
                   defaultValue={selectedChat?.title}
+                  max={150}
                   {...register('title', {
                     required: {
                       message: 'Chat title cannot be empty',
                       value: true,
+                    },
+                    maxLength: {
+                      message: 'Title should be less than 150 characters',
+                      value: 150,
                     },
                   })}
                 />

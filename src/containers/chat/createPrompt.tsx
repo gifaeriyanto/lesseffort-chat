@@ -208,19 +208,6 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
 
                 <FormControl isInvalid={!!errors.description}>
                   <FormLabel>Description</FormLabel>
-                  {/* <Input
-                    defaultValue={defaultValue?.description}
-                    {...register('description', {
-                      required: {
-                        message: 'Description cannot be empty',
-                        value: true,
-                      },
-                      maxLength: {
-                        message: 'Description cannot more than 200 characters',
-                        value: 200,
-                      },
-                    })}
-                  /> */}
                   <InputWithCounter
                     defaultValue={defaultValue?.description || ''}
                     max={200}

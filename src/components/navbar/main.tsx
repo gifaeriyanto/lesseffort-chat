@@ -80,7 +80,7 @@ const MainNavbar: React.FC<MainNavbar> = ({ title, description, icon }) => {
       >
         {renderIcon()}
         <Box
-          w={{ base: '60vw', md: '90%' }}
+          w={{ base: '60vw', md: 'full' }}
           maxW={{ base: 'full', md: 'calc(100% - 3.188rem)' }}
         >
           <Text

@@ -96,6 +96,7 @@ export const ChatHeader: React.FC = () => {
         borderColor: CustomColor.lightBorder,
         bgColor: { base: 'gray.100', md: 'gray.200' },
       }}
+      gap={8}
     >
       {isLessThanMd && (
         <IconButton
@@ -114,7 +115,7 @@ export const ChatHeader: React.FC = () => {
       >
         {renderIcon()}
         <Box
-          w={{ base: '60vw', md: '90%' }}
+          w={{ base: '60vw', md: 'full' }}
           maxW={{ base: 'full', md: 'calc(100% - 3.188rem)' }}
         >
           <Text
