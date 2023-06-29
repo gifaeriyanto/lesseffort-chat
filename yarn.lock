@@ -8862,10 +8862,10 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openai-ext@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/openai-ext/-/openai-ext-1.2.6.tgz#7b98dd60621b2d28eb9f6a1cf05356d528f9d179"
-  integrity sha512-bva4Ql5G1lwBGeIBu0vI3mI9FeTyW/l2b7cq5kdEYasujzSAQxxqN9rPi4lSvjNuKofp3C0ravUMdTZkUtKlxw==
+openai-ext@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/openai-ext/-/openai-ext-1.2.7.tgz#026c8144acab5e9aaac3feaa3ce0d036c065a4a8"
+  integrity sha512-XyONn0cZ0qVLNr0qs/eRZVkccj/PntOj1Vl+++4ztLc//N405vLmDY4aLS33XfRMWa1nFyTPY6WTvMYDso0JeA==
 
 openai@^3.2.1:
   version "3.2.1"
