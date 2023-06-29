@@ -36,6 +36,7 @@ import {
   PromptParams,
   updatePrompt,
 } from 'api/supabase/prompts';
+import { InputWithCounter } from 'components/inputWithCounter';
 import { PromptCategory } from 'containers/chat/starterPrompts';
 import { useForm } from 'react-hook-form';
 import { TbInfoCircle, TbPlus } from 'react-icons/tb';
@@ -207,8 +208,22 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
 
                 <FormControl isInvalid={!!errors.description}>
                   <FormLabel>Description</FormLabel>
-                  <Input
+                  {/* <Input
                     defaultValue={defaultValue?.description}
+                    {...register('description', {
+                      required: {
+                        message: 'Description cannot be empty',
+                        value: true,
+                      },
+                      maxLength: {
+                        message: 'Description cannot more than 200 characters',
+                        value: 200,
+                      },
+                    })}
+                  /> */}
+                  <InputWithCounter
+                    defaultValue={defaultValue?.description || ''}
+                    max={200}
                     {...register('description', {
                       required: {
                         message: 'Description cannot be empty',
@@ -234,9 +249,10 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
 
                 <FormControl isInvalid={!!errors.hint}>
                   <FormLabel>Hint</FormLabel>
-                  <Input
+                  <InputWithCounter
                     defaultValue={defaultValue?.hint}
                     placeholder="e.q. Your keyword, Title for your article, etc."
+                    max={100}
                     {...register('hint', {
                       required: {
                         message: 'Hint cannot be empty',
