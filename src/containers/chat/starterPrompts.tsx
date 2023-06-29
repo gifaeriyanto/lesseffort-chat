@@ -385,6 +385,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                     <TbFilter />
                   )
                 }
+                flexShrink={0}
                 w={filterCount ? '4rem' : 'auto'}
                 title="Filter"
                 size="md"
