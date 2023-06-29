@@ -1,4 +1,11 @@
-import { Box, Button, Link, Text, UseToastOptions } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Link,
+  Text,
+  UseToastOptions,
+} from '@chakra-ui/react';
 import { standaloneToast } from 'index';
 import ReactGA from 'react-ga4';
 
@@ -50,18 +57,20 @@ export const toastForCopy = (id: string, options: UseToastOptions = {}) => {
       position: 'bottom',
       duration: 1000,
       render: () => (
-        <Box
-          p={3}
-          bgColor="gray.900"
-          borderRadius="2xl"
-          textAlign="center"
-          w="12rem"
-          _light={{
-            color: 'white',
-          }}
-        >
-          Copied to clipboard
-        </Box>
+        <Flex justify="center">
+          <Box
+            p={3}
+            bgColor="gray.900"
+            borderRadius="2xl"
+            textAlign="center"
+            w="12rem"
+            _light={{
+              color: 'white',
+            }}
+          >
+            Copied to clipboard
+          </Box>
+        </Flex>
       ),
       ...options,
     });
