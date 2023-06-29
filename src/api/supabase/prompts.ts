@@ -19,6 +19,7 @@ export interface PromptData {
   updated_at: number;
   usages: number;
   user_id: string;
+  type: 'dynamic' | 'direct';
 }
 
 export type PromptParams = Pick<
@@ -35,6 +36,7 @@ export interface PromptFilters {
   order?: string;
   category?: string;
   visibility?: string;
+  type?: string;
   showOwnOnly?: boolean;
   group: PromptGroup;
 }
@@ -55,6 +57,7 @@ export const getPrompts = async ({
   pageSize = 10,
   keyword = '',
   order = defaultOrder,
+  type = '',
   category = '',
   visibility = '',
   group = 'all',
@@ -71,7 +74,8 @@ export const getPrompts = async ({
     .select()
     .ilike('title', `%${keyword}%`)
     .ilike('category', `%${category}%`)
-    .ilike('status', `%${visibility}%`);
+    .ilike('status', `%${visibility}%`)
+    .ilike('type', `%${type}%`);
 
   let data: any | null = null;
   let error: PostgrestError | null = null;
@@ -122,6 +126,7 @@ export const getPromptsCount = async ({
   keyword = '',
   category = '',
   visibility = '',
+  type = '',
   group = 'all',
 }: Omit<PromptFilters, 'page' | 'pageSize'>) => {
   const userData = await getUser();
@@ -134,7 +139,8 @@ export const getPromptsCount = async ({
     .select('*', { count: 'exact', head: true })
     .ilike('title', `%${keyword}%`)
     .ilike('category', `%${category}%`)
-    .ilike('status', `%${visibility}%`);
+    .ilike('status', `%${visibility}%`)
+    .ilike('type', `%${type}%`);
 
   let count: number | null = null;
   let error: PostgrestError | null = null;

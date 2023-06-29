@@ -198,6 +198,14 @@ export const ChatMessagesContainer: React.FC = () => {
     }
   };
 
+  const handleSetTemplate = (value: PromptData) => {
+    if (value?.type === 'direct') {
+      handleSendMessage(value.title, value);
+    } else {
+      setTemplate(value);
+    }
+  };
+
   useLayoutEffect(() => {
     chatAreaRef.current?.addEventListener('scroll', handleShowJumpToBottom);
     return () => {
@@ -218,7 +226,12 @@ export const ChatMessagesContainer: React.FC = () => {
     };
   }, [isLessThanMd]);
 
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (
+    message: string,
+    quickTemplate?: PromptData,
+  ) => {
+    let _template = quickTemplate || template;
+
     if (isSavedMessages) {
       await saveMessage({
         content: message,
@@ -241,12 +254,12 @@ export const ChatMessagesContainer: React.FC = () => {
       createdAt: getUnixTime(new Date()),
       updatedAt: getUnixTime(new Date()),
       content: message,
-      template: template?.prompt || '',
-      templateData: template
+      template: _template?.prompt || '',
+      templateData: _template
         ? {
-            id: template?.id,
-            title: template?.title,
-            author: template?.author_name,
+            id: _template?.id,
+            title: _template?.title,
+            author: _template?.author_name,
           }
         : undefined,
       rules: chatRules,
@@ -365,7 +378,7 @@ export const ChatMessagesContainer: React.FC = () => {
           />
         );
       }
-      return <StarterContainer onSelectPrompt={setTemplate} />;
+      return <StarterContainer onSelectPrompt={handleSetTemplate} />;
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import {
   ModalOverlay,
   Select,
   SimpleGrid,
+  Tabs,
   Text,
   Textarea,
   Tooltip,
@@ -37,6 +38,7 @@ import {
   updatePrompt,
 } from 'api/supabase/prompts';
 import { InputWithCounter } from 'components/inputWithCounter';
+import { CustomTabList } from 'components/tabs/tabList';
 import { PromptCategory } from 'containers/chat/starterPrompts';
 import { useForm } from 'react-hook-form';
 import { TbInfoCircle, TbPlus } from 'react-icons/tb';
@@ -51,12 +53,15 @@ export interface CreatePromptProps {
   onCloseModal?: () => void;
 }
 
+const listOfTabs: PromptData['type'][] = ['dynamic', 'direct'];
+
 export const CreatePrompt: React.FC<CreatePromptProps> = ({
   defaultValue,
   onSuccess,
   onCloseModal,
 }) => {
   const [isLessThanXl] = useMediaQuery('(max-width: 80em)');
+  const [activeTab, setActiveTab] = useState(listOfTabs[0]);
   const {
     register,
     formState: { errors },
@@ -84,7 +89,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
   }, [defaultValue]);
 
   const promptValidator = (value: string) => {
-    if (!value.includes('[PROMPT]')) {
+    if (!value.includes('[PROMPT]') && activeTab === 'dynamic') {
       return 'Prompt should contain "[PROMPT]".';
     }
     return true;
@@ -94,6 +99,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
     const _value = {
       ...value,
       status: value.status || 'private',
+      type: activeTab,
     };
     if (defaultValue?.id) {
       _value['id'] = defaultValue.id;
@@ -107,6 +113,94 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
         onClose();
         resetForm();
       });
+  };
+
+  const renderConditionalForm = () => {
+    if (activeTab === 'dynamic') {
+      return (
+        <>
+          <FormControl isInvalid={!!errors.hint}>
+            <FormLabel>Hint</FormLabel>
+            <InputWithCounter
+              defaultValue={defaultValue?.hint}
+              placeholder="e.q. Your keyword, Title for your article, etc."
+              max={100}
+              {...register('hint', {
+                required: {
+                  message: 'Hint cannot be empty',
+                  value: true,
+                },
+                maxLength: {
+                  message: 'Hint cannot more than 100 characters',
+                  value: 100,
+                },
+              })}
+            />
+            {errors.hint && (
+              <FormErrorMessage>{errors.hint?.message}</FormErrorMessage>
+            )}
+            <FormHelperText>
+              Please instruct the user on what to input to replace the
+              "[PROMPT]" in the template.
+            </FormHelperText>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.prompt}>
+            <FormLabel>Prompt template</FormLabel>
+            <Textarea
+              defaultValue={defaultValue?.prompt}
+              placeholder="e.q. Fix grammar: [PROMPT]"
+              rows={10}
+              resize="none"
+              borderRadius="xl"
+              {...register('prompt', {
+                required: {
+                  message: 'Prompt template cannot be empty',
+                  value: true,
+                },
+                validate: promptValidator,
+              })}
+            />
+            {errors.prompt && (
+              <FormErrorMessage>{errors.prompt?.message}</FormErrorMessage>
+            )}
+            <FormHelperText>
+              Learn how to create prompt{' '}
+              <Link
+                color={accentColor('500')}
+                href="/docs/prompt"
+                target="_blank"
+              >
+                here
+              </Link>
+            </FormHelperText>
+          </FormControl>
+        </>
+      );
+    }
+
+    return (
+      <FormControl isInvalid={!!errors.prompt}>
+        <FormLabel>Prompt</FormLabel>
+        <Textarea
+          defaultValue={defaultValue?.prompt}
+          placeholder="e.q. Please act as my english teacher"
+          rows={10}
+          resize="none"
+          borderRadius="xl"
+          {...register('prompt', {
+            required: {
+              message: 'Prompt cannot be empty',
+              value: true,
+            },
+            validate: promptValidator,
+          })}
+        />
+        {errors.prompt && (
+          <FormErrorMessage>{errors.prompt?.message}</FormErrorMessage>
+        )}
+      </FormControl>
+    );
   };
 
   return (
@@ -234,64 +328,21 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
                   </FormHelperText>
                 </FormControl>
 
-                <FormControl isInvalid={!!errors.hint}>
-                  <FormLabel>Hint</FormLabel>
-                  <InputWithCounter
-                    defaultValue={defaultValue?.hint}
-                    placeholder="e.q. Your keyword, Title for your article, etc."
-                    max={100}
-                    {...register('hint', {
-                      required: {
-                        message: 'Hint cannot be empty',
-                        value: true,
-                      },
-                      maxLength: {
-                        message: 'Hint cannot more than 100 characters',
-                        value: 100,
-                      },
-                    })}
+                <Tabs
+                  w="full"
+                  align="center"
+                  colorScheme={accentColor()}
+                  index={listOfTabs.findIndex((item) => item === activeTab)}
+                >
+                  <CustomTabList
+                    list={listOfTabs.map((item) => `${item} interaction`)}
+                    onChange={(_, index) => {
+                      setActiveTab(listOfTabs[index]);
+                    }}
                   />
-                  {errors.hint && (
-                    <FormErrorMessage>{errors.hint?.message}</FormErrorMessage>
-                  )}
-                  <FormHelperText>
-                    Please instruct the user on what to input to replace the
-                    "[PROMPT]" in the template.
-                  </FormHelperText>
-                </FormControl>
+                </Tabs>
 
-                <FormControl isInvalid={!!errors.prompt}>
-                  <FormLabel>Prompt template</FormLabel>
-                  <Textarea
-                    defaultValue={defaultValue?.prompt}
-                    placeholder="e.q. Fix grammar: [PROMPT]"
-                    rows={10}
-                    resize="none"
-                    borderRadius="xl"
-                    {...register('prompt', {
-                      required: {
-                        message: 'Prompt template cannot be empty',
-                        value: true,
-                      },
-                      validate: promptValidator,
-                    })}
-                  />
-                  {errors.prompt && (
-                    <FormErrorMessage>
-                      {errors.prompt?.message}
-                    </FormErrorMessage>
-                  )}
-                  <FormHelperText>
-                    Learn how to create prompt{' '}
-                    <Link
-                      color={accentColor('500')}
-                      href="/docs/prompt"
-                      target="_blank"
-                    >
-                      here
-                    </Link>
-                  </FormHelperText>
-                </FormControl>
+                {renderConditionalForm()}
               </VStack>
             </ModalBody>
 

@@ -34,13 +34,9 @@ import {
   Portal,
   Select,
   Skeleton,
-  Tab,
-  TabList,
   Tabs,
   Tag,
   Text,
-  useBoolean,
-  useColorMode,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -58,6 +54,7 @@ import {
 import { ChatMessageAction } from 'components/chat/message';
 import { Empty } from 'components/empty';
 import { Search } from 'components/search';
+import { CustomTabList } from 'components/tabs/tabList';
 import { CreatePrompt } from 'containers/chat/createPrompt';
 import {
   TbChevronDown,
@@ -73,7 +70,6 @@ import { usePrompts } from 'store/prompt';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import {
-  capitalizeWords,
   createIncrementArray,
   formatLocaleNumber,
   formatNumber,
@@ -103,13 +99,11 @@ const listOfTabs: PromptGroup[] = ['all', 'yours', 'favorites'];
 export const StarterPrompts: React.FC<StarterPromptsProps> = ({
   onSelectPrompt,
 }) => {
-  const { colorMode } = useColorMode();
   const [keyword, setKeyword] = useState('');
   const [order, setOrder] = useState(defaultOrder);
   const [category, setCategory] = useState('');
+  const [type, setType] = useState('');
   const [visibility, setVisibility] = useState('');
-  const [showOwnOnly, { on: enableOwnOnly, off: disableOwnOnly }] =
-    useBoolean();
   const [activeTab, setActiveTab] = useState<PromptGroup>('all');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -134,6 +128,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
     order: defaultOrder,
     category: '',
     visibility: '',
+    type: '',
   };
 
   const filterCount = useMemo(() => {
@@ -141,13 +136,15 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       order,
       category,
       visibility,
+      type,
     });
-  }, [order, category, visibility]);
+  }, [order, category, visibility, type]);
 
   const clearFilter = () => {
     setOrder(defaultFilter.order);
     setCategory(defaultFilter.category);
     setVisibility(defaultFilter.visibility);
+    setType(defaultFilter.type);
   };
 
   useLayoutEffect(() => {
@@ -173,18 +170,20 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         order,
         category,
         visibility,
+        type,
         group: activeTab,
       }),
       getPromptsCount({
         keyword,
         category,
         visibility,
+        type,
         group: activeTab,
       }),
     ]);
 
   const { data, isLoading, error, refetch } = useQuery(
-    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}-${activeTab}`,
+    `prompts-${page}-${pageSize}-${order}-${keyword}-${category}-${visibility}-${type}-${activeTab}`,
     fetchPrompts,
   );
 
@@ -198,7 +197,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
 
   useLayoutEffect(() => {
     setPage(1);
-  }, [keyword, order, category, visibility, activeTab]);
+  }, [keyword, order, category, visibility, type, activeTab]);
 
   const [prompts, count] = useMemo(() => {
     if (!data) {
@@ -441,6 +440,17 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       <option value="private">Private</option>
                     </Select>
                   </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="sm">Prompt type</FormLabel>
+                    <Select
+                      onChange={(e) => setType(e.currentTarget.value)}
+                      value={type}
+                    >
+                      <option value="">All</option>
+                      <option value="dynamic">Dynamic Interaction</option>
+                      <option value="direct">Direct Interaction</option>
+                    </Select>
+                  </FormControl>
                   <Button size="sm" onClick={clearFilter} hidden={!filterCount}>
                     Clear filter
                   </Button>
@@ -455,43 +465,15 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
       </Flex>
 
       <Tabs
-        mt={4}
+        w="full"
         align="center"
         colorScheme={accentColor()}
         index={listOfTabs.findIndex((item) => item === activeTab)}
       >
-        <LightMode>
-          <TabList
-            borderColor={
-              colorMode === 'light' ? CustomColor.lightBorder : 'inherit'
-            }
-            _active={{
-              button: {
-                bgColor: 'transparent',
-              },
-            }}
-            sx={{
-              button: {
-                color: 'gray.400',
-                _selected: {
-                  fontWeight: 'bold',
-                  color: colorMode === 'light' ? 'gray.500' : 'gray.200',
-                  borderColor: accentColor('500'),
-                },
-              },
-            }}
-          >
-            {listOfTabs.map((item) => (
-              <Tab
-                key={item}
-                fontSize="sm"
-                onClick={() => handleSwitchTab(item)}
-              >
-                {capitalizeWords(item)}
-              </Tab>
-            ))}
-          </TabList>
-        </LightMode>
+        <CustomTabList
+          list={listOfTabs}
+          onChange={(value) => handleSwitchTab(value as PromptGroup)}
+        />
       </Tabs>
 
       <Empty
@@ -598,7 +580,14 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                         {item.usages ? formatNumber(item.usages) : 'Never'} used
                       </Box>
 
-                      <Box>{renderStatus(item.status)}</Box>
+                      <Flex gap={2}>
+                        {item.type !== 'dynamic' && (
+                          <Tag colorScheme="purple" size="sm">
+                            {uppercaseFirstLetter(item.type)} interaction
+                          </Tag>
+                        )}
+                        {renderStatus(item.status)}
+                      </Flex>
                     </Flex>
                   </Flex>
                 </GridItem>

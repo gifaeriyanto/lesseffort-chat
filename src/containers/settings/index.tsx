@@ -2,20 +2,18 @@ import React from 'react';
 import {
   Container,
   Heading,
-  LightMode,
-  Tab,
-  TabList,
   TabPanel,
   TabPanels,
   Tabs,
   useColorMode,
 } from '@chakra-ui/react';
 import { SimpleNavbar } from 'components/navbar/simple';
+import { CustomTabList } from 'components/tabs/tabList';
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { AccountSettings } from 'containers/settings/account';
 import { APIKeySettings } from 'containers/settings/apiKey';
 import { GeneralSettings } from 'containers/settings/general';
-import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { accentColor } from 'theme/foundations/colors';
 
 export const SettingsContainer: React.FC = () => {
   const { colorMode } = useColorMode();
@@ -28,33 +26,7 @@ export const SettingsContainer: React.FC = () => {
       </Heading>
 
       <Tabs colorScheme={accentColor()}>
-        <LightMode>
-          <TabList
-            borderColor={
-              colorMode === 'light' ? CustomColor.lightBorder : 'inherit'
-            }
-            _active={{
-              button: {
-                bgColor: 'transparent',
-              },
-            }}
-            sx={{
-              button: {
-                color: 'gray.400',
-                _selected: {
-                  fontWeight: 'bold',
-                  color: colorMode === 'light' ? 'gray.500' : 'gray.200',
-                  borderColor: accentColor('500'),
-                },
-              },
-            }}
-          >
-            <Tab>General</Tab>
-            <Tab>Account</Tab>
-            <Tab>Chat</Tab>
-            <Tab>API Key</Tab>
-          </TabList>
-        </LightMode>
+        <CustomTabList list={['general', 'account', 'chat', 'api key']} />
 
         <TabPanels>
           <TabPanel px={0}>
