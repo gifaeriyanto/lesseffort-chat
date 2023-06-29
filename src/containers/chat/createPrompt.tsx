@@ -53,7 +53,7 @@ export interface CreatePromptProps {
   onCloseModal?: () => void;
 }
 
-const listOfTabs: PromptData['type'][] = ['dynamic', 'direct'];
+const listOfTabs: PromptData['type'][] = ['direct', 'dynamic'];
 
 export const CreatePrompt: React.FC<CreatePromptProps> = ({
   defaultValue,
@@ -123,7 +123,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
             <FormLabel>Hint</FormLabel>
             <InputWithCounter
               defaultValue={defaultValue?.hint}
-              placeholder="e.q. Your keyword, Title for your article, etc."
+              placeholder="e.q. Your keyword, title for your article, etc."
               max={100}
               {...register('hint', {
                 required: {
@@ -184,7 +184,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
         <FormLabel>Prompt</FormLabel>
         <Textarea
           defaultValue={defaultValue?.prompt}
-          placeholder="e.q. Please act as my english teacher"
+          placeholder="e.q. I'm bored, please just ask me anything"
           rows={10}
           resize="none"
           borderRadius="xl"

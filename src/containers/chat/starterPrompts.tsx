@@ -469,6 +469,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
         align="center"
         colorScheme={accentColor()}
         index={listOfTabs.findIndex((item) => item === activeTab)}
+        mt={4}
       >
         <CustomTabList
           list={listOfTabs}
