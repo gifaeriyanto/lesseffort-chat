@@ -200,7 +200,7 @@ export const ChatSidebar: React.FC = () => {
           ) : (
             <MenuItem as={Link} to="/manage-subs">
               <Icon as={TbDiamond} />
-              <Text ml={4}>Manage Subscription</Text>
+              <Text ml={4}>Manage subscription</Text>
             </MenuItem>
           )}
           {!isLessThanMd && (
