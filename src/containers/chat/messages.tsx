@@ -279,8 +279,8 @@ export const ChatMessagesContainer: React.FC = () => {
           },
           userMessage,
         );
-        if (template) {
-          await usePrompt(template.id);
+        if (_template) {
+          await usePrompt(_template.id);
         }
       }
     } catch (error) {

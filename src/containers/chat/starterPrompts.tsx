@@ -554,7 +554,11 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                     <Box fontSize="sm" color="gray.400" mb={4}>
                       {item.category} . by{' '}
                       {item.link ? (
-                        <Link href={item.link} target="_blank">
+                        <Link
+                          href={item.link}
+                          target="_blank"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           {item.author_name}
                         </Link>
                       ) : (
