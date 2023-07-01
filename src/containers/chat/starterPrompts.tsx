@@ -387,7 +387,7 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                 }
                 flexShrink={0}
                 w={filterCount ? '4rem' : 'auto'}
-                title="Filter"
+                title=""
                 size="md"
                 borderRadius="xl"
                 variant="outline"
