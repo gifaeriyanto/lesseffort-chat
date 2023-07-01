@@ -54,11 +54,13 @@ import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { useGA } from 'utils/hooks/useGA';
 import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
 
 export const ChatSidebar: React.FC = () => {
   const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const { GAEvent } = useGA();
   const { isOpenSidebar, onCloseSidebar } = useSidebar(
     (state) => ({
       isOpenSidebar: state.isOpen,
@@ -116,7 +118,7 @@ export const ChatSidebar: React.FC = () => {
 
   const handleToggleColorMode = () => {
     toggleColorMode();
-    ReactGA.event({
+    GAEvent({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
       category: 'UX',
       label: isLessThanMd ? 'mobile' : 'desktop',

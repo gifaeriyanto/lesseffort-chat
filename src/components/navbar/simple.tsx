@@ -13,6 +13,7 @@ import { TbArrowLeft, TbMoonFilled, TbSun } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { useGA } from 'utils/hooks/useGA';
 import { shallow } from 'zustand/shallow';
 
 export interface SimpleNavbarProps {
@@ -21,13 +22,13 @@ export interface SimpleNavbarProps {
 
 export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({ backLink }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
-  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const { GAEvent } = useGA();
   const { toggleColorMode, colorMode } = useColorMode();
   const { pathname } = useLocation();
 
   const handleToggleColorMode = () => {
     toggleColorMode();
-    ReactGA.event({
+    GAEvent({
       action: `Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`,
       category: 'UX',
       label: isLessThanMd ? 'mobile' : 'desktop',

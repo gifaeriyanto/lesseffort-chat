@@ -56,6 +56,7 @@ import { useChat } from 'store/chat';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { copyToClipboard } from 'utils/copy';
+import { useGA } from 'utils/hooks/useGA';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
 import { toastForFreeUser } from 'utils/toasts';
@@ -108,6 +109,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   onRegenerateResponse,
 }) => {
   const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const { GAEvent } = useGA();
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -158,7 +160,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
   );
 
   const handleSelectPrevMessage = () => {
-    ReactGA.event({
+    GAEvent({
       action: 'Select previous generated message',
       category: 'Action',
     });
@@ -166,7 +168,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     selectGeneratedMessage(message, selectedGeneratedMessage - 1);
   };
   const handleSelectNextMessage = () => {
-    ReactGA.event({
+    GAEvent({
       action: 'Select next generated message',
       category: 'Action',
     });
@@ -174,7 +176,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
     selectGeneratedMessage(message, selectedGeneratedMessage + 1);
   };
   const handleSelectMessage = (index: number) => {
-    ReactGA.event({
+    GAEvent({
       action: 'Select spesific generated message',
       category: 'Action',
     });

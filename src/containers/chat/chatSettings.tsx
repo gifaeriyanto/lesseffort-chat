@@ -27,6 +27,7 @@ import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';
+import { useGA } from 'utils/hooks/useGA';
 import { shallow } from 'zustand/shallow';
 
 export interface DBChatSettings {
@@ -74,6 +75,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     setValue,
   } = useForm<FormInputs>();
   const dbSettings = useIndexedDB('settings');
+  const { GAEvent } = useGA();
   const [indexeddbReady, setIndexeddbReady] = useState(false);
   const [isSaving, { on, off }] = useBoolean();
   const [showSavingState, setShowSavingState] = useState(false);
@@ -114,7 +116,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     botInstruction: _botInstruction,
     model: _model,
   }) => {
-    ReactGA.event({
+    GAEvent({
       action: `Save chat settings ${isGlobalSetting ? 'globally' : 'locally'}`,
       category: 'Action',
     });

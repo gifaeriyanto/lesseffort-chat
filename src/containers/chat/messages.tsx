@@ -49,6 +49,7 @@ import { useIndexedDB } from 'react-indexed-db';
 import { useChat } from 'store/chat';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { sanitizeString } from 'utils/common';
+import { useGA } from 'utils/hooks/useGA';
 import { shallow } from 'zustand/shallow';
 
 export const ChatMessagesContainer: React.FC = () => {
@@ -91,6 +92,7 @@ export const ChatMessagesContainer: React.FC = () => {
     shallow,
   );
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
+  const { GAEvent } = useGA();
   const dbMessages = useIndexedDB('messages');
   const [
     isShowJumpToBottomButton,
@@ -389,14 +391,14 @@ export const ChatMessagesContainer: React.FC = () => {
             key={message.id || message.createdAt}
             message={message}
             onResend={() => {
-              ReactGA.event({
+              GAEvent({
                 action: 'Resend last message',
                 category: 'Action',
               });
               resendLastMessage();
             }}
             onEdit={() => {
-              ReactGA.event({
+              GAEvent({
                 action: 'Edit message',
                 category: 'Action',
               });
@@ -404,7 +406,7 @@ export const ChatMessagesContainer: React.FC = () => {
               message.rules && setChatRules(message.rules);
             }}
             onRegenerateResponse={() => {
-              ReactGA.event({
+              GAEvent({
                 action: 'Regenerate response',
                 category: 'Action',
               });
