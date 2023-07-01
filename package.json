@@ -1,6 +1,6 @@
 {
   "name": "lesseffortchat-client",
-  "version": "0.1.124",
+  "version": "0.1.125",
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
