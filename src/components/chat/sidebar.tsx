@@ -308,15 +308,13 @@ export const ChatSidebar: React.FC = () => {
                   </Box>
                 </Flex>
 
-                {!isFreeUser && (
-                  <IconButton
-                    variant="ghost"
-                    icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-                    aria-label="Toggle color mode"
-                    onClick={handleToggleColorMode}
-                    color="gray.400"
-                  />
-                )}
+                <IconButton
+                  variant="ghost"
+                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+                  aria-label="Toggle color mode"
+                  onClick={handleToggleColorMode}
+                  color="gray.400"
+                />
               </Flex>
             </Flex>
           </DrawerBody>

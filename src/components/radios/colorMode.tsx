@@ -8,9 +8,7 @@ import {
   UseRadioProps,
   VStack,
 } from '@chakra-ui/react';
-import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
-import { shallow } from 'zustand/shallow';
 
 const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
   const { getInputProps, getRadioProps } = useRadio(props);
@@ -29,7 +27,6 @@ const RadioCard: React.FC<UseRadioProps & PropsWithChildren> = (props) => {
 };
 
 export const ColorModeRadio: React.FC = () => {
-  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
   const { toggleColorMode } = useColorMode();
   const colorModeOptions = ['dark', 'light'];
 
