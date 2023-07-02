@@ -85,6 +85,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
   useLayoutEffect(() => {
     if (defaultValue) {
       onOpen();
+      setActiveTab(defaultValue.type);
     }
   }, [defaultValue]);
 
