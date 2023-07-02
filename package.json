@@ -1,6 +1,6 @@
 {
   "name": "lesseffortchat-client",
-  "version": "0.1.129",
+  "version": "0.1.130",
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
@@ -19,7 +19,7 @@
     "date-fns": "^2.30.0",
     "draft-js": "^0.11.7",
     "framer-motion": "^10.10.0",
-    "openai": "^3.2.1",
+    "openai": "^3.3.0",
     "openai-ext": "^1.2.7",
     "ramda": "^0.29.0",
     "react": "^18.2.0",
