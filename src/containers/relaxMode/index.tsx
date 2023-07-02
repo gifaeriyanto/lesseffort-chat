@@ -44,7 +44,7 @@ export const RelaxModeContainer: React.FC = () => {
     w: '3rem',
     h: '3rem',
     border: '1px solid',
-    borderColor: 'whiteAlpha.300',
+    borderColor: index === activeTabIndex ? 'blackAlpha.200' : 'whiteAlpha.300',
     borderRadius: 'lg',
     m: 4,
     mb: 0,
