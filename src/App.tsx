@@ -17,6 +17,7 @@ import { SignUpContainer } from 'containers/auth/signup';
 import { UpdatePasswordContainer } from 'containers/auth/updatePassword';
 import { ChatContainer } from 'containers/chat';
 import PurchasedRedirect from 'containers/redirect/purchased';
+import { RelaxModeContainer } from 'containers/relaxMode';
 import { SettingsContainer } from 'containers/settings';
 import { SharedConversationContainer } from 'containers/sharedConversation';
 import { SharedConversationsContainer } from 'containers/sharedConversation/list';
@@ -108,6 +109,11 @@ const router = createBrowserRouter([
     path: '/manage-subs',
     loader: premiumUser,
     element: <ManageSubscriptionContainer />,
+  },
+  {
+    path: '/relax-mode',
+    // loader: premiumUser,
+    element: <RelaxModeContainer />,
   },
 ]);
 
