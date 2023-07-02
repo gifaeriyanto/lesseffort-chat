@@ -1,12 +1,13 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { AspectRatio, Box, Flex } from '@chakra-ui/react';
+import { CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
   const [date, setDate] = useState(new Date());
 
-  function refreshClock() {
+  const refreshClock = () => {
     setDate(new Date());
-  }
+  };
 
   useLayoutEffect(() => {
     const timerId = setInterval(refreshClock, 1000);
@@ -22,26 +23,32 @@ export const RelaxModeContainer: React.FC = () => {
           align="center"
           gap={4}
           cursor="pointer"
-          w="4rem"
-          h="4rem"
-          p={4}
+          w="3rem"
+          h="3rem"
+          p="0.6rem"
           backdropFilter="blur(5px)"
           border="1px solid"
           borderColor="whiteAlpha.300"
           borderRadius="xl"
           flexShrink={0}
         >
-          <img src="/favicon-32x32.png" alt="Logo Lesseffort" />
+          <Box
+            as="img"
+            w="2.4rem"
+            src="/favicon-32x32.png"
+            alt="Logo Lesseffort"
+          />
         </Flex>
         <Flex
           align="center"
-          h="4rem"
+          h="3rem"
           p={4}
           backdropFilter="blur(5px)"
           border="1px solid"
           borderColor="whiteAlpha.300"
           borderRadius="xl"
           fontSize="xl"
+          _light={{ color: 'gray.100' }}
         >
           {date.toLocaleTimeString()}
         </Flex>
@@ -50,18 +57,22 @@ export const RelaxModeContainer: React.FC = () => {
       <Box
         as="iframe"
         pos="absolute"
-        w="405px"
+        w="354px"
         h="calc(100vh - 2rem)"
         right={4}
         top={4}
         zIndex={1}
         borderRadius="xl"
         title="background"
-        src="/"
+        src="/?relax-mode=1"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
         allowFullScreen
         overflow="hidden"
+        bgColor={CustomColor.background}
+        _light={{
+          bgColor: 'gray.200',
+        }}
       />
 
       <AspectRatio w="full" h="100vh" ratio={16 / 9} overflow="hidden">

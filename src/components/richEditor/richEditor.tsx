@@ -13,6 +13,7 @@ import {
   SelectionState,
 } from 'draft-js';
 import { useChat } from 'store/chat';
+import { isRelaxMode } from 'utils/url';
 import { shallow } from 'zustand/shallow';
 
 export interface RichEditorProps {
@@ -115,7 +116,12 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       return 'strikethrough';
     }
 
-    if (!isLessThanMd && onSubmit && !e.shiftKey && e.key === 'Enter') {
+    if (
+      (!isLessThanMd || isRelaxMode()) &&
+      onSubmit &&
+      !e.shiftKey &&
+      e.key === 'Enter'
+    ) {
       handleSubmit();
       return 'submit';
     }
