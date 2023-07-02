@@ -34,7 +34,7 @@ import { CustomColor } from 'theme/foundations/colors';
 export const RelaxModeContainer: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [date, setDate] = useState(new Date());
-  const [youtubeID, setYoutubeID] = useState('sUwD3GRPJos');
+  const [youtubeID, setYoutubeID] = useState('QbJBDABNKxY');
   const [youtubeMuted, { toggle: toggleYoutubeMute }] = useBoolean(true);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const playerRef = useRef<any>(null);
