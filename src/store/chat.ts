@@ -241,6 +241,14 @@ export const useChat = create<{
 
       captureException(error);
 
+      // TODO: JSON parse error from openai-ext
+      if (status !== 200) {
+        set({
+          generatingMessage: '',
+          isTyping: false,
+        });
+      }
+
       switch (status) {
         case 200:
           // TODO: JSON parse error from openai-ext
@@ -299,12 +307,6 @@ export const useChat = create<{
       {
         onContent,
         onError,
-        onDone: () => {
-          set({
-            generatingMessage: '',
-            isTyping: false,
-          });
-        },
       },
       {
         botInstruction,
