@@ -32,7 +32,6 @@ import { RichEditor } from 'components/richEditor';
 import { TypingDots } from 'components/typingDots';
 import { StarterContainer } from 'containers/chat/starter';
 import { getUnixTime } from 'date-fns';
-import ReactGA from 'react-ga4';
 import {
   MdOutlineChecklist,
   MdSend,
@@ -98,6 +97,10 @@ export const ChatMessagesContainer: React.FC = () => {
     isShowJumpToBottomButton,
     { on: showJumpToBottomButton, off: hideJumpToBottomButton },
   ] = useBoolean(false);
+  const [
+    isSendingMessage,
+    { on: onIsSendingMessage, off: offIsSendingMessage },
+  ] = useBoolean(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const [selectedChat, setSelectedChat] = useState<Chat | undefined>(undefined);
   const [readyToUse, setReadyToUse] = useState(false);
@@ -124,6 +127,12 @@ export const ChatMessagesContainer: React.FC = () => {
       setReadyToUse(false);
     };
   }, [messages, selectedChatId]);
+
+  useLayoutEffect(() => {
+    if (isTyping) {
+      offIsSendingMessage();
+    }
+  }, [isTyping]);
 
   const jumpToBottomMobile = () => {
     if (!isLessThanMd) {
@@ -232,6 +241,7 @@ export const ChatMessagesContainer: React.FC = () => {
     message: string,
     quickTemplate?: PromptData,
   ) => {
+    onIsSendingMessage();
     let _template = quickTemplate || template;
 
     if (isSavedMessages) {
@@ -314,6 +324,7 @@ export const ChatMessagesContainer: React.FC = () => {
         placeholder={
           template?.hint ? sanitizeString(template?.hint) : undefined
         }
+        isDisabled={isSendingMessage || isTyping}
       />
     );
   };
@@ -371,6 +382,27 @@ export const ChatMessagesContainer: React.FC = () => {
   };
 
   const renderMessages = useCallback(() => {
+    if (isSendingMessage && !messages.length) {
+      return (
+        <Flex
+          w="full"
+          justify="center"
+          align="center"
+          direction="column"
+          gap={4}
+          color="gray.400"
+          h={{ base: 'calc(100vh - 200px)', md: '100vh' }}
+        >
+          <Box maxW="85vw" textAlign="center" fontSize="sm">
+            Please wait
+            <Box as="span" display="inline-block" w="1rem" textAlign="left">
+              <TypingDots />
+            </Box>
+          </Box>
+        </Flex>
+      );
+    }
+
     if (!messages.length) {
       if (isSavedMessages) {
         return (
@@ -416,7 +448,7 @@ export const ChatMessagesContainer: React.FC = () => {
         ))}
       </>
     );
-  }, [messages]);
+  }, [messages, isSendingMessage]);
 
   return (
     <>

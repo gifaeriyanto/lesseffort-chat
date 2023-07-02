@@ -21,6 +21,7 @@ export interface RichEditorProps {
   onBlur?: (value: string) => void;
   onSubmit?: (value: string) => void;
   placeholder?: string;
+  isDisabled?: boolean;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
@@ -29,6 +30,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   onBlur,
   onSubmit,
   placeholder,
+  isDisabled,
 }) => {
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const initialEditorState = defaultValue
@@ -148,6 +150,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           placeholder={placeholder || getPlaceholder()}
           stripPastedStyles
           ref={richEditorRef}
+          readOnly={isDisabled}
         />
       </Box>
     </Box>
