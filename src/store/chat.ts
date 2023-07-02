@@ -240,10 +240,7 @@ export const useChat = create<{
       const errorMessage = xhr?.response?.error?.message;
 
       captureException(error);
-      set({
-        generatingMessage: '',
-        isTyping: false,
-      });
+
       switch (status) {
         case 400:
           if (chatId) {
@@ -298,6 +295,12 @@ export const useChat = create<{
       {
         onContent,
         onError,
+        onDone: () => {
+          set({
+            generatingMessage: '',
+            isTyping: false,
+          });
+        },
       },
       {
         botInstruction,
