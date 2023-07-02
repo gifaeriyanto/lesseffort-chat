@@ -8,7 +8,7 @@ import {
   Icon,
   IconButton,
   Input,
-  Link,
+  Link as CLink,
   Tab,
   TabList,
   TabPanel,
@@ -18,14 +18,15 @@ import {
   useBoolean,
 } from '@chakra-ui/react';
 import { SiYoutube } from 'react-icons/si';
-import { TbMessage, TbNotebook, TbVolumeOff } from 'react-icons/tb';
+import { TbMessage, TbNotebook, TbVolume, TbVolumeOff } from 'react-icons/tb';
+import { Link } from 'react-router-dom';
 import YouTube from 'react-youtube';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
   const [date, setDate] = useState(new Date());
   const [youtubeID, setYoutubeID] = useState('QbJBDABNKxY');
-  const [youtubeMuted, { toggle: toggleYoutubeMute }] = useBoolean(false);
+  const [youtubeMuted, { toggle: toggleYoutubeMute }] = useBoolean(true);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const playerRef = useRef<any>(null);
 
@@ -54,6 +55,7 @@ export const RelaxModeContainer: React.FC = () => {
   const handleMute = async () => {
     const player = playerRef.current.internalPlayer;
     const isMuted = await player.isMuted();
+    toggleYoutubeMute();
     isMuted ? player.unMute() : player.mute();
   };
 
@@ -84,6 +86,8 @@ export const RelaxModeContainer: React.FC = () => {
           borderColor="whiteAlpha.300"
           borderRadius="xl"
           flexShrink={0}
+          as={Link}
+          to="/"
         >
           <Box
             as="img"
@@ -121,16 +125,16 @@ export const RelaxModeContainer: React.FC = () => {
           _light={{ color: 'gray.100' }}
           gap={4}
         >
-          <Link href={`https://youtu.be/${youtubeID}`} target="_blank">
+          <CLink href={`https://youtu.be/${youtubeID}`} target="_blank">
             <Icon as={SiYoutube} fontSize="2xl" mt={2} />
-          </Link>
+          </CLink>
           <Input
             variant="unstyled"
             value={youtubeID}
             onChange={(e) => setYoutubeID(e.currentTarget.value)}
           />
           <IconButton
-            icon={<TbVolumeOff />}
+            icon={youtubeMuted ? <TbVolume /> : <TbVolumeOff />}
             aria-label="Youtube mute"
             onClick={handleMute}
             variant="ghost"
@@ -212,7 +216,7 @@ export const RelaxModeContainer: React.FC = () => {
           iframe: {
             w: 'full',
             h: 'full',
-            transform: 'scale(120%)',
+            transform: 'scale(120%) rotateY(0deg)',
           },
         }}
       >
