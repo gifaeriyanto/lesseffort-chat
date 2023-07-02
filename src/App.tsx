@@ -112,7 +112,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/relax-mode',
-    // loader: premiumUser,
+    loader: withAuth,
     element: <RelaxModeContainer />,
   },
 ]);
