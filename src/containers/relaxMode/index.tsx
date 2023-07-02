@@ -16,16 +16,25 @@ import {
   TabProps,
   Tabs,
   useBoolean,
+  useColorMode,
 } from '@chakra-ui/react';
 import { SiYoutube } from 'react-icons/si';
-import { TbMessage, TbNotebook, TbVolume, TbVolumeOff } from 'react-icons/tb';
+import {
+  TbMessage,
+  TbMoon,
+  TbNotebook,
+  TbSun,
+  TbVolume,
+  TbVolumeOff,
+} from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import YouTube from 'react-youtube';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [date, setDate] = useState(new Date());
-  const [youtubeID, setYoutubeID] = useState('QbJBDABNKxY');
+  const [youtubeID, setYoutubeID] = useState('sUwD3GRPJos');
   const [youtubeMuted, { toggle: toggleYoutubeMute }] = useBoolean(true);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const playerRef = useRef<any>(null);
@@ -68,6 +77,7 @@ export const RelaxModeContainer: React.FC = () => {
     playerVars: {
       autoplay: 1,
       controls: 0,
+      disablekb: 1,
     },
   };
 
@@ -108,6 +118,21 @@ export const RelaxModeContainer: React.FC = () => {
           _light={{ color: 'gray.100' }}
         >
           {date.toLocaleTimeString()}
+        </Flex>
+        <Flex
+          align="center"
+          h="3rem"
+          p={4}
+          backdropFilter="blur(5px)"
+          border="1px solid"
+          borderColor="whiteAlpha.300"
+          borderRadius="xl"
+          fontSize="xl"
+          _light={{ color: 'gray.100' }}
+          onClick={toggleColorMode}
+          hidden
+        >
+          {colorMode === 'light' ? <Icon as={TbMoon} /> : <Icon as={TbSun} />}
         </Flex>
       </Flex>
 
