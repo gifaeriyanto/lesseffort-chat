@@ -19,6 +19,7 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Portal,
   Select,
   Tab,
   TabList,
@@ -29,6 +30,7 @@ import {
   useBoolean,
   useColorMode,
 } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 import { reverse } from 'ramda';
 import { SiYoutube } from 'react-icons/si';
 import {
@@ -56,6 +58,7 @@ export const RelaxModeContainer: React.FC = () => {
     title: '',
     quality: '',
     duration: 0,
+    thumbnailUrl: '',
   });
   const [youtubeMuted, { toggle: toggleYoutubeMute }] = useBoolean(true);
   const [youtubePlay, { on: onYoutubePlay, off: offYoutubePlay }] =
@@ -125,10 +128,17 @@ export const RelaxModeContainer: React.FC = () => {
     });
     const res = await player.playVideo();
     if (res?.playerInfo?.videoData?.title) {
+      console.log(res);
+      const thumbnailUrl =
+        res.playerInfo.videoUrl.replace(
+          'https://www.youtube.com/watch?v=',
+          'https://img.youtube.com/vi/',
+        ) + '/0.jpg';
       setYoutubeData({
         title: res.playerInfo.videoData.title,
         quality: res.playerInfo.videoData.video_quality,
         duration: res.playerInfo.duration,
+        thumbnailUrl,
       });
     }
   };
@@ -206,6 +216,39 @@ export const RelaxModeContainer: React.FC = () => {
           <Box pos="absolute" bottom={4} left={4} zIndex={1}>
             <Flex
               align="center"
+              p={4}
+              backdropFilter="blur(5px)"
+              border="1px solid"
+              borderColor="whiteAlpha.300"
+              borderRadius="xl"
+              fontSize="xl"
+              _light={{ color: 'gray.100' }}
+              gap={4}
+              mb={4}
+              w="fit-content"
+            >
+              <CLink
+                href={`https://youtu.be/${youtubeID}`}
+                target="_blank"
+                _hover={{ textDecor: 'none' }}
+              >
+                <Flex width="25rem" gap={4}>
+                  <Box
+                    as="img"
+                    src={youtubeData.thumbnailUrl}
+                    w="10rem"
+                    h="10rem"
+                    objectFit="cover"
+                    borderRadius="lg"
+                  />
+                  <Box maxH="6rem" overflow="hidden" title={youtubeData.title}>
+                    {youtubeData.title}
+                  </Box>
+                </Flex>
+              </CLink>
+            </Flex>
+            <Flex
+              align="center"
               h="3rem"
               p={4}
               pr={1}
@@ -222,6 +265,7 @@ export const RelaxModeContainer: React.FC = () => {
               </CLink>
               <HStack spacing={1}>
                 <Input
+                  width="200px"
                   variant="unstyled"
                   value={youtubeID}
                   onChange={(e) => setYoutubeID(e.currentTarget.value)}
@@ -249,76 +293,80 @@ export const RelaxModeContainer: React.FC = () => {
                       borderRadius="lg"
                     />
                   </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody>
-                      <Grid
-                        templateColumns="1fr 2fr"
-                        alignItems="center"
-                        gap={4}
-                      >
-                        <GridItem hidden fontSize="md">
-                          Quality
-                        </GridItem>
-                        <GridItem hidden>
-                          <Select
-                            onChange={(e) =>
-                              handleChangeQuality(e.currentTarget.value)
-                            }
-                          >
-                            <option value="0">Auto</option>
-                            {reverse(VIDEO_QUALITY_LEVELS)
-                              .filter((item) => item <= maxQualityLevel)
-                              .map((item) => (
-                                <option value={`hd${item}`} key={item}>
-                                  {item}p
-                                </option>
-                              ))}
-                          </Select>
-                        </GridItem>
+                  <Portal>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverBody>
+                        <Grid
+                          templateColumns="1fr 2fr"
+                          alignItems="center"
+                          gap={4}
+                        >
+                          <GridItem hidden fontSize="md">
+                            Quality
+                          </GridItem>
+                          <GridItem hidden>
+                            <Select
+                              onChange={(e) =>
+                                handleChangeQuality(e.currentTarget.value)
+                              }
+                            >
+                              <option value="0">Auto</option>
+                              {reverse(VIDEO_QUALITY_LEVELS)
+                                .filter((item) => item <= maxQualityLevel)
+                                .map((item) => (
+                                  <option value={`hd${item}`} key={item}>
+                                    {item}p
+                                  </option>
+                                ))}
+                            </Select>
+                          </GridItem>
 
-                        <GridItem fontSize="md">Scale</GridItem>
-                        <GridItem>
-                          <InputGroup size="md">
-                            <InputLeftElement>
-                              <Button
-                                size="sm"
-                                onClick={() =>
-                                  setScale((prev) => {
-                                    if (Number(prev) <= 100) {
-                                      return prev;
-                                    }
-                                    return String(Number(prev) - 5);
-                                  })
+                          <GridItem fontSize="md">Scale</GridItem>
+                          <GridItem>
+                            <InputGroup size="md">
+                              <InputLeftElement>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    setScale((prev) => {
+                                      if (Number(prev) <= 100) {
+                                        return prev;
+                                      }
+                                      return String(Number(prev) - 5);
+                                    })
+                                  }
+                                >
+                                  -
+                                </Button>
+                              </InputLeftElement>
+                              <Input
+                                readOnly
+                                textAlign="center"
+                                type="number"
+                                step={5}
+                                min={100}
+                                value={scale}
+                                onChange={(e) =>
+                                  setScale(e.currentTarget.value)
                                 }
-                              >
-                                -
-                              </Button>
-                            </InputLeftElement>
-                            <Input
-                              readOnly
-                              textAlign="center"
-                              type="number"
-                              step={5}
-                              min={100}
-                              value={scale}
-                              onChange={(e) => setScale(e.currentTarget.value)}
-                            />
-                            <InputRightElement>
-                              <Button
-                                size="sm"
-                                onClick={() =>
-                                  setScale((prev) => String(Number(prev) + 5))
-                                }
-                              >
-                                +
-                              </Button>
-                            </InputRightElement>
-                          </InputGroup>
-                        </GridItem>
-                      </Grid>
-                    </PopoverBody>
-                  </PopoverContent>
+                              />
+                              <InputRightElement>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    setScale((prev) => String(Number(prev) + 5))
+                                  }
+                                >
+                                  +
+                                </Button>
+                              </InputRightElement>
+                            </InputGroup>
+                          </GridItem>
+                        </Grid>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Portal>
                 </Popover>
               </HStack>
             </Flex>
@@ -414,6 +462,7 @@ export const RelaxModeContainer: React.FC = () => {
           videoId={youtubeID}
           opts={youtubePlayerOpts}
           onReady={handlePlayerReady}
+          key={youtubeID}
         />
       </AspectRatio>
     </Box>
