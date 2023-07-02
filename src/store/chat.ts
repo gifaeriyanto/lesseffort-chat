@@ -242,6 +242,10 @@ export const useChat = create<{
       captureException(error);
 
       switch (status) {
+        case 200:
+          // TODO: JSON parse error from openai-ext
+          break;
+
         case 400:
           if (chatId) {
             try {
