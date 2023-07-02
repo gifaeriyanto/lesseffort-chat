@@ -237,13 +237,8 @@ export const useChat = create<{
       status: number,
       xhr: XMLHttpRequest,
     ) => {
-      let response;
-      try {
-        response = JSON.parse(xhr.response);
-      } catch (error) {
-        response = undefined;
-        console.error(error);
-      }
+      const errorMessage = xhr?.response?.error?.message;
+
       captureException(error);
       set({
         generatingMessage: '',
@@ -286,7 +281,7 @@ export const useChat = create<{
               id: 'somethingError',
               title: 'Oops! Something went wrong. 😕',
               description:
-                response?.error?.message ||
+                errorMessage ||
                 `We're sorry about that. Please try again later.\nError status: ${status}`,
               status: 'error',
             });
