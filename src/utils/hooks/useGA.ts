@@ -1,7 +1,7 @@
 import ReactGA from 'react-ga4';
 import { UaEventOptions } from 'react-ga4/types/ga4';
 import { useUserData } from 'store/user';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 
 export const useGA = () => {
   const userData = useUserData((state) => state.user, shallow);
