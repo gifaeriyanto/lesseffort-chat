@@ -55,6 +55,7 @@
     "@types/ramda": "^0.29.0",
     "@types/react-lazyload": "^3.2.0",
     "@types/react-query": "^1.2.9",
+    "@types/react-youtube": "^7.10.0",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
     "eslint": "^7.32.0",
