@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   AspectRatio,
   Box,
@@ -6,6 +6,7 @@ import {
   Grid,
   GridItem,
   Icon,
+  IconButton,
   Input,
   Link,
   Tab,
@@ -14,15 +15,19 @@ import {
   TabPanels,
   TabProps,
   Tabs,
+  useBoolean,
 } from '@chakra-ui/react';
 import { SiYoutube } from 'react-icons/si';
-import { TbExternalLink, TbMessage, TbNotebook } from 'react-icons/tb';
+import { TbMessage, TbNotebook, TbVolumeOff } from 'react-icons/tb';
+import YouTube from 'react-youtube';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
   const [date, setDate] = useState(new Date());
   const [youtubeID, setYoutubeID] = useState('QbJBDABNKxY');
+  const [youtubeMuted, { toggle: toggleYoutubeMute }] = useBoolean(false);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const playerRef = useRef<any>(null);
 
   const refreshClock = () => {
     setDate(new Date());
@@ -45,6 +50,24 @@ export const RelaxModeContainer: React.FC = () => {
     mb: 0,
     bgColor: index === activeTabIndex ? 'blackAlpha.500' : 'transparent',
   });
+
+  const handleMute = async () => {
+    const player = playerRef.current.internalPlayer;
+    const isMuted = await player.isMuted();
+    isMuted ? player.unMute() : player.mute();
+  };
+
+  useLayoutEffect(() => {
+    const player = playerRef?.current?.internalPlayer;
+    player.playVideo();
+  }, [playerRef]);
+
+  const youtubePlayerOpts = {
+    playerVars: {
+      autoplay: 1,
+      controls: 0,
+    },
+  };
 
   return (
     <Box pos="relative">
@@ -89,6 +112,7 @@ export const RelaxModeContainer: React.FC = () => {
           align="center"
           h="3rem"
           p={4}
+          pr={1}
           backdropFilter="blur(5px)"
           border="1px solid"
           borderColor="whiteAlpha.300"
@@ -97,15 +121,21 @@ export const RelaxModeContainer: React.FC = () => {
           _light={{ color: 'gray.100' }}
           gap={4}
         >
-          <Icon as={SiYoutube} fontSize="2xl" />
+          <Link href={`https://youtu.be/${youtubeID}`} target="_blank">
+            <Icon as={SiYoutube} fontSize="2xl" mt={2} />
+          </Link>
           <Input
             variant="unstyled"
             value={youtubeID}
             onChange={(e) => setYoutubeID(e.currentTarget.value)}
           />
-          <Link href={`https://youtu.be/${youtubeID}`} target="_blank">
-            <Icon as={TbExternalLink} />
-          </Link>
+          <IconButton
+            icon={<TbVolumeOff />}
+            aria-label="Youtube mute"
+            onClick={handleMute}
+            variant="ghost"
+            borderRadius="lg"
+          />
         </Flex>
       </Box>
 
@@ -173,16 +203,20 @@ export const RelaxModeContainer: React.FC = () => {
         </Tabs>
       </Box>
 
-      <AspectRatio w="full" h="100vh" ratio={16 / 9} overflow="hidden">
-        <Box
-          as="iframe"
-          transform="scale(120%)"
-          title="background"
-          src="https://www.youtube.com/embed/QbJBDABNKxY?autoplay=1&controls=0&mute=0&rel=0&disablekb=1"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
-          allowFullScreen
-        />
+      <AspectRatio
+        w="full"
+        h="100vh"
+        ratio={16 / 9}
+        overflow="hidden"
+        sx={{
+          iframe: {
+            w: 'full',
+            h: 'full',
+            transform: 'scale(120%)',
+          },
+        }}
+      >
+        <YouTube ref={playerRef} videoId={youtubeID} opts={youtubePlayerOpts} />
       </AspectRatio>
     </Box>
   );

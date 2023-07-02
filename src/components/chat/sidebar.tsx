@@ -22,6 +22,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Tag,
   Text,
   useColorMode,
   useDisclosure,
@@ -39,6 +40,7 @@ import {
   TbChecklist,
   TbDiamond,
   TbDiscountCheck,
+  TbFlower,
   TbLogout,
   TbMoon,
   TbMoonFilled,
@@ -189,6 +191,29 @@ export const ChatSidebar: React.FC = () => {
             <Icon as={TbBookmarks} />
             <Text ml={4}>Saved conversations</Text>
           </MenuItem>
+          <MenuItem onClick={handleToggleColorMode}>
+            {colorMode === 'light' ? <Icon as={TbMoon} /> : <Icon as={TbSun} />}
+            <Text ml={4}>
+              Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
+            </Text>
+          </MenuItem>
+          <MenuItem as={Link} to="/relax-mode">
+            <Icon as={TbFlower} />
+            <Text ml={4}>
+              Relax mode{' '}
+              <LightMode>
+                <Tag
+                  size="sm"
+                  mt={1}
+                  ml={2}
+                  colorScheme={accentColor()}
+                  variant="solid"
+                >
+                  Beta
+                </Tag>
+              </LightMode>
+            </Text>
+          </MenuItem>
           <MenuDivider />
           <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
@@ -203,18 +228,6 @@ export const ChatSidebar: React.FC = () => {
             <MenuItem as={Link} to="/manage-subs">
               <Icon as={TbDiamond} />
               <Text ml={4}>Manage subscription</Text>
-            </MenuItem>
-          )}
-          {!isLessThanMd && (
-            <MenuItem onClick={handleToggleColorMode}>
-              {colorMode === 'light' ? (
-                <Icon as={TbMoon} />
-              ) : (
-                <Icon as={TbSun} />
-              )}
-              <Text ml={4}>
-                Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
-              </Text>
             </MenuItem>
           )}
           <MenuItem as="a" href="https://lesseffort.io/privacy" target="_blank">

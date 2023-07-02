@@ -38,6 +38,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
+    "react-youtube": "^10.1.0",
     "rehype-external-links": "^2.1.0",
     "rehype-highlight": "^6.0.0",
     "remark-breaks": "^3.0.2",
