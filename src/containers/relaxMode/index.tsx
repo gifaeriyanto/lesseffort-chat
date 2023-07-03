@@ -408,7 +408,7 @@ export const RelaxModeContainer: React.FC = () => {
                     <TabPanel h="full" p={0}>
                       <Box
                         as="iframe"
-                        w="354px"
+                        w="355px"
                         h="full"
                         borderLeft="1px solid"
                         borderColor="whiteAlpha.300"
@@ -424,7 +424,7 @@ export const RelaxModeContainer: React.FC = () => {
 
                     <TabPanel h="full" p={0}>
                       <Flex
-                        w="354px"
+                        w="355px"
                         p={4}
                         justify="center"
                         align="center"
