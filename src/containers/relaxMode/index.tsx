@@ -128,7 +128,6 @@ export const RelaxModeContainer: React.FC = () => {
     });
     const res = await player.playVideo();
     if (res?.playerInfo?.videoData?.title) {
-      console.log(res);
       const thumbnailUrl =
         res.playerInfo.videoUrl.replace(
           'https://www.youtube.com/watch?v=',
@@ -149,6 +148,7 @@ export const RelaxModeContainer: React.FC = () => {
       controls: 0,
       disablekb: 1,
       rel: 0,
+      defaultPlaybackQuality: 'highres',
     },
   };
 
