@@ -149,6 +149,7 @@ export const RelaxModeContainer: React.FC = () => {
       disablekb: 1,
       rel: 0,
       defaultPlaybackQuality: 'highres',
+      loop: 1,
     },
   };
 
