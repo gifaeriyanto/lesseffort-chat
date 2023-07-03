@@ -263,9 +263,9 @@ export const RelaxModeContainer: React.FC = () => {
               <CLink href={`https://youtu.be/${youtubeID}`} target="_blank">
                 <Icon as={SiYoutube} fontSize="2xl" mt={2} />
               </CLink>
-              <HStack spacing={1}>
+              <HStack spacing={1} w="full">
                 <Input
-                  width="200px"
+                  width="full"
                   variant="unstyled"
                   value={youtubeID}
                   onChange={(e) => setYoutubeID(e.currentTarget.value)}
