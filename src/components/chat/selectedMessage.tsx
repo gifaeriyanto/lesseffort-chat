@@ -24,7 +24,10 @@ import { Message } from 'api/chat';
 import { useForm } from 'react-hook-form';
 import { IconType } from 'react-icons';
 import { TbTemplate, TbX } from 'react-icons/tb';
+import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { toastForFreeUser } from 'utils/toasts';
+import { shallow } from 'zustand/shallow';
 
 export interface SelectedMessageProps {
   title: string;
@@ -51,6 +54,7 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
 }) => {
   const { isOpen, onOpen, onClose: onCloseModal } = useDisclosure();
   const { register, handleSubmit } = useForm<FormInputs>();
+  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
 
   const handleSaveTemplate = ({ template: value }: FormInputs) => {
     onSaveTemplate?.(value);
@@ -98,7 +102,9 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
               variant="ghost"
               fontSize="xl"
               color={accentColor('500')}
-              onClick={onOpen}
+              onClick={
+                isFreeUser ? () => toastForFreeUser('no_edit_template') : onOpen
+              }
             />
           )}
           <IconButton

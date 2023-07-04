@@ -5,6 +5,7 @@ import {
   Grid,
   GridItem,
   Icon,
+  Link as CLink,
   Tab,
   TabList,
   TabPanel,
@@ -17,7 +18,7 @@ import { ClockWidget } from 'containers/relaxMode/sections/clock';
 import { YoutubeSection } from 'containers/relaxMode/sections/youtube';
 import { TbMessage, TbMoon, TbNotebook, TbSun } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { accentColor, CustomColor } from 'theme/foundations/colors';
+import { CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -49,8 +50,8 @@ export const RelaxModeContainer: React.FC = () => {
           borderColor="whiteAlpha.300"
           borderRadius="xl"
           flexShrink={0}
-          as={Link}
-          to="/"
+          as={CLink}
+          href="/"
         >
           <Box
             as="img"
