@@ -1,11 +1,7 @@
 import { RefObject } from 'react';
 import { captureException } from '@sentry/react';
 import { Chat, generateResponse, Message } from 'api/chat';
-import {
-  defaultBotInstruction,
-  defaultModel,
-  OpenAIModel,
-} from 'api/constants';
+import { defaultBotInstruction, defaultModel } from 'api/constants';
 import { supabase } from 'api/supabase';
 import { getUser } from 'api/supabase/auth';
 import { getSavedMessages } from 'api/supabase/chat';
@@ -38,6 +34,17 @@ export const modifyTemplate = (
   );
 };
 
+export const useOpenAIKey = create<{
+  openAIKey: string;
+  setOpenAIKey: (openAIKey: string) => void;
+}>((set) => ({
+  openAIKey: localStorage.getItem('OPENAI_KEY') || '',
+  setOpenAIKey: (openAIKey) => {
+    set({ openAIKey });
+    localStorage.setItem('OPENAI_KEY', openAIKey);
+  },
+}));
+
 export const useChat = create<{
   botInstruction: string;
   chatHistory: Chat[];
@@ -45,13 +52,15 @@ export const useChat = create<{
   generatingMessage: string;
   isTyping: boolean;
   messages: Message[];
-  model: OpenAIModel;
+  model: string;
+  modelList: string[];
+  setModelList: (modelList: string[]) => void;
   // note: -1 is saved messages
   selectedChatId: number | undefined;
   xhr?: XMLHttpRequest;
   richEditorRef: RefObject<Editor> | null;
   setBotInstruction: (instruction: string) => Promise<void>;
-  setModel: (model: OpenAIModel) => void;
+  setModel: (model: string) => void;
   deleteChat: (chatId: number) => Promise<void>;
   deleteMessage: (messageId: number) => Promise<void>;
   deleteTheNextMessages: (chatId: number, messageId: number) => Promise<void>;
@@ -91,8 +100,12 @@ export const useChat = create<{
   isTyping: false,
   messages: [],
   model: defaultModel,
+  modelList: [],
   richEditorRef: null,
   setRichEditorRef: (ref) => set({ richEditorRef: ref }),
+  setModelList: (modelList) => {
+    set({ modelList });
+  },
   setBotInstruction: async (botInstruction) => {
     set({ botInstruction });
     const { selectedChatId, getChatHistory } = get();

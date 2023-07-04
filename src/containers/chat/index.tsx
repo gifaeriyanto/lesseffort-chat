@@ -29,7 +29,7 @@ import { ChatMessagesContainer } from 'containers/chat/messages';
 import Confetti from 'react-confetti';
 import { useForm } from 'react-hook-form';
 import { TbCircleKeyFilled } from 'react-icons/tb';
-import { useChat } from 'store/chat';
+import { useChat, useOpenAIKey } from 'store/chat';
 import { usePWA } from 'store/pwa';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
@@ -66,6 +66,7 @@ export const ChatContainer: React.FC = () => {
     (state) => ({ isFreeUser: state.isFreeUser, user: state.user }),
     shallow,
   );
+  const { openAIKey, setOpenAIKey } = useOpenAIKey();
   const { toggleColorMode } = useColorMode();
   const isOnline = useOnlineStatus();
 
@@ -77,7 +78,7 @@ export const ChatContainer: React.FC = () => {
       setSelectedChatId(lastOpenChatId);
     }
 
-    if (!localStorage.getItem('OPENAI_KEY')) {
+    if (!openAIKey) {
       onOpenAPIKEYModal();
     }
 
@@ -101,7 +102,7 @@ export const ChatContainer: React.FC = () => {
   }, [toggleColorMode, isFreeUser]);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
-    localStorage.setItem('OPENAI_KEY', openaiKey);
+    setOpenAIKey(openaiKey);
     onCloseAPIKEYModal();
   };
 

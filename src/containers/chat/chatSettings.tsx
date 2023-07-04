@@ -15,30 +15,26 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import {
-  defaultBotInstruction,
-  defaultModel,
-  OpenAIModel,
-} from 'api/constants';
+import { getModels } from 'api/chat';
+import { defaultBotInstruction, defaultModel } from 'api/constants';
 import { TypingDots } from 'components/typingDots';
-import ReactGA from 'react-ga4';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useIndexedDB } from 'react-indexed-db';
-import { useChat } from 'store/chat';
+import { useChat, useOpenAIKey } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';
 import { useGA } from 'utils/hooks/useGA';
 import { shallow } from 'zustand/shallow';
 
 export interface DBChatSettings {
-  chat_model: OpenAIModel;
+  chat_model: string;
   chat_bot_instruction: string;
 }
 
 interface FormInputs {
   title: string;
   botInstruction: string;
-  model: OpenAIModel;
+  model: string;
 }
 
 export interface ChatSettingsProps {
@@ -50,9 +46,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
 }) => {
   const {
     model,
+    modelList,
     botInstruction,
     setBotInstruction,
     setModel,
+    setModelList,
     selectedChat,
     renameChat,
   } = useChat((state) => {
@@ -62,12 +60,15 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
     return {
       selectedChat,
       model: state.model,
+      modelList: state.modelList,
       botInstruction: state.botInstruction,
       setBotInstruction: state.setBotInstruction,
       setModel: state.setModel,
+      setModelList: state.setModelList,
       renameChat: state.renameChat,
     };
   }, shallow);
+  const openAIKey = useOpenAIKey((state) => state.openAIKey, shallow);
   const {
     register,
     formState: { errors },
@@ -86,6 +87,10 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
   );
 
   useLayoutEffect(() => {
+    getModels(openAIKey).then(setModelList);
+  }, [openAIKey]);
+
+  useLayoutEffect(() => {
     if (indexeddbReady) {
       return;
     }
@@ -93,8 +98,8 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
       .getByID<DBChatSettings>(1)
       .then((res) => {
         if (res?.chat_model) {
-          setModel(res.chat_model as OpenAIModel);
-          setValue('model', res.chat_model as OpenAIModel);
+          setModel(res.chat_model as string);
+          setValue('model', res.chat_model as string);
         }
 
         if (res?.chat_bot_instruction) {
@@ -239,16 +244,18 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({
               about how to create a good instruction
             </FormHelperText>
           </FormControl>
-          <FormControl>
-            <FormLabel>Model</FormLabel>
-            <Select defaultValue={model} {...register('model')}>
-              {Object.keys(OpenAIModel).map((item) => (
-                <option value={item} key={item}>
-                  {item}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+          {!!modelList.length && (
+            <FormControl>
+              <FormLabel>Model</FormLabel>
+              <Select defaultValue={model} {...register('model')}>
+                {modelList.map((item) => (
+                  <option value={item} key={item}>
+                    {item}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          )}
 
           <Button onClick={handleResetToDefault}>Reset to Default</Button>
         </VStack>
