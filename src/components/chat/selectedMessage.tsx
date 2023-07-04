@@ -7,6 +7,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   Icon,
   IconButton,
   LightMode,
@@ -40,7 +41,7 @@ export interface SelectedMessageProps {
 }
 
 interface FormInputs {
-  template: string;
+  prompt: string;
 }
 
 export const SelectedMessage: React.FC<SelectedMessageProps> = ({
@@ -53,12 +54,23 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
   onSaveTemplate,
 }) => {
   const { isOpen, onOpen, onClose: onCloseModal } = useDisclosure();
-  const { register, handleSubmit } = useForm<FormInputs>();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<FormInputs>();
   const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
 
-  const handleSaveTemplate = ({ template: value }: FormInputs) => {
-    onSaveTemplate?.(value);
+  const handleSaveTemplate = ({ prompt }: FormInputs) => {
+    onSaveTemplate?.(prompt);
     onCloseModal();
+  };
+
+  const promptValidator = (value: string) => {
+    if (!value.includes('[PROMPT]')) {
+      return 'Prompt should contain "[PROMPT]".';
+    }
+    return true;
   };
 
   return (
@@ -139,14 +151,23 @@ export const SelectedMessage: React.FC<SelectedMessageProps> = ({
                   formatting.
                 </AlertDescription>
               </Alert>
-              <FormControl>
+              <FormControl isInvalid={!!errors.prompt}>
                 <Textarea
-                  rows={20}
-                  {...register('template')}
+                  rows={15}
                   resize="none"
                   borderRadius="xl"
                   defaultValue={template}
+                  {...register('prompt', {
+                    required: {
+                      message: 'Prompt template cannot be empty',
+                      value: true,
+                    },
+                    validate: promptValidator,
+                  })}
                 />
+                {errors.prompt && (
+                  <FormErrorMessage>{errors.prompt?.message}</FormErrorMessage>
+                )}
               </FormControl>
             </ModalBody>
 
