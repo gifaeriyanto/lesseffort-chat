@@ -17,7 +17,7 @@ import { ClockWidget } from 'containers/relaxMode/sections/clock';
 import { YoutubeSection } from 'containers/relaxMode/sections/youtube';
 import { TbMessage, TbMoon, TbNotebook, TbSun } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { CustomColor } from 'theme/foundations/colors';
+import { accentColor, CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -27,11 +27,11 @@ export const RelaxModeContainer: React.FC = () => {
     w: '3rem',
     h: '3rem',
     border: '1px solid',
-    borderColor: index === activeTabIndex ? 'blackAlpha.200' : 'whiteAlpha.300',
+    borderColor: index === activeTabIndex ? 'whiteAlpha.600' : 'whiteAlpha.300',
     borderRadius: 'lg',
     m: 4,
     mb: 0,
-    bgColor: index === activeTabIndex ? 'blackAlpha.500' : 'transparent',
+    bgColor: index === activeTabIndex ? 'whiteAlpha.300' : 'transparent',
   });
 
   return (
