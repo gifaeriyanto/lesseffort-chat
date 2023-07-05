@@ -17,7 +17,6 @@ import {
 import { ClockWidget } from 'containers/relaxMode/sections/clock';
 import { YoutubeSection } from 'containers/relaxMode/sections/youtube';
 import { TbMessage, TbMoon, TbNotebook, TbSun } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
 import { CustomColor } from 'theme/foundations/colors';
 
 export const RelaxModeContainer: React.FC = () => {
