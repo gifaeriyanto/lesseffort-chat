@@ -60,6 +60,7 @@ import { useGA } from 'utils/hooks/useGA';
 // import remarkHTMLKatex from 'remark-html-katex';
 // import remarkMath from 'remark-math';
 import { toastForFreeUser } from 'utils/toasts';
+import { isRelaxMode } from 'utils/url';
 import { shallow } from 'zustand/shallow';
 
 // import 'katex/dist/katex.min.css';
@@ -285,7 +286,7 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
       (item) => item.inMenu && !item.hidden,
     );
 
-    if (isLessThanMd) {
+    if (isLessThanMd && !isRelaxMode()) {
       return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
@@ -375,10 +376,8 @@ export const ChatMessage: React.FC<PropsWithChildren<ChatMessageProps>> = ({
         gap={4}
         pos="relative"
         _hover={{
-          md: {
-            ['.message-actions']: {
-              opacity: 1,
-            },
+          ['.message-actions']: {
+            opacity: 1,
           },
         }}
         id={`message-${message.id || 0}`}

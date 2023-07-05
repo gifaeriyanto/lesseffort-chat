@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { format } from 'date-fns';
 
-const openaiAPI = axios.create({
+export const openaiAPI = axios.create({
   baseURL: 'https://api.openai.com',
   headers: {
     Authorization: `Bearer ${localStorage.getItem('OPENAI_KEY') || ''}`,

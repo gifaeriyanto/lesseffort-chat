@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { TypingDots } from 'components/typingDots';
 import { useForm } from 'react-hook-form';
+import { useOpenAIKey } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';
 
@@ -30,6 +31,7 @@ export const APIKeySettings: React.FC = () => {
   } = useForm<FormInputs>();
   const [isSaving, { on, off }] = useBoolean();
   const [showSavingState, setShowSavingState] = useState(false);
+  const { openAIKey, setOpenAIKey } = useOpenAIKey();
 
   const debounceOnChange = debounce(
     (setter: Function, value: unknown) => setter(value),
@@ -37,8 +39,7 @@ export const APIKeySettings: React.FC = () => {
   );
 
   const handleSaveSettings = ({ openaiKey }: FormInputs) => {
-    localStorage.setItem('OPENAI_KEY', openaiKey);
-
+    setOpenAIKey(openaiKey);
     off();
     setShowSavingState(true);
   };
@@ -100,7 +101,7 @@ export const APIKeySettings: React.FC = () => {
           <FormControl isInvalid={!!errors['openaiKey']}>
             <FormLabel>OpenAI Key</FormLabel>
             <Input
-              defaultValue={localStorage.getItem('OPENAI_KEY') || ''}
+              defaultValue={openAIKey}
               {...register('openaiKey', {
                 required: {
                   message: 'OpenAI Key is required',

@@ -7,7 +7,6 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { OpenAIModel } from 'api/constants';
 import { HistoryActions } from 'components/chat/historyActions';
 import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
 import { useChat } from 'store/chat';
@@ -54,7 +53,7 @@ export const ChatHeader: React.FC = () => {
       icon = TbBookmark;
     }
 
-    if ([OpenAIModel['gpt-4'], OpenAIModel['gpt-4-0613']].includes(model)) {
+    if (model.startsWith('gpt-4')) {
       bgColor = 'pink.500';
     }
 

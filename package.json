@@ -1,6 +1,6 @@
 {
   "name": "lesseffortchat-client",
-  "version": "0.1.134",
+  "version": "0.1.148",
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
@@ -38,6 +38,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
+    "react-youtube": "^10.1.0",
     "rehype-external-links": "^2.1.0",
     "rehype-highlight": "^6.0.0",
     "remark-breaks": "^3.0.2",
@@ -54,6 +55,7 @@
     "@types/ramda": "^0.29.0",
     "@types/react-lazyload": "^3.2.0",
     "@types/react-query": "^1.2.9",
+    "@types/react-youtube": "^7.10.0",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
     "eslint": "^7.32.0",

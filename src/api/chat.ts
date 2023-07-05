@@ -1,8 +1,5 @@
-import {
-  defaultBotInstruction,
-  mandatoryInstruction,
-  OpenAIModel,
-} from 'api/constants';
+import { defaultBotInstruction, mandatoryInstruction } from 'api/constants';
+import { openaiAPI } from 'api/openai';
 import { Rules } from 'components/chat/rules';
 import { ClientStreamChatCompletionConfig, OpenAIExt } from 'openai-ext';
 import { mapMessage } from 'store/utils/parser';
@@ -11,7 +8,7 @@ export interface Chat {
   id?: number;
   bot_instruction: string;
   last_message: string;
-  model: OpenAIModel;
+  model: string;
   title: string;
   limited?: boolean;
   createdAt?: number;
@@ -39,7 +36,7 @@ export interface Message {
 
 export const generateResponse = (
   messages: Message[],
-  model: OpenAIModel,
+  model: string,
   handler?: ClientStreamChatCompletionConfig['handler'],
   options?: {
     botInstruction: string;
@@ -63,4 +60,23 @@ export const generateResponse = (
       handler,
     },
   );
+};
+
+export const getModels = async (openAIKey?: string) => {
+  try {
+    const res = await openaiAPI.get('/v1/models', {
+      headers: {
+        Authorization: `Bearer ${
+          openAIKey || localStorage.getItem('OPENAI_KEY') || ''
+        }`,
+      },
+    });
+    const allModels: { id: string }[] = res?.data?.data || [];
+    return allModels
+      .filter((item) => item.id.startsWith('gpt-'))
+      .map((item) => item.id);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
