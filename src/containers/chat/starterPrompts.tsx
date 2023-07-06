@@ -75,6 +75,7 @@ import {
   formatNumber,
   uppercaseFirstLetter,
 } from 'utils/common';
+import { featureFlags } from 'utils/featureFlags';
 import { compareObjects } from 'utils/object';
 import { toastForFreeUser } from 'utils/toasts';
 import { shallow } from 'zustand/shallow';
@@ -582,9 +583,12 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({
                       pt={4}
                       _light={{ color: 'gray.400' }}
                     >
-                      <Box>
-                        {item.usages ? formatNumber(item.usages) : 'Never'} used
-                      </Box>
+                      {featureFlags.prompts__showViews && (
+                        <Box>
+                          {item.usages ? formatNumber(item.usages) : 'Never'}{' '}
+                          used
+                        </Box>
+                      )}
 
                       <Flex gap={2}>
                         {item.type !== 'dynamic' && (
