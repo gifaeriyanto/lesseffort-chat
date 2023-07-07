@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Button,
-  Icon,
   LightMode,
   Table,
   Tbody,
@@ -13,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { Plan } from 'components/pricingPlans';
 import { ResponsiveTable } from 'components/table';
-import { TbCheck, TbX } from 'react-icons/tb';
 import { accentColor } from 'theme/foundations/colors';
 
 import { featuresData } from './data';
