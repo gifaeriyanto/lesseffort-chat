@@ -71,7 +71,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
       />
 
       <PricingCard
-        badge="40% sale"
+        badge="40% discount"
         mostExpensive
         data={{
           price: '$69',
