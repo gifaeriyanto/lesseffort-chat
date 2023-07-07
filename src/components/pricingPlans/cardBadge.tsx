@@ -14,6 +14,7 @@ export const CardBadge = (props: FlexProps) => {
       py={2}
       justifyContent="center"
       alignItems="center"
+      color={useColorModeValue('white', 'gray.800')}
       {...flexProps}
     >
       <Text
@@ -21,7 +22,6 @@ export const CardBadge = (props: FlexProps) => {
         textTransform="uppercase"
         fontWeight="bold"
         letterSpacing="wider"
-        color={useColorModeValue('white', 'gray.800')}
       >
         {children}
       </Text>

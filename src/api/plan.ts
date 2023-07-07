@@ -10,7 +10,7 @@ export enum PlanAction {
 const baseAction = async (
   url: string,
   action: PlanAction,
-  additionalData: Record<string, any> = {},
+  isYearly?: boolean,
 ) => {
   const userData = await getUser();
   if (!userData) {
@@ -22,14 +22,13 @@ const baseAction = async (
       uuid: userData?.id,
       subscription_id: userData?.subscription_id,
       action,
-      ...additionalData,
     },
   };
 
   if (action === PlanAction.create) {
     data = {
       user_id: userData?.id,
-      variant_id: '91493',
+      variant_id: isYearly ? '96072' : '91493',
       store_id: '27875',
       return_url: `${window.location.origin}/purchased`,
     };
@@ -39,8 +38,8 @@ const baseAction = async (
   return fetcher.post(url, data);
 };
 
-export const createPlan = () => {
-  return baseAction('create-subscription', PlanAction.create);
+export const createPlan = (isYearly = false) => {
+  return baseAction('create-subscription', PlanAction.create, isYearly);
 };
 
 export const cancelPlan = () => {

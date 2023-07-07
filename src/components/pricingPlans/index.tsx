@@ -7,6 +7,7 @@ import { PricingCard } from './pricingCard';
 export enum Plan {
   free = 'Free',
   premium = 'Premium',
+  premiumAnnually = 'Premium (Annually)',
 }
 
 export interface PricingPlansProps {
@@ -20,7 +21,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
 }) => (
   <Box as="section" py="14" px={{ base: '4', md: '8' }}>
     <SimpleGrid
-      columns={{ base: 1, lg: 2 }}
+      columns={{ base: 1, lg: 3 }}
       spacing={{ base: '8', lg: '0' }}
       maxW="7xl"
       mx="auto"
@@ -45,8 +46,9 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
           </ActionButton>
         }
       />
+
       <PricingCard
-        isRecommended
+        badge="Recommended"
         data={{
           price: '$9.99',
           name: Plan.premium,
@@ -60,6 +62,31 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
             </Box>
             <ActionButton
               onClick={() => onSelect?.(Plan.premium)}
+              isLoading={isLoading}
+            >
+              Buy now
+            </ActionButton>
+          </>
+        }
+      />
+
+      <PricingCard
+        badge="40% sale"
+        mostExpensive
+        data={{
+          price: '$69',
+          realPrice: '$119.88',
+          name: Plan.premiumAnnually,
+          time: 'year',
+          features: pricingData.features.premium,
+        }}
+        button={
+          <>
+            <Box mb={4} textAlign="center">
+              Trial for 3 days, cancel anytime
+            </Box>
+            <ActionButton
+              onClick={() => onSelect?.(Plan.premiumAnnually)}
               isLoading={isLoading}
             >
               Buy now

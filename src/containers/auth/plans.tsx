@@ -12,9 +12,9 @@ const PlansContainer: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, { on, off }] = useBoolean();
 
-  const handleBuyPremium = async () => {
+  const handleBuyPremium = async (isYearly?: boolean) => {
     on();
-    await createPlan()
+    await createPlan(isYearly)
       .then((res) => {
         window.location.href = res?.data.data.attributes.url;
       })
@@ -28,6 +28,10 @@ const PlansContainer: React.FC = () => {
     switch (plan) {
       case Plan.premium:
         await handleBuyPremium();
+        return;
+
+      case Plan.premiumAnnually:
+        await handleBuyPremium(true);
         return;
 
       case Plan.free:
