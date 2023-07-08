@@ -38,7 +38,7 @@ export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
               $0
             </Td>
             <Td fontSize="2xl" fontWeight="bold">
-              $9.99
+              $3
             </Td>
           </Tr>
           {featuresData.map(([feature, free, premium]) => (

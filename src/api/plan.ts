@@ -28,7 +28,7 @@ const baseAction = async (
   if (action === PlanAction.create) {
     data = {
       user_id: userData?.id,
-      variant_id: isYearly ? '96072' : '91493',
+      variant_id: isYearly ? '97970' : '97737',
       store_id: '27875',
       return_url: `${window.location.origin}/purchased`,
     };

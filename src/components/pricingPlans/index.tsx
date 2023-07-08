@@ -7,7 +7,7 @@ import { PricingCard } from './pricingCard';
 export enum Plan {
   free = 'Free',
   premium = 'Premium',
-  premiumAnnually = 'Premium (Annually)',
+  premiumAnnually = 'Premium (Annual)',
 }
 
 export interface PricingPlansProps {
@@ -40,7 +40,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
           <ActionButton
             onClick={() => onSelect?.(Plan.free)}
             variant="outline"
-            mt={10}
+            // mt={10}
           >
             Continue free
           </ActionButton>
@@ -48,18 +48,17 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
       />
 
       <PricingCard
-        badge="Popular"
         data={{
-          price: '$9.99',
+          price: '$3',
           name: Plan.premium,
           time: 'month',
           features: pricingData.features.premium,
         }}
         button={
           <>
-            <Box mb={4} textAlign="center">
+            {/* <Box mb={4} textAlign="center">
               30-day free trial
-            </Box>
+            </Box> */}
             <ActionButton
               onClick={() => onSelect?.(Plan.premium)}
               isLoading={isLoading}
@@ -71,20 +70,20 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
       />
 
       <PricingCard
-        badge="40% off"
+        badge="Popular"
         mostExpensive
         data={{
-          price: '$69',
-          realPrice: '$119.88',
+          price: '$30',
+          realPrice: '$36',
           name: Plan.premiumAnnually,
           time: 'year',
           features: pricingData.features.premium,
         }}
         button={
           <>
-            <Box mb={4} textAlign="center">
+            {/* <Box mb={4} textAlign="center">
               30-day free trial
-            </Box>
+            </Box> */}
             <ActionButton
               onClick={() => onSelect?.(Plan.premiumAnnually)}
               isLoading={isLoading}
