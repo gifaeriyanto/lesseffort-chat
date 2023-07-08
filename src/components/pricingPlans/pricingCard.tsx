@@ -18,6 +18,7 @@ export interface PricingCardData {
   features: Array<string | string[]>;
   name: string;
   price: string;
+  realPrice?: string;
   time?: string;
 }
 
@@ -28,7 +29,7 @@ interface PricingCardProps extends CardProps {
 
 export const PricingCard = (props: PricingCardProps) => {
   const { data, button, ...rest } = props;
-  const { features, price, name, time } = data;
+  const { features, price, realPrice, name, time } = data;
 
   return (
     <Card
@@ -42,22 +43,33 @@ export const PricingCard = (props: PricingCardProps) => {
       <Heading size="md" fontWeight="extrabold">
         {name}
       </Heading>
-      <Flex
-        align="flex-end"
-        fontWeight="extrabold"
-        color={accentColor('500')}
-        my="8"
-      >
-        <Heading size="3xl" fontWeight="inherit" lineHeight="0.9em">
-          {price}
+      <Box fontWeight="extrabold" color={accentColor('500')} my="8">
+        <Heading
+          size="lg"
+          h="2rem"
+          fontWeight="inherit"
+          lineHeight="0.9em"
+          textDecor="line-through"
+          color="gray.400"
+          mb={2}
+          _light={{
+            color: 'gray.300',
+          }}
+        >
+          {realPrice}
         </Heading>
-        {time && (
-          <Text fontWeight="normal" fontSize="2xl" ml={2} color="gray.400">
-            / {time}
-          </Text>
-        )}
-      </Flex>
-      <List spacing="4" mb="8" maxW="28ch" mx="auto" h="21rem">
+        <Flex align="flex-end">
+          <Heading size="3xl" fontWeight="inherit" lineHeight="0.9em">
+            {price}
+          </Heading>
+          {time && (
+            <Text fontWeight="normal" fontSize="2xl" ml={2} color="gray.400">
+              / {time}
+            </Text>
+          )}
+        </Flex>
+      </Box>
+      <List spacing="4" mb="8" mx="auto" h="21rem">
         {features.map((feature, index) => (
           <ListItem key={index} display="flex" alignItems="flex-start" gap={4}>
             <Icon

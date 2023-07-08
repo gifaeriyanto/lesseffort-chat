@@ -3,11 +3,23 @@ import { Box, BoxProps, LightMode, useColorModeValue } from '@chakra-ui/react';
 import { CardBadge } from './cardBadge';
 
 export interface CardProps extends BoxProps {
-  isRecommended?: boolean;
+  badge?: string;
+  mostExpensive?: boolean;
 }
 
 export const Card = (props: CardProps) => {
-  const { children, isRecommended, ...rest } = props;
+  const { children, badge, mostExpensive, ...rest } = props;
+
+  const badgeProps = () => {
+    if (mostExpensive) {
+      return {
+        bg: 'gold',
+        color: 'gray.800',
+      };
+    }
+    return {};
+  };
+
   return (
     <Box
       bg={useColorModeValue('white', 'gray.700')}
@@ -21,9 +33,9 @@ export const Card = (props: CardProps) => {
       width="100%"
       {...rest}
     >
-      {isRecommended && (
+      {badge && (
         <LightMode>
-          <CardBadge>Recommended</CardBadge>
+          <CardBadge {...badgeProps()}>{badge}</CardBadge>
         </LightMode>
       )}
       {children}

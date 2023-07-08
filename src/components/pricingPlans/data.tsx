@@ -10,6 +10,7 @@ export const pricingData = {
       'Unlimited starter prompts usage',
       ['Chat rules', '170+ language, tone, writing style and format'],
       'Light mode & dark mode',
+      'Relax mode',
       'Custom font size',
     ],
     premium: [
@@ -61,6 +62,21 @@ export const featuresData: [
     />,
   ],
   ['Accent color', 'Blue only', '9 color options'],
+  [
+    'Relax mode',
+    <Icon
+      key="create_prompts_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
+    <Icon
+      key="create_prompts_premium"
+      as={TbCheck}
+      color={accentColor('500')}
+      fontSize="xl"
+    />,
+  ],
   ['Chat history', 'Max 5', 'Unlimited'],
   [
     'Search history',
