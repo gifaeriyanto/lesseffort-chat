@@ -30,13 +30,11 @@ export const useUserData = create<{
   user: undefined,
   isFreeUser: undefined,
   setUser: (user) => {
-    if (!user) {
-      window.location.reload();
-      return;
-    }
     set({
       user,
-      isFreeUser: ![Plan.premium, Plan.premiumAnnually].includes(user.plan),
+      isFreeUser: ![Plan.premium, Plan.premiumAnnually].includes(
+        user?.plan as Plan,
+      ),
     });
   },
 }));
