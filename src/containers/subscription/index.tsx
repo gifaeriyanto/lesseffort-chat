@@ -22,9 +22,6 @@ import {
   Tbody,
   Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tr,
   useBoolean,
   useDisclosure,
@@ -32,10 +29,11 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { captureException } from '@sentry/react';
-import { cancelPlan, resumePlan } from 'api/plan';
+import { cancelPlan, getPlans, resumePlan } from 'api/plan';
 import { MainLayout } from 'components/layout';
 import MainNavbar from 'components/navbar/main';
 import { TbDiamond } from 'react-icons/tb';
+import { useQuery } from 'react-query';
 import { useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
 import { formatDate } from 'utils/common';
@@ -56,6 +54,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
   });
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const [isLoading, { on, off }] = useBoolean();
+  const { data: plansData } = useQuery('get-plans', () => getPlans());
 
   const data = useMemo(() => {
     if (!user) {
@@ -71,10 +70,14 @@ export const ManageSubscriptionContainer: React.FC = () => {
       },
       {
         label: 'Pricing',
-        value: '$9.99 / month',
+        value: plansData
+          ? `$${plansData.data.price / 100} / ${
+              plansData?.data.variant_name === 'Monthly' ? 'month' : 'year'
+            }`
+          : '-',
       },
     ];
-  }, [user]);
+  }, [user, plansData]);
 
   const handleAction = () => {
     let action = cancelPlan;

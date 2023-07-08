@@ -50,3 +50,18 @@ export const resumePlan = () => {
   // we are using same API url with cancel
   return baseAction('cancel-subscription', PlanAction.resume);
 };
+
+export const getPlans = async () => {
+  const userData = await getUser();
+  if (!userData) {
+    return;
+  }
+
+  const fetcher = await API();
+  return fetcher.get('/order-details', {
+    params: {
+      subscription_id: userData.subscription_id,
+      user_id: userData.id,
+    },
+  });
+};
