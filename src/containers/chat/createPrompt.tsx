@@ -351,7 +351,7 @@ export const CreatePrompt: React.FC<CreatePromptProps> = ({
               <Flex justify="space-between" align="center" w="full" gap={8}>
                 <FormControl isInvalid={!!errors.status}>
                   <Checkbox
-                    defaultChecked={defaultValue?.status !== 'private'}
+                    defaultChecked={defaultValue?.status === 'public'}
                     {...register('status')}
                     value={
                       process.env.NODE_ENV === 'development'
