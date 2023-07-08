@@ -58,7 +58,7 @@ const PlansContainer: React.FC = () => {
             Plans
           </Text>
         </Heading>
-        <ComparePlans onSelect={handleSelectPlan} />
+        <ComparePlans onSelect={handleSelectPlan} isLoading={isLoading} />
       </Box>
     </Flex>
   );

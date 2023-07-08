@@ -17,10 +17,14 @@ import { accentColor } from 'theme/foundations/colors';
 import { featuresData } from './data';
 
 export interface ComparePlansProps {
+  isLoading?: boolean;
   onSelect?: (plan: Plan) => void;
 }
 
-export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
+export const ComparePlans: React.FC<ComparePlansProps> = ({
+  isLoading,
+  onSelect,
+}) => {
   return (
     <ResponsiveTable>
       <Table variant="simple">
@@ -70,6 +74,7 @@ export const ComparePlans: React.FC<ComparePlansProps> = ({ onSelect }) => {
                   colorScheme={accentColor()}
                   borderRadius="xl"
                   onClick={() => onSelect?.(Plan.premium)}
+                  isLoading={isLoading}
                 >
                   Buy now
                 </Button>
