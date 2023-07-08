@@ -48,7 +48,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
       />
 
       <PricingCard
-        badge="Recommended"
+        badge="Popular"
         data={{
           price: '$9.99',
           name: Plan.premium,
@@ -58,7 +58,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
         button={
           <>
             <Box mb={4} textAlign="center">
-              Trial for 3 days, cancel anytime
+              30-day free trial
             </Box>
             <ActionButton
               onClick={() => onSelect?.(Plan.premium)}
@@ -83,7 +83,7 @@ export const PricingPlans: React.FC<PricingPlansProps> = ({
         button={
           <>
             <Box mb={4} textAlign="center">
-              Trial for 3 days, 30 days risk free
+              30-day free trial
             </Box>
             <ActionButton
               onClick={() => onSelect?.(Plan.premiumAnnually)}
