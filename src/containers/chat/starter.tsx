@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -17,7 +17,8 @@ import {
 import { PromptData } from 'api/supabase/prompts';
 import { ChatSettings } from 'containers/chat/chatSettings';
 import { StarterPrompts } from 'containers/chat/starterPrompts';
-import { TbSettings, TbTemplate } from 'react-icons/tb';
+import { Tutorial } from 'containers/chat/tutorial';
+import { TbBook, TbSettings, TbTemplate } from 'react-icons/tb';
 import { usePrompts } from 'store/prompt';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 
@@ -28,9 +29,17 @@ export interface StarterContainerProps {
 export const StarterContainer: React.FC<StarterContainerProps> = ({
   onSelectPrompt,
 }) => {
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(
+    localStorage.getItem('lastOpenStarterTab')
+      ? Number(localStorage.getItem('lastOpenStarterTab'))
+      : 0,
+  );
   const [isLessThanMd] = useMediaQuery('(max-width: 48em)');
   const { isManagingPrompt } = usePrompts();
+
+  useEffect(() => {
+    localStorage.setItem('lastOpenStarterTab', tabIndex.toString());
+  }, [tabIndex]);
 
   const tabProps = (index: number): TabProps => ({
     borderWidth: { base: '0 0 2px 0', md: '0 2px 0 0' },
@@ -56,6 +65,7 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
   return (
     <Tabs
       variant="unstyled"
+      index={tabIndex}
       onChange={setTabIndex}
       mt={{ base: '0 !important', md: '2rem !important' }}
       w="full"
@@ -68,15 +78,21 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
           <TabList p={{ base: '1rem', md: 'initial' }}>
             <Flex direction={{ md: 'column' }}>
               <Tab {...tabProps(0)}>
-                <Icon as={TbTemplate} />
+                <Icon as={TbBook} />
                 <Text ml={2} hidden={!isLessThanMd}>
-                  Starter Prompts
+                  Tutorial
                 </Text>
               </Tab>
               <Tab {...tabProps(1)}>
+                <Icon as={TbTemplate} />
+                <Text ml={2} hidden={!isLessThanMd}>
+                  {isLessThanMd ? 'Prompts' : 'Starter Prompts'}
+                </Text>
+              </Tab>
+              <Tab {...tabProps(2)}>
                 <Icon as={TbSettings} />
                 <Text ml={2} hidden={!isLessThanMd}>
-                  Chat Settings
+                  {isLessThanMd ? 'Settings' : 'Chat Settings'}
                 </Text>
               </Tab>
             </Flex>
@@ -85,6 +101,9 @@ export const StarterContainer: React.FC<StarterContainerProps> = ({
 
         <GridItem>
           <TabPanels>
+            <TabPanel p={wrapperPadding}>
+              <Tutorial />
+            </TabPanel>
             <TabPanel p={wrapperPadding}>
               <StarterPrompts onSelectPrompt={onSelectPrompt} />
             </TabPanel>

@@ -204,7 +204,7 @@ export const SharedConversationContainer: React.FC = () => {
             <Box>
               <Text fontSize="sm">Powered by</Text>
               <Text color={`${accentColor}.500`} as="span" fontWeight="bold">
-                Less Effort
+                LessEffort
               </Text>
             </Box>
           </Flex>

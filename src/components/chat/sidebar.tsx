@@ -257,7 +257,7 @@ export const ChatSidebar: React.FC = () => {
               <Flex gap={4}>
                 <Box as="img" src="/favicon-32x32.png" />
                 <Text color={accentColor('500')} as="span" fontWeight="bold">
-                  Less Effort
+                  LessEffort
                 </Text>
               </Flex>
               <LightMode>
