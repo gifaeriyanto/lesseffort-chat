@@ -8,7 +8,12 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import { HistoryActions } from 'components/chat/historyActions';
-import { TbBookmark, TbBrandOpenai, TbMenu2 } from 'react-icons/tb';
+import {
+  TbBookmark,
+  TbBrandOpenai,
+  TbMenu2,
+  TbSeparator,
+} from 'react-icons/tb';
 import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
@@ -132,6 +137,10 @@ export const ChatHeader: React.FC = () => {
             textAlign={{ base: 'center', md: 'initial' }}
           >
             {messagesLength ? `${messagesLength} messages` : 'No messages'}
+            <Box as="span" mx={2}>
+              ·
+            </Box>
+            {model}
           </Text>
         </Box>
       </Flex>
