@@ -32,7 +32,7 @@ import {
   TbVolume,
   TbVolumeOff,
 } from 'react-icons/tb';
-import YouTube from 'react-youtube';
+import YouTube, { YouTubeProps } from 'react-youtube';
 
 const VIDEO_QUALITY_LEVELS = [720, 1080, 1440, 2160];
 
@@ -103,7 +103,7 @@ export const YoutubeSection: React.FC = () => {
     }
   };
 
-  const youtubePlayerOpts = {
+  const youtubePlayerOpts: YouTubeProps['opts'] = {
     playerVars: {
       autoplay: 1,
       controls: 0,
@@ -138,7 +138,7 @@ export const YoutubeSection: React.FC = () => {
             <Flex width="25rem" gap={4}>
               <Box
                 as="img"
-                src={youtubeData.thumbnailUrl}
+                src={`https://img.youtube.com/vi/${youtubeID}/mqdefault.jpg`}
                 w="10rem"
                 h="10rem"
                 objectFit="cover"

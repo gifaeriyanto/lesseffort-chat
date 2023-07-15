@@ -67,8 +67,14 @@ export const ChatContainer: React.FC = () => {
     shallow,
   );
   const { openAIKey, setOpenAIKey } = useOpenAIKey();
-  const { toggleColorMode } = useColorMode();
+  const { toggleColorMode, setColorMode } = useColorMode();
   const isOnline = useOnlineStatus();
+
+  const handleColorMode = (e: MessageEvent) => {
+    if (['dark', 'light'].includes(e.data)) {
+      setColorMode(e.data);
+    }
+  };
 
   useLayoutEffect(() => {
     getPWAStatus();
@@ -86,6 +92,12 @@ export const ChatContainer: React.FC = () => {
       onOpenPurchasedModal();
       localStorage.removeItem('purchased');
     }
+
+    window.addEventListener('message', handleColorMode);
+
+    return () => {
+      window.removeEventListener('message', handleColorMode);
+    };
   }, []);
 
   useLayoutEffect(() => {

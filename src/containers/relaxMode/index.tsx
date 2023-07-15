@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Flex,
@@ -22,6 +22,14 @@ import { CustomColor } from 'theme/foundations/colors';
 export const RelaxModeContainer: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    iframeRef.current?.contentWindow?.postMessage(
+      colorMode,
+      window.location.origin,
+    );
+  }, [iframeRef, colorMode]);
 
   const tabProps = (index: number): TabProps => ({
     w: '3rem',
@@ -71,7 +79,6 @@ export const RelaxModeContainer: React.FC = () => {
           fontSize="xl"
           _light={{ color: 'gray.100' }}
           onClick={toggleColorMode}
-          hidden
         >
           {colorMode === 'light' ? <Icon as={TbMoon} /> : <Icon as={TbSun} />}
         </Flex>
@@ -107,6 +114,7 @@ export const RelaxModeContainer: React.FC = () => {
               <TabPanels h="full" pl={4}>
                 <TabPanel h="full" p={0}>
                   <Box
+                    ref={iframeRef}
                     as="iframe"
                     w="355px"
                     h="full"
