@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import { useOpenAIKey } from 'store/chat';
 import { accentColor } from 'theme/foundations/colors';
 import { debounce } from 'utils/common';
+import { useGA } from 'utils/hooks/useGA';
 
 interface FormInputs {
   openaiKey: string;
@@ -29,6 +30,7 @@ export const APIKeySettings: React.FC = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<FormInputs>();
+  const { GAEvent } = useGA();
   const [isSaving, { on, off }] = useBoolean();
   const [showSavingState, setShowSavingState] = useState(false);
   const { openAIKey, setOpenAIKey } = useOpenAIKey();
@@ -39,6 +41,10 @@ export const APIKeySettings: React.FC = () => {
   );
 
   const handleSaveSettings = ({ openaiKey }: FormInputs) => {
+    GAEvent({
+      action: 'Save OpenAI Key',
+      category: 'Action',
+    });
     setOpenAIKey(openaiKey);
     off();
     setShowSavingState(true);
