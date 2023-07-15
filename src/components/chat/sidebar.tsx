@@ -42,7 +42,6 @@ import {
   TbFlower,
   TbLogout,
   TbMoon,
-  TbMoonFilled,
   TbPlus,
   TbSearch,
   TbSettings,
@@ -172,22 +171,6 @@ export const ChatSidebar: React.FC = () => {
     }
   };
 
-  const renderToggleColorModeMobile = () => {
-    if (isRelaxMode() || isLessThanMd) {
-      return;
-    }
-
-    return (
-      <IconButton
-        variant="ghost"
-        icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-        aria-label="Toggle color mode"
-        onClick={handleToggleColorMode}
-        color="gray.400"
-      />
-    );
-  };
-
   const renderUserSettings = () => {
     if (isRelaxMode()) {
       return;
@@ -217,23 +200,25 @@ export const ChatSidebar: React.FC = () => {
               Switch to {colorMode === 'light' ? 'dark' : 'light'} mode
             </Text>
           </MenuItem>
-          <MenuItem as={Link} to="/relax-mode">
-            <Icon as={TbFlower} />
-            <Text ml={4}>
-              Relax mode{' '}
-              <LightMode>
-                <Tag
-                  size="sm"
-                  mt={1}
-                  ml={2}
-                  colorScheme={accentColor()}
-                  variant="solid"
-                >
-                  Beta
-                </Tag>
-              </LightMode>
-            </Text>
-          </MenuItem>
+          {!isLessThanMd && (
+            <MenuItem as={Link} to="/relax-mode">
+              <Icon as={TbFlower} />
+              <Text ml={4}>
+                Relax mode{' '}
+                <LightMode>
+                  <Tag
+                    size="sm"
+                    mt={1}
+                    ml={2}
+                    colorScheme={accentColor()}
+                    variant="solid"
+                  >
+                    Beta
+                  </Tag>
+                </LightMode>
+              </Text>
+            </MenuItem>
+          )}
           <MenuDivider />
           <MenuItem as={Link} to="/settings">
             <Icon as={TbSettings} />
@@ -340,8 +325,6 @@ export const ChatSidebar: React.FC = () => {
                     </Text>
                   </Box>
                 </Flex>
-
-                {renderToggleColorModeMobile()}
               </Flex>
             </Flex>
           </DrawerBody>
