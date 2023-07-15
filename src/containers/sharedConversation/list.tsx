@@ -247,7 +247,12 @@ export const SharedConversationsContainer: React.FC = () => {
           message="You don't have any shared conversation yet"
         />
 
-        <VStack w="full" align="flex-start" mt={{ base: '5rem', md: '2rem' }}>
+        <VStack
+          w="full"
+          align="flex-start"
+          mt={{ base: '5rem', md: '2rem' }}
+          overflowY="auto"
+        >
           {conversations.map((item) => (
             <Flex
               key={item.id}
