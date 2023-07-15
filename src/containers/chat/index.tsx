@@ -33,6 +33,7 @@ import { useChat, useOpenAIKey } from 'store/chat';
 import { usePWA } from 'store/pwa';
 import { useProfilePhoto, useUserData } from 'store/user';
 import { accentColor } from 'theme/foundations/colors';
+import { useGA } from 'utils/hooks/useGA';
 import { useOnlineStatus } from 'utils/hooks/useOnlineStatus';
 import { shallow } from 'zustand/shallow';
 
@@ -41,6 +42,7 @@ interface FormInputs {
 }
 
 export const ChatContainer: React.FC = () => {
+  const { GAEvent } = useGA();
   const {
     isOpen: isOpenAPIKEYModal,
     onOpen: onOpenAPIKEYModal,
@@ -114,6 +116,10 @@ export const ChatContainer: React.FC = () => {
   }, [toggleColorMode, isFreeUser]);
 
   const handleSaveOpenaiKey = ({ openaiKey = '' }) => {
+    GAEvent({
+      action: 'Save OpenAI Key',
+      category: 'Action',
+    });
     setOpenAIKey(openaiKey);
     onCloseAPIKEYModal();
   };
