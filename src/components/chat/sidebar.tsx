@@ -173,7 +173,7 @@ export const ChatSidebar: React.FC = () => {
   };
 
   const renderToggleColorModeMobile = () => {
-    if (isRelaxMode()) {
+    if (isRelaxMode() || isLessThanMd) {
       return;
     }
 
