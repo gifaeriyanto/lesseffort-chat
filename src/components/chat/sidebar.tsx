@@ -33,7 +33,6 @@ import { signOut } from 'api/supabase/auth';
 import { ChatHistory } from 'components/chat/history';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
 import { Search } from 'components/search';
-import ReactGA from 'react-ga4';
 import {
   TbBookmark,
   TbBookmarks,
@@ -58,6 +57,7 @@ import { useUserData } from 'store/user';
 import { accentColor, CustomColor } from 'theme/foundations/colors';
 import { useGA } from 'utils/hooks/useGA';
 import { toastForFreeUser } from 'utils/toasts';
+import { isRelaxMode } from 'utils/url';
 import { shallow } from 'zustand/shallow';
 
 export const ChatSidebar: React.FC = () => {
@@ -172,7 +172,27 @@ export const ChatSidebar: React.FC = () => {
     }
   };
 
+  const renderToggleColorModeMobile = () => {
+    if (isRelaxMode()) {
+      return;
+    }
+
+    return (
+      <IconButton
+        variant="ghost"
+        icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
+        aria-label="Toggle color mode"
+        onClick={handleToggleColorMode}
+        color="gray.400"
+      />
+    );
+  };
+
   const renderUserSettings = () => {
+    if (isRelaxMode()) {
+      return;
+    }
+
     return (
       <Menu autoSelect={false}>
         <MenuButton>
@@ -321,13 +341,7 @@ export const ChatSidebar: React.FC = () => {
                   </Box>
                 </Flex>
 
-                <IconButton
-                  variant="ghost"
-                  icon={colorMode === 'light' ? <TbMoonFilled /> : <TbSun />}
-                  aria-label="Toggle color mode"
-                  onClick={handleToggleColorMode}
-                  color="gray.400"
-                />
+                {renderToggleColorModeMobile()}
               </Flex>
             </Flex>
           </DrawerBody>
