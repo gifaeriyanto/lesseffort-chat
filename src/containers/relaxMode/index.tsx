@@ -18,6 +18,7 @@ import { ClockWidget } from 'containers/relaxMode/sections/clock';
 import { YoutubeSection } from 'containers/relaxMode/sections/youtube';
 import { TbMessage, TbMoon, TbNotebook, TbSun } from 'react-icons/tb';
 import { CustomColor } from 'theme/foundations/colors';
+import { blurBackgroundProps } from 'utils/blurBackground';
 
 export const RelaxModeContainer: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -40,6 +41,11 @@ export const RelaxModeContainer: React.FC = () => {
     m: 4,
     mb: 0,
     bgColor: index === activeTabIndex ? 'whiteAlpha.300' : 'transparent',
+    _light: {
+      borderColor:
+        index === activeTabIndex ? 'blackAlpha.300' : 'blackAlpha.200',
+      bgColor: index === activeTabIndex ? 'blackAlpha.100' : 'transparent',
+    },
   });
 
   return (
@@ -52,13 +58,12 @@ export const RelaxModeContainer: React.FC = () => {
           w="3rem"
           h="3rem"
           p="0.6rem"
-          backdropFilter="blur(5px)"
           border="1px solid"
-          borderColor="whiteAlpha.300"
           borderRadius="xl"
           flexShrink={0}
           as={CLink}
           href="/"
+          {...blurBackgroundProps}
         >
           <Box
             as="img"
@@ -72,13 +77,12 @@ export const RelaxModeContainer: React.FC = () => {
           align="center"
           h="3rem"
           p={4}
-          backdropFilter="blur(5px)"
           border="1px solid"
-          borderColor="whiteAlpha.300"
           borderRadius="xl"
           fontSize="xl"
-          _light={{ color: 'gray.100' }}
           onClick={toggleColorMode}
+          role="button"
+          {...blurBackgroundProps}
         >
           {colorMode === 'light' ? <Icon as={TbMoon} /> : <Icon as={TbSun} />}
         </Flex>
@@ -90,11 +94,10 @@ export const RelaxModeContainer: React.FC = () => {
         top={4}
         zIndex={1}
         h="calc(100vh - 2rem)"
-        backdropFilter="blur(5px)"
         border="1px solid"
-        borderColor="whiteAlpha.300"
         borderRadius="xl"
         overflow="hidden"
+        {...blurBackgroundProps}
       >
         <Tabs variant="unstyled" onChange={setActiveTabIndex} w="full" h="full">
           <Grid templateColumns="3.8rem 1fr" h="full">

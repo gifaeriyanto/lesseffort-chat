@@ -33,6 +33,7 @@ import {
   TbVolumeOff,
 } from 'react-icons/tb';
 import YouTube, { YouTubeProps } from 'react-youtube';
+import { blurBackgroundProps } from 'utils/blurBackground';
 
 const VIDEO_QUALITY_LEVELS = [720, 1080, 1440, 2160];
 
@@ -120,15 +121,13 @@ export const YoutubeSection: React.FC = () => {
         <Flex
           align="center"
           p={4}
-          backdropFilter="blur(5px)"
           border="1px solid"
-          borderColor="whiteAlpha.300"
           borderRadius="xl"
           fontSize="xl"
-          _light={{ color: 'gray.100' }}
           gap={4}
           mb={4}
           w="fit-content"
+          {...blurBackgroundProps}
         >
           <CLink
             href={`https://youtu.be/${youtubeID}`}
@@ -155,13 +154,11 @@ export const YoutubeSection: React.FC = () => {
           h="3rem"
           p={4}
           pr={1}
-          backdropFilter="blur(5px)"
           border="1px solid"
-          borderColor="whiteAlpha.300"
           borderRadius="xl"
           fontSize="xl"
-          _light={{ color: 'gray.100' }}
           gap={4}
+          {...blurBackgroundProps}
         >
           <CLink href={`https://youtu.be/${youtubeID}`} target="_blank">
             <Icon as={SiYoutube} fontSize="2xl" mt={2} />

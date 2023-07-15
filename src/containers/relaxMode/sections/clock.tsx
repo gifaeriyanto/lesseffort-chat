@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { Flex } from '@chakra-ui/layout';
+import { blurBackgroundProps } from 'utils/blurBackground';
 
 export const ClockWidget: React.FC = () => {
   const [date, setDate] = useState(new Date());
@@ -20,12 +21,10 @@ export const ClockWidget: React.FC = () => {
       align="center"
       h="3rem"
       p={4}
-      backdropFilter="blur(5px)"
       border="1px solid"
-      borderColor="whiteAlpha.300"
       borderRadius="xl"
       fontSize="xl"
-      _light={{ color: 'gray.100' }}
+      {...blurBackgroundProps}
     >
       {date.toLocaleTimeString()}
     </Flex>
