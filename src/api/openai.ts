@@ -22,34 +22,39 @@ const getNextMonthFirstDate = () => {
 };
 
 export const getUsages = async () => {
-  const res = await openaiAPI.get<{
-    total_usage: number;
-    daily_costs: {
-      line_items: { name: string; cost: number }[];
-      timestamp: number;
-    }[];
-  }>('/dashboard/billing/usage', {
-    params: {
-      start_date: format(getUTCTime(), 'yyyy-MM-01'),
-      end_date: format(getNextMonthFirstDate(), 'yyyy-MM-dd'),
-    },
-  });
+  // const res = await openaiAPI.get<{
+  //   total_usage: number;
+  //   daily_costs: {
+  //     line_items: { name: string; cost: number }[];
+  //     timestamp: number;
+  //   }[];
+  // }>('/dashboard/billing/usage', {
+  //   params: {
+  //     start_date: format(getUTCTime(), 'yyyy-MM-01'),
+  //     end_date: format(getNextMonthFirstDate(), 'yyyy-MM-dd'),
+  //   },
+  // });
 
-  const todayItemIndex = res.data.daily_costs.findIndex((item) => {
-    return (
-      new Date(item.timestamp * 1000).getDate() === new Date().getUTCDate()
-    );
-  });
+  // const todayItemIndex = res.data.daily_costs.findIndex((item) => {
+  //   return (
+  //     new Date(item.timestamp * 1000).getDate() === new Date().getUTCDate()
+  //   );
+  // });
 
-  const todayUsageItems = res.data.daily_costs[
-    todayItemIndex
-  ].line_items.reduce((prev, curr) => {
-    return prev + curr.cost;
-  }, 0);
+  // const todayUsageItems = res.data.daily_costs[
+  //   todayItemIndex
+  // ].line_items.reduce((prev, curr) => {
+  //   return prev + curr.cost;
+  // }, 0);
+
+  // return {
+  //   total: res.data.total_usage * 0.01,
+  //   today: todayUsageItems * 0.01,
+  // };
 
   return {
-    total: res.data.total_usage * 0.01,
-    today: todayUsageItems * 0.01,
+    total: 0,
+    today: 0,
   };
 };
 
