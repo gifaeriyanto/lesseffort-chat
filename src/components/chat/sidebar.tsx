@@ -1,10 +1,5 @@
-import React, { useLayoutEffect, useMemo, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
   Drawer,
@@ -13,7 +8,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  HStack,
   Icon,
   IconButton,
   LightMode,
@@ -28,7 +22,6 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { getUsages } from 'api/openai';
 import { signOut } from 'api/supabase/auth';
 import { ChatHistory } from 'components/chat/history';
 import { ProfilePhoto } from 'components/chat/profilePhoto';
@@ -48,7 +41,6 @@ import {
   TbShieldCheck,
   TbSun,
 } from 'react-icons/tb';
-import { useQuery } from 'react-query';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useChat } from 'store/chat';
 import { useSidebar } from 'store/sidebar';
@@ -60,7 +52,10 @@ import { isRelaxMode } from 'utils/url';
 import { shallow } from 'zustand/shallow';
 
 export const ChatSidebar: React.FC = () => {
-  const isFreeUser = useUserData((state) => state.isFreeUser, shallow);
+  const { isFreeUser, user } = useUserData(
+    (state) => ({ isFreeUser: state.isFreeUser, user: state.user }),
+    shallow,
+  );
   const { GAEvent } = useGA();
   const { isOpenSidebar, onCloseSidebar } = useSidebar(
     (state) => ({
@@ -91,19 +86,6 @@ export const ChatSidebar: React.FC = () => {
   const { toggleColorMode, colorMode } = useColorMode();
   const location = useLocation();
   const navigate = useNavigate();
-  const { data } = useQuery('usages', getUsages, {
-    refetchInterval: 60000 * 5, // 5 min
-  });
-
-  const usages = useMemo(() => {
-    if (!data) {
-      return {
-        total: 0,
-        today: 0,
-      };
-    }
-    return data;
-  }, [data]);
 
   const handleToggleShowSearch = () => {
     if (isFreeUser) {
@@ -312,15 +294,16 @@ export const ChatSidebar: React.FC = () => {
                 <Flex gap={4}>
                   {renderUserSettings()}
                   <Box>
-                    <Text fontWeight="bold">Usages</Text>
+                    <Text fontWeight="bold" isTruncated w="14rem">
+                      {user?.name}
+                    </Text>
                     <Text
                       fontSize="sm"
                       color="gray.300"
                       _light={{ color: 'gray.400' }}
                     >
-                      This month:{' '}
                       <Box as="b" color={accentColor('500')}>
-                        ${usages.total.toFixed(2)}
+                        {user?.plan}
                       </Box>
                     </Text>
                   </Box>
@@ -417,67 +400,39 @@ export const ChatSidebar: React.FC = () => {
 
         <ChatHistory search={search} />
       </Flex>
-      <Accordion allowToggle>
-        <AccordionItem
-          bgColor={CustomColor.card}
-          borderRadius="2xl"
-          p={4}
-          border="1px solid"
-          borderColor={CustomColor.border}
-          _light={{
-            bgColor: CustomColor.lightCard,
-            borderColor: CustomColor.lightBorder,
-          }}
-        >
-          <Flex gap={4}>
-            <Flex justify="space-between" align="center" w="full">
-              <Flex gap={4}>
-                {renderUserSettings()}
-                <Box>
-                  <Text fontWeight="bold">Usages</Text>
-                  <Text
-                    fontSize="sm"
-                    color="gray.300"
-                    _light={{ color: 'gray.400' }}
-                  >
-                    This month:{' '}
-                    <Box as="b" color={accentColor('500')}>
-                      ${usages.total.toFixed(2)}
-                    </Box>
-                  </Text>
-                </Box>
-              </Flex>
-              <HStack>
-                <AccordionButton
-                  w="auto"
-                  p={1}
-                  transform="rotate(180deg)"
-                  borderRadius="xl"
+      <Box
+        bgColor={CustomColor.card}
+        borderRadius="2xl"
+        p={4}
+        border="1px solid"
+        borderColor={CustomColor.border}
+        _light={{
+          bgColor: CustomColor.lightCard,
+          borderColor: CustomColor.lightBorder,
+        }}
+      >
+        <Flex gap={4}>
+          <Flex justify="space-between" align="center" w="full">
+            <Flex gap={4}>
+              {renderUserSettings()}
+              <Box>
+                <Text fontWeight="bold" isTruncated w="13rem">
+                  {user?.name}
+                </Text>
+                <Text
+                  fontSize="sm"
+                  color="gray.300"
+                  _light={{ color: 'gray.400' }}
                 >
-                  <AccordionIcon color="gray.400" fontSize="2xl" />
-                </AccordionButton>
-              </HStack>
+                  <Box as="b" color={accentColor('500')}>
+                    {user?.plan}
+                  </Box>
+                </Text>
+              </Box>
             </Flex>
           </Flex>
-          <AccordionPanel p={0} mt={4}>
-            <Box
-              pt={4}
-              borderTop="1px solid"
-              color="gray.300"
-              borderColor={CustomColor.border}
-              _light={{
-                borderColor: CustomColor.lightBorder,
-                color: 'gray.400',
-              }}
-            >
-              Today usage is{' '}
-              <Box as="b" color={accentColor('500')}>
-                ${usages.today.toFixed(4)}
-              </Box>
-            </Box>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
+        </Flex>
+      </Box>
     </Flex>
   );
 };
