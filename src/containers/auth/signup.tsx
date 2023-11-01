@@ -42,7 +42,7 @@ export const SignUpContainer: React.FC = () => {
       .then((res) => {
         if (res.error?.message) {
           standaloneToast({
-            title: 'Error login',
+            title: 'Error register',
             description: res.error.message,
             position: 'top',
             status: 'error',
