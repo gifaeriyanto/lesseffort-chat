@@ -97,7 +97,7 @@ export const ManageSubscriptionContainer: React.FC = () => {
 
   const cancellationSection = (
     <>
-      <Box>
+      <Box hidden>
         If you have any questions, feel free to contact us at{' '}
         <LightMode>
           <Button

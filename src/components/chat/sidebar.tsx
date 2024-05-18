@@ -217,11 +217,19 @@ export const ChatSidebar: React.FC = () => {
               <Text ml={4}>Manage subscription</Text>
             </MenuItem>
           )}
-          <MenuItem as="a" href="https://lesseffort.io/privacy" target="_blank">
+          <MenuItem
+            as="a"
+            href="https://lesseffort.vercel.app/privacy"
+            target="_blank"
+          >
             <Icon as={TbShieldCheck} />
             <Text ml={4}>Privacy Policy</Text>
           </MenuItem>
-          <MenuItem as="a" href="https://lesseffort.io/terms" target="_blank">
+          <MenuItem
+            as="a"
+            href="https://lesseffort.vercel.app/terms"
+            target="_blank"
+          >
             <Icon as={TbChecklist} />
             <Text ml={4}>Terms of Service</Text>
           </MenuItem>
